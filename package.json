@@ -1,0 +1,11 @@
+{
+  "name": "pulpito",
+  "version": "1.0.0",
+  "description": "API to help organize travels from different places to one destination",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nicolas Daudin",
+  "license": "ISC"
+}
