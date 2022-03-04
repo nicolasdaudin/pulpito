@@ -2,10 +2,21 @@
   "name": "pulpito",
   "version": "1.0.0",
   "description": "API to help organize travels from different places to one destination",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon server.js",
+    "debug": "ndb server.js"
   },
   "author": "Nicolas Daudin",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.26.0",
+    "core-js": "^3.21.1",
+    "core-js-pure": "^3.21.1",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "luxon": "^2.3.1",
+    "mongoose": "^6.2.2",
+    "morgan": "^1.10.0"
+  }
 }
