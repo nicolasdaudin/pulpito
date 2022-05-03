@@ -5,26 +5,12 @@ const AppError = require('./appError');
 
 const isCommaSeparatedAlpha = (str) => {
   const splitted = str.split(',');
-  // console.log(splitted);
-  let isValid = true;
-  splitted.forEach((split) => {
-    // console.log(split, isAlpha(split));
-    if (!isAlpha(split)) isValid = false;
-  });
-  return isValid;
+  return splitted.every((split) => isAlpha(split));
 };
 
 const isCommaSeparatedNumeric = (str) => {
-  // console.log('isCommaSeparatedNumeric', str);
   const splitted = str.split(',');
-  // console.log('isCommaSeparatedNumeric', splitted);
-  let isValid = true;
-  splitted.forEach((split) => {
-    // console.log(split, isNumeric(split));
-
-    if (!isNumeric(split)) isValid = false;
-  });
-  return isValid;
+  return splitted.every(isNumeric);
 };
 
 exports.validateRequestParamsManyOrigins = (req, res, next) => {
