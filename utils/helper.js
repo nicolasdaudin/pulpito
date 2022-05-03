@@ -6,7 +6,7 @@ exports.cleanItineraryData = (itinerary) => {
   delete itinerary.nightsInDest;
   delete itinerary.quality;
   delete itinerary.conversion;
-  delete itinerary.fare;
+  // delete itinerary.fare;
   delete itinerary.bags_price;
   delete itinerary.baglimit;
   delete itinerary.availability;

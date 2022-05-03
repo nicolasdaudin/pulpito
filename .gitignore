@@ -5,3 +5,4 @@ dist
 .DS_Store
 .prettierrc
 .env
+datasets

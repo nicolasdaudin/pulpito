@@ -17,6 +17,7 @@ mongoose.connect(DB).then(() => {
   console.log(`DB running at ${DB} ... ✅`);
 });
 
+// TODO: why is app required after mongoose connect?
 const app = require('./app');
 
 const port = process.env.PORT || 3000;
