@@ -7,11 +7,10 @@ process.on('uncaughtException', (err) => {
   process.exit(1);
 });
 
-// TODO: mongoose : when we have a DB on Atlas MongoDB, even for local - this will be done after my trip to Ecuador
-// DATABASE=mongodb+srv://nicolas:<PASSWORD>@cluster0.02dvc.mongodb.net/natours?retryWrites=true&w=majority
-// DATABASE_PASSWORD=
-// but at the moment we just have DATABASE in .env
-const DB = process.env.DATABASE;
+const DB = process.env.DATABASE.replace(
+  '<PASSWORD>',
+  process.env.DATABASE_PASSWORD
+);
 
 mongoose.connect(DB).then(() => {
   console.log(`DB running at ${DB} ... ✅`);
