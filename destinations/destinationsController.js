@@ -51,6 +51,25 @@ const prepareItineraryData = (dest, itineraries) => {
   return itinerary;
 };
 
+const prepareAxiosRequest = () =>
+  axios.create({
+    baseURL: process.env.KIWI_URL,
+    headers: {
+      apikey: process.env.KIWI_API_KEY,
+    },
+    params: {
+      max_stopovers: 2,
+      partner_market: 'fr',
+      lang: 'fr',
+      limit: 1000,
+      flight_type: 'round',
+      ret_from_diff_airport: 0,
+      ret_to_diff_airport: 0,
+      one_for_city: 1,
+      fly_to: 'anywhere',
+    },
+  });
+
 /**
  * Find cheapest destinations to this origin.
  * By default, if nothing is specified for adults, we search for 1 adult per destination.
@@ -61,23 +80,7 @@ const prepareItineraryData = (dest, itineraries) => {
 exports.getCheapestDestinations = async (req, res, next) => {
   try {
     // perform KIWI API call (TODO: to refactor in a different function to be able to be API-agnostic)
-    const instance = axios.create({
-      baseURL: 'https://tequila-api.kiwi.com/v2/search',
-      headers: {
-        apikey: 'ul0LzzIMoMoVSSHoI1KyQshH2shl4Eup',
-      },
-      params: {
-        max_stopovers: 2,
-        partner_market: 'fr',
-        lang: 'fr',
-        limit: 1000,
-        flight_type: 'round',
-        ret_from_diff_airport: 0,
-        ret_to_diff_airport: 0,
-        one_for_city: 1,
-        fly_to: 'anywhere',
-      },
-    });
+    const instance = prepareAxiosRequest();
     const response = await instance.get('', {
       params: {
         fly_from: req.query.origin,
@@ -136,23 +139,7 @@ exports.getCommonDestinations = async (req, res) => {
   try {
     // console.log(req.query);
 
-    const instance = axios.create({
-      baseURL: 'https://tequila-api.kiwi.com/v2/search',
-      headers: {
-        apikey: 'ul0LzzIMoMoVSSHoI1KyQshH2shl4Eup',
-      },
-      params: {
-        max_stopovers: 4,
-        partner_market: 'fr',
-        lang: 'fr',
-        limit: 1000,
-        flight_type: 'round',
-        ret_from_diff_airport: 0,
-        ret_to_diff_airport: 0,
-        one_for_city: 1,
-        fly_to: 'anywhere',
-      },
-    });
+    const instance = prepareAxiosRequest();
 
     const origins = req.query.origin.split(',');
     const adults = req.query.adults
