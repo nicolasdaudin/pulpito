@@ -1,6 +1,11 @@
 const { Settings, Duration, DateTime } = require('luxon');
 Settings.defaultLocale = 'fr';
 
+/**
+ * Remove unnecessary info from API payload
+ * @param {*} itinerary
+ * @returns
+ */
 exports.cleanItineraryData = (itinerary) => {
   delete itinerary.type_flights;
   delete itinerary.nightsInDest;
@@ -30,7 +35,8 @@ exports.cleanItineraryData = (itinerary) => {
   const onewayFlights = filteredRoute.filter((r) => r.return === 0);
   const returnFlights = filteredRoute.filter((r) => r.return === 1);
 
-  // add easy to mainpulate info about each set of flights
+  // refactor info about each set of flights
+  // FIXME: improve performance, this usually takes 0.6 or 0.8ms to complete (and we need to repeat that operation 600-700 times since there are 600-700 itineraries to be cleaned). Maybe an option is to completely remove that part and not clean-refactor data?
   const route = {
     oneway: {
       flights: onewayFlights,
@@ -64,8 +70,6 @@ exports.cleanItineraryData = (itinerary) => {
     },
   };
   itinerary.route = route;
-
-  //
 
   delete itinerary.tracking_pixel;
   delete itinerary.facilitated_booking_available;

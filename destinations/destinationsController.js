@@ -3,6 +3,54 @@ const axios = require('axios').default;
 const groupByToMap = require('core-js-pure/actual/array/group-by-to-map');
 const AppError = require('../utils/appError');
 
+const isCommonDestination = (destination, origins) => {
+  // for each origin ('every'), I want to find it at least once as an origin ('cityCodeFrom') in the list of flights corresponding to this destination ('destinations.get(key)')
+  return origins.every(
+    (origin) =>
+      destination.findIndex((value) => value.cityCodeFrom === origin) > -1
+  );
+};
+
+const prepareItineraryData = (dest, itineraries) => {
+  const itinerary = { cityTo: dest };
+
+  // corresponding origins to that particular destination
+  // itinerary.flights will have one item per origin
+  itinerary.flights = itineraries.filter(
+    (itinerary) => itinerary.cityTo === dest
+  );
+
+  // common to all origins, for that particular destination
+  itinerary.countryTo = itinerary.flights[0].countryTo.name;
+  itinerary.cityCodeTo = itinerary.flights[0].cityCodeTo;
+
+  // compute total price
+  itinerary.totalPrice = itinerary.flights.reduce(
+    (sum, flight) => sum + flight.price,
+    0
+  );
+
+  // total distance
+  itinerary.totalDistance = itinerary.flights.reduce(
+    (sum, flight) => sum + flight.distance,
+    0
+  );
+
+  // total duration departure
+  itinerary.totalDurationDepartureInMinutes = itinerary.flights.reduce(
+    (sum, flight) => sum + flight.duration.departure / 60,
+    0
+  );
+
+  // total duration return
+  itinerary.totalDurationReturnInMinutes = itinerary.flights.reduce(
+    (sum, flight) => sum + flight.duration['return'] / 60,
+    0
+  );
+
+  return itinerary;
+};
+
 /**
  * Find cheapest destinations to this origin.
  * By default, if nothing is specified for adults, we search for 1 adult per destination.
@@ -86,10 +134,7 @@ exports.getCheapestDestinations = async (req, res, next) => {
  */
 exports.getCommonDestinations = async (req, res) => {
   try {
-    // const { origin, departureDate } = req.params;
-    console.log(req.query);
-
-    // const params = new URLSearchParams(req.params);
+    // console.log(req.query);
 
     const instance = axios.create({
       baseURL: 'https://tequila-api.kiwi.com/v2/search',
@@ -120,6 +165,7 @@ exports.getCommonDestinations = async (req, res) => {
       ? req.query.infants.split(',')
       : new Array(origins.length).fill(0);
 
+    // create one GET call for each origin
     const searchDestinations = origins.map((origin, i) =>
       instance.get('', {
         params: {
@@ -137,6 +183,7 @@ exports.getCommonDestinations = async (req, res) => {
 
     console.time('searchDestinations');
 
+    // execute the GET calls
     const responses = await Promise.all(searchDestinations);
     // const response = await instance.get('', {
     //   params: {
@@ -149,40 +196,35 @@ exports.getCommonDestinations = async (req, res) => {
     // });
     console.timeEnd('searchDestinations');
     console.time('findCommonDestinations');
-    console.log(responses.length);
 
+    // concat data coming from all the GET calls into one 'allResponses' variable
+    // for eahc GET call, we concat the value from data.data (contain all he info for each itinerary)
     const allResponses = responses.reduce(
       (acc, curr) => acc.concat(curr.data.data),
       []
     );
-    console.log(allResponses.length);
 
+    // remove unnecessary fields
+    // FIXME: this operation takes 500-700 ms to complete, check inside cleanItineraryData
+
+    // console.log(`${allResponses.length} itineraries need to be cleaned`);
+    // console.time('global cleaning itinerary data');
     const itineraries = allResponses.map(cleanItineraryData);
+    // console.timeEnd('global cleaning itinerary data');
 
-    // group the array by field item.flyTo
+    // group the array by field item.flyTo and extract all possible destinations
     // Array.groupByToMap is in stage 3 proposal
     // can be switched to lodash.groupBy (https://lodash.com/docs/4.17.15#groupBy)
     const destinations = groupByToMap(itineraries, (item) => {
       return item.cityTo;
     });
 
-    console.log('destinations before common', destinations.keys());
-
-    // const wantedOrigins = ['MAD', 'BRU', 'BOD'];
-
+    // only the destinations that are common to all the origins in that request
+    // i.e. if origins is ['JFK','LON', 'CDG'] and all origins have destination 'Dubai' but only 'JFK' and 'CDG' have destination 'Bangkok', only 'Dubai' will kept
     const filteredDestinationCities = Array.from(destinations.keys()).filter(
-      (key) => {
-        // for each origin ('every'), I want to find it at least once as an origin ('flyFrom') in the list of flights corresponding to this destination ('destinations.keys()')
-        return origins.every(
-          (origin) =>
-            destinations
-              .get(key)
-              .findIndex((value) => value.cityCodeFrom === origin) > -1
-        );
-      }
+      (key) => isCommonDestination(destinations.get(key), origins)
     );
 
-    // console.log(filteredDestinationCities);
     console.log(
       `${filteredDestinationCities.length} common destinations found: ${filteredDestinationCities}`
     );
@@ -190,42 +232,10 @@ exports.getCommonDestinations = async (req, res) => {
     console.timeEnd('findCommonDestinations');
 
     // For each destination, have an array with the flights, total price and total distance and total duration
-    const commonItineraries = filteredDestinationCities.map((dest) => {
-      const itinerary = { cityTo: dest };
-
-      // look for flights
-      itinerary.flights = itineraries.filter(
-        (itinerary) => itinerary.cityTo === dest
-      );
-      itinerary.countryTo = itinerary.flights[0].countryTo.name;
-      itinerary.cityCodeTo = itinerary.flights[0].cityCodeTo;
-
-      // compute total price
-      itinerary.totalPrice = itinerary.flights.reduce(
-        (sum, flight) => sum + flight.price,
-        0
-      );
-
-      // total distance
-      itinerary.totalDistance = itinerary.flights.reduce(
-        (sum, flight) => sum + flight.distance,
-        0
-      );
-
-      // total duration departure
-      itinerary.totalDurationDepartureInMinutes = itinerary.flights.reduce(
-        (sum, flight) => sum + flight.duration.departure / 60,
-        0
-      );
-
-      // total duration return
-      itinerary.totalDurationReturnInMinutes = itinerary.flights.reduce(
-        (sum, flight) => sum + flight.duration['return'] / 60,
-        0
-      );
-
-      return itinerary;
-    });
+    // (preparing for display)
+    const commonItineraries = filteredDestinationCities.map((dest) =>
+      prepareItineraryData(dest, itineraries)
+    );
 
     // console.log(commonItineraries[0]);
     // console.log(commonItineraries[43]);
