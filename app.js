@@ -62,8 +62,9 @@ app.use((err, req, res, next) => {
     message: err.message,
     stack: err.stack,
   });
-  // TODO: separate error handling in DEV and PROD (in PROD, no need for logs or stack trace... see NATOURS)
-  console.log(err);
+
+  // TODO: separate error handling in DEV and PROD (in PROD, no need for logs or stack trace, no need to give such detailed info to API Client... see NATOURS)
+  // console.log(err);
 });
 
 module.exports = app;

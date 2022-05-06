@@ -81,6 +81,7 @@ exports.getCheapestDestinations = async (req, res, next) => {
   try {
     // perform KIWI API call (TODO: to refactor in a different function to be able to be API-agnostic)
     const instance = prepareAxiosRequest();
+
     const response = await instance.get('', {
       params: {
         fly_from: req.query.origin,
@@ -105,26 +106,37 @@ exports.getCheapestDestinations = async (req, res, next) => {
     if (error.response) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
-
-      console.log(
-        'Error while processing the request to KIWI : ',
-        error.response.data
-      );
+      return next(handleKiwiError(error));
+    } else {
+      // There has been another kind of problem
+      console.log('Error', error);
       return next(
         new AppError(
-          `Error in 3rd party API : ${error.response.data.error}`,
-          error.response.status
+          `Something went wrong! Please contact your administrator`,
+          500
         )
       );
-    } else if (error.request) {
-      // The request was made but no response was received
-      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-      // http.ClientRequest in node.js
-      console.log(error.request);
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      console.log('Error', error);
     }
+  }
+};
+
+const handleKiwiError = (error) => {
+  console.log(
+    'Error while processing the request to KIWI : ',
+    error.response.data
+  );
+
+  if (error.response.status === 422) {
+    // an error occurred on 3rd party Kiwi because of some input query parameters fed to to Pulpito API client
+    return new AppError(
+      `Error in 3rd party API : ${error.response.data.error}`,
+      400
+    );
+  } else {
+    return new AppError(
+      `Something went wrong! Please contact your administrator`,
+      500
+    );
   }
 };
 
@@ -135,10 +147,10 @@ exports.getCheapestDestinations = async (req, res, next) => {
  * @param {*} req
  * @param {*} res
  */
-exports.getCommonDestinations = async (req, res) => {
-  try {
-    // console.log(req.query);
+exports.getCommonDestinations = async (req, res, next) => {
+  // FIXME: see NATOURS + errorController + catchAsync to avoid repeating the error-catching code
 
+  try {
     const instance = prepareAxiosRequest();
 
     const origins = req.query.origin.split(',');
@@ -168,21 +180,7 @@ exports.getCommonDestinations = async (req, res) => {
       })
     );
 
-    console.time('searchDestinations');
-
-    // execute the GET calls
     const responses = await Promise.all(searchDestinations);
-    // const response = await instance.get('', {
-    //   params: {
-    //     fly_from: req.query.origin,
-    //     dateFrom: req.query.departureDate,
-    //     dateTo: req.query.departureDate,
-    //     returnFrom: req.query.returnDate,
-    //     returnTo: req.query.returnDate,
-    //   },
-    // });
-    console.timeEnd('searchDestinations');
-    console.time('findCommonDestinations');
 
     // concat data coming from all the GET calls into one 'allResponses' variable
     // for eahc GET call, we concat the value from data.data (contain all he info for each itinerary)
@@ -216,8 +214,6 @@ exports.getCommonDestinations = async (req, res) => {
       `${filteredDestinationCities.length} common destinations found: ${filteredDestinationCities}`
     );
 
-    console.timeEnd('findCommonDestinations');
-
     // For each destination, have an array with the flights, total price and total distance and total duration
     // (preparing for display)
     const commonItineraries = filteredDestinationCities.map((dest) =>
@@ -236,17 +232,17 @@ exports.getCommonDestinations = async (req, res) => {
     if (error.response) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
-      console.log(error.response.data);
-      console.log(error.response.status);
-      console.log(error.response.headers);
-    } else if (error.request) {
-      // The request was made but no response was received
-      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-      // http.ClientRequest in node.js
-      console.log(error.request);
+      return next(handleKiwiError(error));
     } else {
-      // Something happened in setting up the request that triggered an Error
+      // There has been another kind of problem
+
       console.log('Error', error);
+      return next(
+        new AppError(
+          `Something went wrong! Please contact your administrator`,
+          500
+        )
+      );
     }
   }
 };
