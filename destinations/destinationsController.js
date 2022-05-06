@@ -70,6 +70,26 @@ const prepareAxiosRequest = () =>
     },
   });
 
+const handleKiwiError = (error) => {
+  console.log(
+    'Error while processing the request to KIWI : ',
+    error.response.data
+  );
+
+  if (error.response.status === 422) {
+    // an error occurred on 3rd party Kiwi because of some input query parameters fed to to Pulpito API client
+    return new AppError(
+      `Error in 3rd party API : ${error.response.data.error}`,
+      400
+    );
+  } else {
+    return new AppError(
+      `Something went wrong! Please contact your administrator`,
+      500
+    );
+  }
+};
+
 /**
  * Find cheapest destinations to this origin.
  * By default, if nothing is specified for adults, we search for 1 adult per destination.
@@ -117,26 +137,6 @@ exports.getCheapestDestinations = async (req, res, next) => {
         )
       );
     }
-  }
-};
-
-const handleKiwiError = (error) => {
-  console.log(
-    'Error while processing the request to KIWI : ',
-    error.response.data
-  );
-
-  if (error.response.status === 422) {
-    // an error occurred on 3rd party Kiwi because of some input query parameters fed to to Pulpito API client
-    return new AppError(
-      `Error in 3rd party API : ${error.response.data.error}`,
-      400
-    );
-  } else {
-    return new AppError(
-      `Something went wrong! Please contact your administrator`,
-      500
-    );
   }
 };
 
@@ -193,9 +193,7 @@ exports.getCommonDestinations = async (req, res, next) => {
     // FIXME: this operation takes 500-700 ms to complete, check inside cleanItineraryData
 
     // console.log(`${allResponses.length} itineraries need to be cleaned`);
-    // console.time('global cleaning itinerary data');
     const itineraries = allResponses.map(cleanItineraryData);
-    // console.timeEnd('global cleaning itinerary data');
 
     // group the array by field item.flyTo and extract all possible destinations
     // Array.groupByToMap is in stage 3 proposal
@@ -219,9 +217,6 @@ exports.getCommonDestinations = async (req, res, next) => {
     const commonItineraries = filteredDestinationCities.map((dest) =>
       prepareItineraryData(dest, itineraries)
     );
-
-    // console.log(commonItineraries[0]);
-    // console.log(commonItineraries[43]);
 
     res.status(200).json({
       status: 'success',
