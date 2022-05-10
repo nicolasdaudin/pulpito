@@ -2,6 +2,7 @@ const { cleanItineraryData } = require('../utils/helper');
 const axios = require('axios').default;
 const groupByToMap = require('core-js-pure/actual/array/group-by-to-map');
 const AppError = require('../utils/appError');
+const { catchAsyncKiwi } = require('../utils/catchAsync');
 
 const isCommonDestination = (destination, origins) => {
   // for each origin ('every'), I want to find it at least once as an origin ('cityCodeFrom') in the list of flights corresponding to this destination ('destinations.get(key)')
@@ -70,26 +71,6 @@ const prepareAxiosRequest = () =>
     },
   });
 
-const handleKiwiError = (error) => {
-  console.log(
-    'Error while processing the request to KIWI : ',
-    error.response.data
-  );
-
-  if (error.response.status === 422) {
-    // an error occurred on 3rd party Kiwi because of some input query parameters fed to to Pulpito API client
-    return new AppError(
-      `Error in 3rd party API : ${error.response.data.error}`,
-      400
-    );
-  } else {
-    return new AppError(
-      `Something went wrong! Please contact your administrator`,
-      500
-    );
-  }
-};
-
 /**
  * Find cheapest destinations to this origin.
  * By default, if nothing is specified for adults, we search for 1 adult per destination.
@@ -97,48 +78,48 @@ const handleKiwiError = (error) => {
  * @param {*} req
  * @param {*} res
  */
-exports.getCheapestDestinations = async (req, res, next) => {
-  try {
-    // perform KIWI API call (TODO: to refactor in a different function to be able to be API-agnostic)
-    const instance = prepareAxiosRequest();
+exports.getCheapestDestinations = catchAsyncKiwi(async (req, res, next) => {
+  // perform KIWI API call (TODO: to refactor in a different function to be able to be API-agnostic)
+  const instance = prepareAxiosRequest();
 
-    const response = await instance.get('', {
-      params: {
-        fly_from: req.query.origin,
-        dateFrom: req.query.departureDate,
-        dateTo: req.query.departureDate,
-        returnFrom: req.query.returnDate,
-        returnTo: req.query.returnDate,
-        adults: req.query.adults || 1,
-        children: req.query.children || 0,
-        infants: req.query.infants || 0,
-      },
-    });
+  const response = await instance.get('', {
+    params: {
+      fly_from: req.query.origin,
+      dateFrom: req.query.departureDate,
+      dateTo: req.query.departureDate,
+      returnFrom: req.query.returnDate,
+      returnTo: req.query.returnDate,
+      adults: req.query.adults || 1,
+      children: req.query.children || 0,
+      infants: req.query.infants || 0,
+    },
+  });
 
-    const flights = response.data.data.map(cleanItineraryData);
+  const flights = response.data.data.map(cleanItineraryData);
 
-    res.status(200).json({
-      status: 'success',
-      results: flights.length, //response.data.data.length,
-      data: flights, //flights,
-    });
-  } catch (error) {
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      return next(handleKiwiError(error));
-    } else {
-      // There has been another kind of problem
-      console.log('Error', error);
-      return next(
-        new AppError(
-          `Something went wrong! Please contact your administrator`,
-          500
-        )
-      );
-    }
-  }
-};
+  res.status(200).json({
+    status: 'success',
+    results: flights.length, //response.data.data.length,
+    data: flights, //flights,
+  });
+  // }
+  // catch (error) {
+  //   if (error.response) {
+  //     // The request was made and the server responded with a status code
+  //     // that falls out of the range of 2xx
+  //     return next(handleKiwiError(error));
+  //   } else {
+  //     // There has been another kind of problem
+  //     console.log('Error', error);
+  //     return next(
+  //       new AppError(
+  //         `Something went wrong! Please contact your administrator`,
+  //         500
+  //       )
+  //     );
+  //   }
+  // }
+});
 
 /**
  * Find common destinations to several origins.
@@ -147,97 +128,77 @@ exports.getCheapestDestinations = async (req, res, next) => {
  * @param {*} req
  * @param {*} res
  */
-exports.getCommonDestinations = async (req, res, next) => {
-  // FIXME: see NATOURS + errorController + catchAsync to avoid repeating the error-catching code
+exports.getCommonDestinations = catchAsyncKiwi(async (req, res, next) => {
+  const instance = prepareAxiosRequest();
 
-  try {
-    const instance = prepareAxiosRequest();
+  const origins = req.query.origin.split(',');
+  const adults = req.query.adults
+    ? req.query.adults.split(',')
+    : new Array(origins.length).fill(1);
+  const children = req.query.children
+    ? req.query.children.split(',')
+    : new Array(origins.length).fill(0);
+  const infants = req.query.infants
+    ? req.query.infants.split(',')
+    : new Array(origins.length).fill(0);
 
-    const origins = req.query.origin.split(',');
-    const adults = req.query.adults
-      ? req.query.adults.split(',')
-      : new Array(origins.length).fill(1);
-    const children = req.query.children
-      ? req.query.children.split(',')
-      : new Array(origins.length).fill(0);
-    const infants = req.query.infants
-      ? req.query.infants.split(',')
-      : new Array(origins.length).fill(0);
+  // create one GET call for each origin
+  const searchDestinations = origins.map((origin, i) =>
+    instance.get('', {
+      params: {
+        fly_from: origin,
+        dateFrom: req.query.departureDate,
+        dateTo: req.query.departureDate,
+        returnFrom: req.query.returnDate,
+        returnTo: req.query.returnDate,
+        adults: adults[i],
+        children: children[i],
+        infants: infants[i],
+      },
+    })
+  );
 
-    // create one GET call for each origin
-    const searchDestinations = origins.map((origin, i) =>
-      instance.get('', {
-        params: {
-          fly_from: origin,
-          dateFrom: req.query.departureDate,
-          dateTo: req.query.departureDate,
-          returnFrom: req.query.returnDate,
-          returnTo: req.query.returnDate,
-          adults: adults[i],
-          children: children[i],
-          infants: infants[i],
-        },
-      })
-    );
+  const responses = await Promise.all(searchDestinations);
 
-    const responses = await Promise.all(searchDestinations);
+  // concat data coming from all the GET calls into one 'allResponses' variable
+  // for eahc GET call, we concat the value from data.data (contain all he info for each itinerary)
+  const allResponses = responses.reduce(
+    (acc, curr) => acc.concat(curr.data.data),
+    []
+  );
 
-    // concat data coming from all the GET calls into one 'allResponses' variable
-    // for eahc GET call, we concat the value from data.data (contain all he info for each itinerary)
-    const allResponses = responses.reduce(
-      (acc, curr) => acc.concat(curr.data.data),
-      []
-    );
+  // remove unnecessary fields
+  // FIXME: this operation takes 500-700 ms to complete, check inside cleanItineraryData
 
-    // remove unnecessary fields
-    // FIXME: this operation takes 500-700 ms to complete, check inside cleanItineraryData
+  // console.log(`${allResponses.length} itineraries need to be cleaned`);
+  const itineraries = allResponses.map(cleanItineraryData);
 
-    // console.log(`${allResponses.length} itineraries need to be cleaned`);
-    const itineraries = allResponses.map(cleanItineraryData);
+  // group the array by field item.flyTo and extract all possible destinations
+  // Array.groupByToMap is in stage 3 proposal
+  // can be switched to lodash.groupBy (https://lodash.com/docs/4.17.15#groupBy)
+  const destinations = groupByToMap(itineraries, (item) => {
+    return item.cityTo;
+  });
 
-    // group the array by field item.flyTo and extract all possible destinations
-    // Array.groupByToMap is in stage 3 proposal
-    // can be switched to lodash.groupBy (https://lodash.com/docs/4.17.15#groupBy)
-    const destinations = groupByToMap(itineraries, (item) => {
-      return item.cityTo;
-    });
+  // only the destinations that are common to all the origins in that request
+  // i.e. if origins is ['JFK','LON', 'CDG'] and all origins have destination 'Dubai' but only 'JFK' and 'CDG' have destination 'Bangkok', only 'Dubai' will kept
+  const filteredDestinationCities = Array.from(destinations.keys()).filter(
+    (key) => isCommonDestination(destinations.get(key), origins)
+  );
 
-    // only the destinations that are common to all the origins in that request
-    // i.e. if origins is ['JFK','LON', 'CDG'] and all origins have destination 'Dubai' but only 'JFK' and 'CDG' have destination 'Bangkok', only 'Dubai' will kept
-    const filteredDestinationCities = Array.from(destinations.keys()).filter(
-      (key) => isCommonDestination(destinations.get(key), origins)
-    );
+  console.log(
+    `${filteredDestinationCities.length} common destinations found: ${filteredDestinationCities}`
+  );
 
-    console.log(
-      `${filteredDestinationCities.length} common destinations found: ${filteredDestinationCities}`
-    );
+  // For each destination, have an array with the flights, total price and total distance and total duration
+  // (preparing for display)
+  const commonItineraries = filteredDestinationCities.map((dest) =>
+    prepareItineraryData(dest, itineraries)
+  );
 
-    // For each destination, have an array with the flights, total price and total distance and total duration
-    // (preparing for display)
-    const commonItineraries = filteredDestinationCities.map((dest) =>
-      prepareItineraryData(dest, itineraries)
-    );
-
-    res.status(200).json({
-      status: 'success',
-      results: commonItineraries.length,
-      data: commonItineraries,
-    });
-  } catch (error) {
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      return next(handleKiwiError(error));
-    } else {
-      // There has been another kind of problem
-
-      console.log('Error', error);
-      return next(
-        new AppError(
-          `Something went wrong! Please contact your administrator`,
-          500
-        )
-      );
-    }
-  }
-};
+  res.status(200).json({
+    status: 'success',
+    results: commonItineraries.length,
+    data: commonItineraries,
+  });
+});

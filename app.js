@@ -6,7 +6,7 @@ const groupBy = require('core-js/actual/array/group-by');
 const AppError = require('./utils/appError');
 
 const destinationsRouter = require('./destinations/destinationsRoutes');
-const usersRouter = require('./users/usersRoutes');
+const userRouter = require('./user/userRoutes');
 
 if (process.env.NODE_ENV === 'development') {
   // adding 'GET' log messages
@@ -45,7 +45,7 @@ app.get('/test/', async (req, res) => {
 
 // just one result per city, to get more available cities
 app.use('/api/v1/destinations', destinationsRouter);
-app.use('/api/v1/users', usersRouter);
+app.use('/api/v1/users', userRouter);
 
 // for routes not handled
 app.all('*', (req, res, next) => {
