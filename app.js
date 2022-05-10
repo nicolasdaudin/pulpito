@@ -17,6 +17,11 @@ if (process.env.NODE_ENV === 'development') {
 // and limiting body size
 app.use(express.json({ limit: '10kb' })); // middleware to add body in the request data
 
+// app.use((req, res, next) => {
+//   console.log(req.headers);
+//   next();
+// });
+
 // serving static files
 app.use(express.static(`${__dirname}/public`));
 
@@ -56,9 +61,13 @@ app.all('*', (req, res, next) => {
 app.use((err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
+
+  if (err.name === 'JsonWebTokenError') err = handleJWTError();
+  if (err.name === 'TokenExpiredError') err = handleTokenExpiredError();
+
   res.status(err.statusCode).json({
     status: err.status,
-    error: err,
+    err: err,
     message: err.message,
     stack: err.stack,
   });
@@ -66,5 +75,11 @@ app.use((err, req, res, next) => {
   // TODO: separate error handling in DEV and PROD (in PROD, no need for logs or stack trace, no need to give such detailed info to API Client... see NATOURS)
   // console.log(err);
 });
+
+const handleJWTError = () =>
+  new AppError('Invalid token. Please log in again!', 401);
+
+const handleTokenExpiredError = () =>
+  new AppError('Token expired. Please log in again!', 401);
 
 module.exports = app;

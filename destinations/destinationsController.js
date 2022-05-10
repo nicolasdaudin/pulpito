@@ -2,7 +2,7 @@ const { cleanItineraryData } = require('../utils/helper');
 const axios = require('axios').default;
 const groupByToMap = require('core-js-pure/actual/array/group-by-to-map');
 const AppError = require('../utils/appError');
-const { catchAsyncKiwi } = require('../utils/catchAsync');
+const { catchAsync, catchAsyncKiwi } = require('../utils/catchAsync');
 
 const isCommonDestination = (destination, origins) => {
   // for each origin ('every'), I want to find it at least once as an origin ('cityCodeFrom') in the list of flights corresponding to this destination ('destinations.get(key)')
@@ -75,6 +75,8 @@ const prepareAxiosRequest = () =>
  * Find cheapest destinations to this origin.
  * By default, if nothing is specified for adults, we search for 1 adult per destination.
  *
+ * FIXME: improve error handling, check if some parameters do not exist ...
+ *
  * @param {*} req
  * @param {*} res
  */
@@ -121,10 +123,17 @@ exports.getCheapestDestinations = catchAsyncKiwi(async (req, res, next) => {
   // }
 });
 
+exports.getSpecialProtectedRoute = catchAsync(async (req, res, next) => {
+  res.status(200).json({
+    status: 'success',
+    message: 'got access to protected route',
+  });
+});
 /**
  * Find common destinations to several origins.
  * By default, if nothing is specified for adults, we search for 1 adult per destination.
  *
+ * FIXME: improve error handling, check if some parameters do not exist ...
  * @param {*} req
  * @param {*} res
  */
