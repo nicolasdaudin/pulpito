@@ -1,6 +1,10 @@
 const express = require('express');
 const morgan = require('morgan');
+const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const hpp = require('hpp');
 const app = express();
 const axios = require('axios').default;
 const groupBy = require('core-js/actual/array/group-by');
@@ -8,6 +12,10 @@ const AppError = require('./utils/appError');
 
 const destinationsRouter = require('./destinations/destinationsRoutes');
 const userRouter = require('./user/userRoutes');
+
+// better to use early in the middleware.
+// set http security headers
+app.use(helmet());
 
 if (process.env.NODE_ENV === 'development') {
   // adding 'GET' log messages
@@ -26,6 +34,20 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 app.use(express.json({ limit: '10kb' })); // middleware to add body in the request data
+
+// data sanitization against NoSQL query injection
+app.use(mongoSanitize());
+
+// data snaitization against XSS
+app.use(xss());
+
+// prevent parameter pollution
+app.use(
+  hpp({
+    whitelist: [],
+  })
+);
+// whitelist is an array of parameter names to allow several occurrences of that field in the query parameters.
 
 // app.use((req, res, next) => {
 //   console.log(req.headers);
