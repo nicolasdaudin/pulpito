@@ -1,5 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
 const app = express();
 const axios = require('axios').default;
 const groupBy = require('core-js/actual/array/group-by');
@@ -15,6 +16,15 @@ if (process.env.NODE_ENV === 'development') {
 
 // body parser, reading data from body into req.body
 // and limiting body size
+
+// 100 requests per jour per IP
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000, // 1 hour
+  message: 'Too many requests from this IP, please try again in an hour!',
+});
+app.use('/api', limiter);
+
 app.use(express.json({ limit: '10kb' })); // middleware to add body in the request data
 
 // app.use((req, res, next) => {
