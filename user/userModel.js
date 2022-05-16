@@ -52,18 +52,20 @@ const userSchema = new mongoose.Schema({
 // pre('save') DO NOT WORK for update calls (findByIdAndUpdate)
 userSchema.pre('save', async function (next) {
   // only run this function if password was actually modified
+  console.log('here');
   if (!this.isModified('password')) return next();
-
+  console.log('here2');
   this.password = await bcrypt.hash(this.password, 12);
   this.passwordConfirm = undefined;
-  this.passwordChangedAt = Date.now();
+  // this.passwordChangedAt = Date.now();
 
   next();
 });
 
 userSchema.pre('save', function (next) {
+  console.log('there');
   if (!this.isModified('password') || this.isNew) return next();
-
+  console.log('there2');
   this.passwordChangedAt = Date.now() - 1000;
   // sometimes this operation finishes after generating the JWT token so we put the passwordChangedAt one second in the past.
   next();
