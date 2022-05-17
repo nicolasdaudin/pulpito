@@ -12,6 +12,7 @@ const AppError = require('./utils/appError');
 
 const destinationsRouter = require('./destinations/destinationsRoutes');
 const userRouter = require('./user/userRoutes');
+const airportRouter = require('./airports/airportRoutes');
 
 // better to use early in the middleware.
 // set http security headers
@@ -83,6 +84,7 @@ app.get('/test/', async (req, res) => {
 // just one result per city, to get more available cities
 app.use('/api/v1/destinations', destinationsRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/airports', airportRouter);
 
 // for routes not handled
 app.all('*', (req, res, next) => {
