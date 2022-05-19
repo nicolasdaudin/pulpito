@@ -2,7 +2,6 @@ const airportService = require('./airportService');
 
 exports.search = (req, res) => {
   const query = req.params.q;
-  console.log(query);
 
   const airports = airportService.searchByString(query);
   // console.log(airports);

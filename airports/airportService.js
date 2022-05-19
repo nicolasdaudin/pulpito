@@ -31,9 +31,7 @@ const largeAirports = airports
 const mediumAirports = airports
   .filter((airport) => airport.type === `medium_airport`)
   .map(decodeAirport);
-console.log(
-  `Found ${largeAirports.length} large airports and ${mediumAirports.length} medium airports)`
-);
+
 const airportContainsQuerySearch = (airport, str) => {
   const strToLowerCase = str.toLowerCase();
   return (
