@@ -117,3 +117,11 @@ exports.searchByString = (str) => {
   // finally filter out some unnecessary fields (like continent, ...)
   return uniqueAirports.slice(0, 10).map(filterAirportFields);
 };
+
+exports.findByIataCode = (iataCode) => {
+  return airports.find(
+    (airport) =>
+      airport.iata_code &&
+      airport.iata_code.toLowerCase() === iataCode.toLowerCase()
+  );
+};

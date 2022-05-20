@@ -1,6 +1,13 @@
 const express = require('express');
 
-const { getAllUsers, updateMe, deleteMe } = require('./userController');
+const {
+  getAllUsers,
+  updateMe,
+  deleteMe,
+  getFavAirports,
+  addFavAirport,
+  removeFavAirport,
+} = require('./userController');
 const {
   signup,
   login,
@@ -15,6 +22,11 @@ const router = express.Router();
 // current user related
 router.patch('/updateMe', protect, updateMe);
 router.delete('/deleteMe', protect, deleteMe);
+router
+  .route('/favAirports')
+  .get(protect, getFavAirports)
+  .post(protect, addFavAirport)
+  .delete(protect, removeFavAirport);
 
 // auth related
 router.post('/signup', signup);

@@ -1,6 +1,7 @@
 const User = require('./userModel');
 const { catchAsync } = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const airportService = require('../airports/airportService');
 
 exports.getAllUsers = async (req, res) => {
   const users = await User.find();
@@ -65,27 +66,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     );
   }
 
-  const allowedFields = ['name', 'email', 'favOrigins'];
-
-  // // 2) Error if no fields to update
-  // if (!areFieldsInBody(req.body,updatableFields)){
-  //   return next(
-  //     new AppError(
-  //       `There are no fields to update. Please provide at least one of the following fields : ${updatableFields.join(',')}`,
-  //       400
-  //     )
-  //   );
-  // }
-
-  // const { name, email, favOrigins } = req.body;
-  // if (!name && !email && !favOrigins) {
-  //   return next(
-  //     new AppError(
-  //       'There are no fields to update. Please provide name, email or favOrigins!',
-  //       400
-  //     )
-  //   );
-  // }
+  const allowedFields = ['name', 'email'];
 
   // 2) Filter out unwanted fields names that are not allowed to be updated, to avoid users to set themselves as admin, for example
   const filteredBody = filterObj(req.body, allowedFields);
@@ -100,6 +81,79 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     status: 'success',
     data: {
       user: updatedUser,
+    },
+  });
+});
+
+exports.getFavAirports = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      favAirports: user.favAirports,
+    },
+  });
+});
+
+exports.addFavAirport = catchAsync(async (req, res, next) => {
+  if (!req.body.airport) {
+    return next(new AppError('Please specify an airport', 400));
+  }
+  if (!airportService.findByIataCode(req.body.airport)) {
+    return next(
+      new AppError(
+        `We haven't found any airport with this IATA code. Please retry with an existing IATA code`,
+        400
+      )
+    );
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(
+    req.user.id,
+    {
+      $addToSet: { favAirports: req.body.airport },
+    },
+    {
+      new: true,
+    }
+  );
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      favAirports: updatedUser.favAirports,
+    },
+  });
+});
+
+exports.removeFavAirport = catchAsync(async (req, res, next) => {
+  if (!req.body.airport) {
+    return next(new AppError('Please specify an airport', 400));
+  }
+  if (!airportService.findByIataCode(req.body.airport)) {
+    return next(
+      new AppError(
+        `We haven't found any airport with this IATA code. Please retry with an existing IATA code`,
+        400
+      )
+    );
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(
+    req.user.id,
+    {
+      $pullAll: { favAirports: [req.body.airport] },
+    },
+    {
+      new: true,
+    }
+  );
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      favAirports: updatedUser.favAirports,
     },
   });
 });
