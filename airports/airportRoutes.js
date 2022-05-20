@@ -1,9 +1,9 @@
 const express = require('express');
 
-const { search } = require('./airportController');
+const { search, getAirports } = require('./airportController');
 
 const router = express.Router();
 
-router.get('/search/:q', search);
+router.get('/', getAirports);
 
 module.exports = router;

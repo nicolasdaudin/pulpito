@@ -1,9 +1,9 @@
 const airportService = require('./airportService');
 
-exports.search = (req, res) => {
-  const query = req.params.q;
+exports.getAirports = (req, res) => {
+  const queryString = req.query.q;
 
-  const airports = airportService.searchByString(query);
+  const airports = airportService.searchByString(queryString);
   // console.log(airports);
 
   res.status(200).json({
