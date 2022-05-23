@@ -1,6 +1,6 @@
 {
   "name": "pulpito",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "API to help organize travels from different places to one destination",
   "main": "server.js",
   "scripts": {
