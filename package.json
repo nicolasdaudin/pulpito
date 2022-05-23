@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",
-    "debug": "ndb server.js"
+    "debug": "ndb server.js",
+    "test": "mocha ./**/*.test.js",
+    "cover": "nyc npm run test"
   },
   "author": "Nicolas Daudin",
   "license": "ISC",
@@ -29,6 +31,8 @@
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {
+    "mocha": "^10.0.0",
+    "nyc": "^15.1.0",
     "utf8": "^3.0.0"
   }
 }

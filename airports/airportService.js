@@ -77,7 +77,10 @@ const filterAirportFields = (airport) => {
  * @returns
  */
 exports.searchByString = (str) => {
-  // first get the BIG airports starting with the query string
+  // first check if 'str' is not empty or null
+  if (!str) return [];
+
+  // then get the BIG airports starting with the query string
   const largeStartsWith = largeAirports.filter((airport) =>
     airportStartsWithQuerySearch(airport, str)
   );
@@ -119,6 +122,8 @@ exports.searchByString = (str) => {
 };
 
 exports.findByIataCode = (iataCode) => {
+  if (!iataCode) return null;
+
   return airports.find(
     (airport) =>
       airport.iata_code &&
