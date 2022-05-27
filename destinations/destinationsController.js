@@ -3,6 +3,7 @@ const axios = require('axios').default;
 const groupByToMap = require('core-js-pure/actual/array/group-by-to-map');
 const AppError = require('../utils/appError');
 const { catchAsync, catchAsyncKiwi } = require('../utils/catchAsync');
+//const kiwiService = require('../utils/kiwiService');
 
 const isCommonDestination = (destination, origins) => {
   // for each origin ('every'), I want to find it at least once as an origin ('cityCodeFrom') in the list of flights corresponding to this destination ('destinations.get(key)')
@@ -10,6 +11,57 @@ const isCommonDestination = (destination, origins) => {
     (origin) =>
       destination.findIndex((value) => value.cityCodeFrom === origin) > -1
   );
+};
+
+const prepareAxiosRequest = () => {
+  return axios.create({
+    baseURL: process.env.KIWI_URL,
+    headers: {
+      apikey: process.env.KIWI_API_KEY,
+    },
+    params: {
+      max_stopovers: 2,
+      partner_market: 'fr',
+      lang: 'fr',
+      limit: 1000,
+      flight_type: 'round',
+      ret_from_diff_airport: 0,
+      ret_to_diff_airport: 0,
+      one_for_city: 1,
+      fly_to: 'anywhere',
+    },
+  });
+};
+
+const performKiwiCheapestSearch = async (req) => {
+  // perform KIWI API call (TODO: to refactor in a different function to be able to be API-agnostic)
+  //const instance = prepareAxiosRequest();
+
+  const response = await axios.get(process.env.KIWI_URL, {
+    headers: {
+      apikey: process.env.KIWI_API_KEY,
+    },
+    params: {
+      max_stopovers: 2,
+      partner_market: 'fr',
+      lang: 'fr',
+      limit: 1000,
+      flight_type: 'round',
+      ret_from_diff_airport: 0,
+      ret_to_diff_airport: 0,
+      one_for_city: 1,
+      fly_to: 'anywhere',
+      fly_from: req.query.origin,
+      dateFrom: req.query.departureDate,
+      dateTo: req.query.departureDate,
+      returnFrom: req.query.returnDate,
+      returnTo: req.query.returnDate,
+      adults: req.query.adults || 1,
+      children: req.query.children || 0,
+      infants: req.query.infants || 0,
+    },
+  });
+  return response;
 };
 
 const prepareItineraryData = (dest, itineraries) => {
@@ -52,27 +104,8 @@ const prepareItineraryData = (dest, itineraries) => {
   return itinerary;
 };
 
-const prepareAxiosRequest = () =>
-  axios.create({
-    baseURL: process.env.KIWI_URL,
-    headers: {
-      apikey: process.env.KIWI_API_KEY,
-    },
-    params: {
-      max_stopovers: 2,
-      partner_market: 'fr',
-      lang: 'fr',
-      limit: 1000,
-      flight_type: 'round',
-      ret_from_diff_airport: 0,
-      ret_to_diff_airport: 0,
-      one_for_city: 1,
-      fly_to: 'anywhere',
-    },
-  });
-
 /**
- * Find cheapest destinations to this origin.
+ * Find cheapest destinations from this origin.
  * By default, if nothing is specified for adults, we search for 1 adult per destination.
  *
  * FIXME: improve error handling, check if some parameters do not exist ...
@@ -80,50 +113,20 @@ const prepareAxiosRequest = () =>
  * @param {*} req
  * @param {*} res
  */
-exports.getCheapestDestinations = catchAsyncKiwi(async (req, res, next) => {
-  // perform KIWI API call (TODO: to refactor in a different function to be able to be API-agnostic)
-  const instance = prepareAxiosRequest();
-
-  const response = await instance.get('', {
-    params: {
-      fly_from: req.query.origin,
-      dateFrom: req.query.departureDate,
-      dateTo: req.query.departureDate,
-      returnFrom: req.query.returnDate,
-      returnTo: req.query.returnDate,
-      adults: req.query.adults || 1,
-      children: req.query.children || 0,
-      infants: req.query.infants || 0,
-    },
-  });
+const getCheapestDestinations = async (req, res, next) => {
+  const response = await performKiwiCheapestSearch(req);
 
   const flights = response.data.data.map(cleanItineraryData);
+  console.log();
 
   res.status(200).json({
     status: 'success',
     results: flights.length, //response.data.data.length,
     data: flights, //flights,
   });
-  // }
-  // catch (error) {
-  //   if (error.response) {
-  //     // The request was made and the server responded with a status code
-  //     // that falls out of the range of 2xx
-  //     return next(handleKiwiError(error));
-  //   } else {
-  //     // There has been another kind of problem
-  //     console.log('Error', error);
-  //     return next(
-  //       new AppError(
-  //         `Something went wrong! Please contact your administrator`,
-  //         500
-  //       )
-  //     );
-  //   }
-  // }
-});
+};
 
-exports.getSpecialProtectedRoute = catchAsync(async (req, res, next) => {
+const getSpecialProtectedRoute = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     message: 'got access to protected route',
@@ -137,7 +140,7 @@ exports.getSpecialProtectedRoute = catchAsync(async (req, res, next) => {
  * @param {*} req
  * @param {*} res
  */
-exports.getCommonDestinations = catchAsyncKiwi(async (req, res, next) => {
+const getCommonDestinations = catchAsyncKiwi(async (req, res, next) => {
   const instance = prepareAxiosRequest();
 
   const origins = req.query.origin.split(',');
@@ -211,3 +214,10 @@ exports.getCommonDestinations = catchAsyncKiwi(async (req, res, next) => {
     data: commonItineraries,
   });
 });
+
+module.exports = {
+  getCheapestDestinations,
+  getCommonDestinations,
+  getSpecialProtectedRoute,
+  prepareItineraryData,
+};

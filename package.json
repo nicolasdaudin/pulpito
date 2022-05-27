@@ -6,8 +6,8 @@
   "scripts": {
     "start": "nodemon server.js",
     "debug": "ndb server.js",
-    "test": "mocha ./**/*.test.js",
-    "cover": "nyc npm run test"
+    "test": "jest --verbose ",
+    "cover": "jest --coverage "
   },
   "author": "Nicolas Daudin",
   "license": "ISC",
@@ -23,16 +23,15 @@
     "helmet": "^5.0.2",
     "hpp": "^0.2.3",
     "jsonwebtoken": "^8.5.1",
-    "luxon": "^2.3.1",
+    "luxon": "^2.4.0",
     "mongoose": "^6.2.2",
     "morgan": "^1.10.0",
     "nodemailer": "^6.7.5",
+    "utf8": "^3.0.0",
     "validator": "^13.7.0",
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {
-    "mocha": "^10.0.0",
-    "nyc": "^15.1.0",
-    "utf8": "^3.0.0"
+    "jest": "^28.1.0"
   }
 }

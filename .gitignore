@@ -6,5 +6,4 @@ dist
 .prettierrc
 .env
 dev-data
-.nyc_output
-.nycrc.json
+coverage

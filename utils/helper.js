@@ -53,7 +53,10 @@ exports.cleanItineraryData = (itinerary) => {
         itinerary.duration.departure * 1000
       ).toFormat("hh'h'mm"),
     },
-    return: {
+  };
+
+  if (returnFlights && returnFlights.length > 0) {
+    route.return = {
       flights: returnFlights,
       local_departure: formatTime(returnFlights[0].local_departure),
       local_arrival: formatTime(
@@ -67,8 +70,9 @@ exports.cleanItineraryData = (itinerary) => {
       duration: Duration.fromMillis(itinerary.duration.return * 1000).toFormat(
         "hh'h'mm"
       ),
-    },
-  };
+    };
+  }
+
   itinerary.route = route;
 
   delete itinerary.tracking_pixel;
