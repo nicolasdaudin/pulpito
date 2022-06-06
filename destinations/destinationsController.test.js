@@ -12,20 +12,6 @@ const maybe = process.env.SKIP_ASYNC_TESTS ? describe.skip : describe;
 maybe('Destinations Controller', function () {
   jest.setTimeout(10000);
 
-  describe.skip('prepareAxiosRequest', function () {
-    test('should receive an answer for a basic search query to KIWI service', async function () {
-      const instance = destinationsController.prepareAxiosRequest();
-
-      const response = await instance.get('', { params: KIWI_PARAMS_FIXTURE });
-
-      expect(response.data).toHaveProperty('data');
-      expect(response.data);
-      expect(Array.isArray(response.data.data)).toBe(true);
-      expect(response.data.data[0]).toHaveProperty('flyFrom');
-      expect(response.data.data[0].flyFrom).toBe(KIWI_PARAMS_FIXTURE.fly_from);
-    });
-  });
-
   describe('handler getCheapestDestinations', function () {
     test('should get the cheapest destinations from one origin', async function () {
       const req = {

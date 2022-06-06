@@ -2,13 +2,22 @@ const { DateTime } = require('luxon');
 
 const KIWI_DATE_FORMAT = `dd'/'LL'/'yyyy`;
 
-const KIWI_PARAMS_FIXTURE = {
-  fly_from: 'CDG',
-  dateFrom: DateTime.now().plus({ weeks: 1 }).toFormat(KIWI_DATE_FORMAT),
-  dateTo: DateTime.now().plus({ weeks: 1 }).toFormat(KIWI_DATE_FORMAT),
-  returnFrom: DateTime.now().plus({ weeks: 2 }).toFormat(KIWI_DATE_FORMAT),
-  returnTo: DateTime.now().plus({ weeks: 2 }).toFormat(KIWI_DATE_FORMAT),
-  adults: 1,
+const FLIGHT_API_PARAMS_FIXTURE = {
+  origin: 'CDG',
+  departureDate: DateTime.now().plus({ weeks: 1 }).toFormat(KIWI_DATE_FORMAT),
+  returnDate: DateTime.now().plus({ weeks: 1 }).toFormat(KIWI_DATE_FORMAT),
+  // returnFrom: DateTime.now().plus({ weeks: 2 }).toFormat(KIWI_DATE_FORMAT),
+  // returnTo: DateTime.now().plus({ weeks: 2 }).toFormat(KIWI_DATE_FORMAT),
+  // adults: 1,
+};
+
+const FLIGHT_API_PARAMS_FIXTURE_NON_EXISTING_ORIGIN = {
+  origin: 'PXR',
+  departureDate: DateTime.now().plus({ weeks: 1 }).toFormat(KIWI_DATE_FORMAT),
+  returnDate: DateTime.now().plus({ weeks: 1 }).toFormat(KIWI_DATE_FORMAT),
+  // returnFrom: DateTime.now().plus({ weeks: 2 }).toFormat(KIWI_DATE_FORMAT),
+  // returnTo: DateTime.now().plus({ weeks: 2 }).toFormat(KIWI_DATE_FORMAT),
+  // adults: 1,
 };
 
 const CHEAPEST_DESTINATION_QUERY_FIXTURE = {
@@ -572,7 +581,8 @@ const CHEAPEST_DESTINATION_RESULT_FIXTURE = [
 
 module.exports = {
   KIWI_DATE_FORMAT,
-  KIWI_PARAMS_FIXTURE,
+  FLIGHT_API_PARAMS_FIXTURE,
+  FLIGHT_API_PARAMS_FIXTURE_NON_EXISTING_ORIGIN,
   RETURN_KIWI_ITINERARY_FIXTURE,
   ONE_WAY_KIWI_ITINERARY_FIXTURE,
   CHEAPEST_DESTINATION_QUERY_FIXTURE,

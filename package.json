@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon server.js",
     "debug": "ndb server.js",
-    "test": "jest --verbose ",
+    "test": "jest --verbose --watchAll",
     "cover": "jest --coverage "
   },
   "author": "Nicolas Daudin",
@@ -32,6 +32,7 @@
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {
+    "@types/jest": "^28.1.1",
     "jest": "^28.1.0"
   }
 }

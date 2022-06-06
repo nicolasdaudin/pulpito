@@ -1,9 +1,8 @@
 const { cleanItineraryData } = require('../utils/helper');
-const axios = require('axios').default;
 const groupByToMap = require('core-js-pure/actual/array/group-by-to-map');
 const AppError = require('../utils/appError');
 const { catchAsync, catchAsyncKiwi } = require('../utils/catchAsync');
-//const kiwiService = require('../utils/kiwiService');
+const flightService = require('../data/flightService');
 
 const isCommonDestination = (destination, origins) => {
   // for each origin ('every'), I want to find it at least once as an origin ('cityCodeFrom') in the list of flights corresponding to this destination ('destinations.get(key)')
@@ -31,37 +30,6 @@ const prepareAxiosRequest = () => {
       fly_to: 'anywhere',
     },
   });
-};
-
-const performKiwiCheapestSearch = async (req) => {
-  // perform KIWI API call (TODO: to refactor in a different function to be able to be API-agnostic)
-  //const instance = prepareAxiosRequest();
-
-  const response = await axios.get(process.env.KIWI_URL, {
-    headers: {
-      apikey: process.env.KIWI_API_KEY,
-    },
-    params: {
-      max_stopovers: 2,
-      partner_market: 'fr',
-      lang: 'fr',
-      limit: 1000,
-      flight_type: 'round',
-      ret_from_diff_airport: 0,
-      ret_to_diff_airport: 0,
-      one_for_city: 1,
-      fly_to: 'anywhere',
-      fly_from: req.query.origin,
-      dateFrom: req.query.departureDate,
-      dateTo: req.query.departureDate,
-      returnFrom: req.query.returnDate,
-      returnTo: req.query.returnDate,
-      adults: req.query.adults || 1,
-      children: req.query.children || 0,
-      infants: req.query.infants || 0,
-    },
-  });
-  return response;
 };
 
 const prepareItineraryData = (dest, itineraries) => {
@@ -114,10 +82,11 @@ const prepareItineraryData = (dest, itineraries) => {
  * @param {*} res
  */
 const getCheapestDestinations = async (req, res, next) => {
-  const response = await performKiwiCheapestSearch(req);
+  const params = flightService.prepareDefaultParams(req.query);
+
+  const response = await flightService.getFlights(params);
 
   const flights = response.data.data.map(cleanItineraryData);
-  console.log();
 
   res.status(200).json({
     status: 'success',
