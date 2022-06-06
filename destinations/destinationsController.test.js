@@ -19,6 +19,7 @@ maybe('Destinations Controller', function () {
       const response = await instance.get('', { params: KIWI_PARAMS_FIXTURE });
 
       expect(response.data).toHaveProperty('data');
+      expect(response.data);
       expect(Array.isArray(response.data.data)).toBe(true);
       expect(response.data.data[0]).toHaveProperty('flyFrom');
       expect(response.data.data[0].flyFrom).toBe(KIWI_PARAMS_FIXTURE.fly_from);
@@ -44,30 +45,6 @@ maybe('Destinations Controller', function () {
       };
       const next = jest.fn();
 
-      // destinationsController.performKiwiCheapestSearch = jest
-      //   .fn()
-      //   .mockImplementation(function (req) {
-      //     console.log('MOCK');
-      //     return {
-      //       data: {
-      //         data: CHEAPEST_DESTINATION_RESULT_FIXTURES,
-      //       },
-      //     };
-      //   });
-      // destinationsController.performKiwiCheapestSearch = jest
-      //   .fn()
-      //   .mockReturnValue({
-      //     data: {
-      //       data: CHEAPEST_DESTINATION_RESULT_FIXTURES,
-      //     },
-      //   });
-
-      // mocking the API call to Kiwi and replacing it with fake data
-      // kiwiService.performKiwiCheapestSearch = jest.fn().mockReturnValue({
-      //   data: {
-      //     data: CHEAPEST_DESTINATION_RESULT_FIXTURE,
-      //   },
-      // });
       jest.mock('axios');
       axios.get = jest.fn().mockResolvedValue({
         data: {
