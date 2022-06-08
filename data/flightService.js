@@ -51,4 +51,31 @@ const prepareDefaultParams = (params) => {
   };
 };
 
-module.exports = { getFlights, prepareDefaultParams };
+const prepareSeveralOriginParams = (params) => {
+  const origins = params.origin.split(',');
+  const adults = params.adults
+    ? params.adults.split(',')
+    : new Array(origins.length).fill(1);
+  const children = params.children
+    ? params.children.split(',')
+    : new Array(origins.length).fill(0);
+  const infants = params.infants
+    ? params.infants.split(',')
+    : new Array(origins.length).fill(0);
+
+  return origins.map((origin, i) => {
+    return {
+      ...params,
+      origin,
+      adults: +adults[i],
+      children: +children[i],
+      infants: +infants[i],
+    };
+  });
+};
+
+module.exports = {
+  getFlights,
+  prepareDefaultParams,
+  prepareSeveralOriginParams,
+};

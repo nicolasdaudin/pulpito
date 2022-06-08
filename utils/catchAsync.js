@@ -27,7 +27,7 @@ const catchKiwiError = (err, next) => {
     return next(handleKiwiError(err));
   } else {
     // There has been another kind of problem
-    console.log('Error', err);
+    console.error(err);
     return next(
       new AppError(
         `Something went wrong! Please contact your administrator`,

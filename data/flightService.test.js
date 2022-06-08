@@ -92,4 +92,42 @@ maybe('Flight Service', function () {
       expect(preparedParams.infants).toBe(0);
     });
   });
+
+  describe('prepareSeveralOriginParams', function () {
+    test('should return an array of same lengh than the number of origins', () => {
+      const params = {
+        origin: 'MAD,CRL,BRU,SXF,JFK',
+      };
+
+      const preparedParams = flightService.prepareSeveralOriginParams(params);
+
+      expect(preparedParams.length).toBe(params.origin.split(',').length);
+    });
+
+    test('should return 1 adult, 0 children, 0 infant for each origin if nothing specified', () => {
+      const params = {
+        origin: 'MAD,CRL,BRU,SXF,JFK',
+      };
+
+      const preparedParams = flightService.prepareSeveralOriginParams(params);
+
+      expect(preparedParams[0].adults).toBe(1);
+      expect(preparedParams[0].children).toBe(0);
+      expect(preparedParams[0].infants).toBe(0);
+    });
+
+    test('should return the correct number of adults, children and infants for each origin when specified', () => {
+      const params = {
+        origin: 'MAD,CRL,BRU,SXF,JFK',
+        adults: '1,2,1,3,1',
+        children: '0,0,3,1,1',
+      };
+
+      const preparedParams = flightService.prepareSeveralOriginParams(params);
+
+      expect(preparedParams[1].adults).toBe(2);
+      expect(preparedParams[2].children).toBe(3);
+      expect(preparedParams[0].infants).toBe(0);
+    });
+  });
 });
