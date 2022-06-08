@@ -6,7 +6,9 @@ Settings.defaultLocale = 'fr';
  * @param {*} itinerary
  * @returns
  */
-exports.cleanItineraryData = (itinerary) => {
+exports.cleanItineraryData = (input) => {
+  const itinerary = Object.assign({}, input);
+
   delete itinerary.type_flights;
   delete itinerary.nightsInDest;
   delete itinerary.quality;

@@ -26,6 +26,12 @@ const CHEAPEST_DESTINATION_QUERY_FIXTURE = {
   returnDate: DateTime.now().plus({ weeks: 2 }).toFormat(KIWI_DATE_FORMAT),
 };
 
+const CHEAPEST_DESTINATION_QUERY_FIXTURE_NON_EXISTING_ORIGIN = {
+  origin: 'PXR',
+  departureDate: DateTime.now().plus({ weeks: 1 }).toFormat(KIWI_DATE_FORMAT),
+  returnDate: DateTime.now().plus({ weeks: 2 }).toFormat(KIWI_DATE_FORMAT),
+};
+
 const ONE_WAY_KIWI_ITINERARY_FIXTURE = {
   id: '20a104884afb00009c17099a_0',
   flyFrom: 'JFK',
@@ -587,4 +593,5 @@ module.exports = {
   ONE_WAY_KIWI_ITINERARY_FIXTURE,
   CHEAPEST_DESTINATION_QUERY_FIXTURE,
   CHEAPEST_DESTINATION_RESULT_FIXTURE,
+  CHEAPEST_DESTINATION_QUERY_FIXTURE_NON_EXISTING_ORIGIN,
 };

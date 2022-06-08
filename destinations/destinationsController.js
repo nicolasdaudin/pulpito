@@ -3,7 +3,7 @@ const groupByToMap = require('core-js-pure/actual/array/group-by-to-map');
 const AppError = require('../utils/appError');
 const { catchAsync, catchAsyncKiwi } = require('../utils/catchAsync');
 const flightService = require('../data/flightService');
-
+const axios = require('axios').default;
 const isCommonDestination = (destination, origins) => {
   // for each origin ('every'), I want to find it at least once as an origin ('cityCodeFrom') in the list of flights corresponding to this destination ('destinations.get(key)')
   return origins.every(
@@ -81,10 +81,11 @@ const prepareItineraryData = (dest, itineraries) => {
  * @param {*} req
  * @param {*} res
  */
-const getCheapestDestinations = async (req, res, next) => {
+const getCheapestDestinations = catchAsyncKiwi(async (req, res, next) => {
   const params = flightService.prepareDefaultParams(req.query);
 
   const response = await flightService.getFlights(params);
+  // console.log('response.data.data', response.data.data);
 
   const flights = response.data.data.map(cleanItineraryData);
 
@@ -93,7 +94,7 @@ const getCheapestDestinations = async (req, res, next) => {
     results: flights.length, //response.data.data.length,
     data: flights, //flights,
   });
-};
+});
 
 const getSpecialProtectedRoute = catchAsync(async (req, res, next) => {
   res.status(200).json({
