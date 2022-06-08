@@ -4,33 +4,6 @@ const AppError = require('../utils/appError');
 const { catchAsync, catchAsyncKiwi } = require('../utils/catchAsync');
 const flightService = require('../data/flightService');
 const axios = require('axios').default;
-const isCommonDestination = (destination, origins) => {
-  // for each origin ('every'), I want to find it at least once as an origin ('cityCodeFrom') in the list of flights corresponding to this destination ('destinations.get(key)')
-  return origins.every(
-    (origin) =>
-      destination.findIndex((value) => value.cityCodeFrom === origin) > -1
-  );
-};
-
-const prepareAxiosRequest = () => {
-  return axios.create({
-    baseURL: process.env.KIWI_URL,
-    headers: {
-      apikey: process.env.KIWI_API_KEY,
-    },
-    params: {
-      max_stopovers: 2,
-      partner_market: 'fr',
-      lang: 'fr',
-      limit: 1000,
-      flight_type: 'round',
-      ret_from_diff_airport: 0,
-      ret_to_diff_airport: 0,
-      one_for_city: 1,
-      fly_to: 'anywhere',
-    },
-  });
-};
 
 const prepareItineraryData = (dest, itineraries) => {
   const itinerary = { cityTo: dest };
@@ -139,7 +112,7 @@ const getCommonDestinations = catchAsyncKiwi(async (req, res, next) => {
 
   // console.log(`${allResponses.length} itineraries need to be cleaned`);
   const itineraries = allResponses.map(cleanItineraryData);
-
+  console.log('itineraries[0]', itineraries[0]);
   // group the array by field item.flyTo and extract all possible destinations
   // Array.groupByToMap is in stage 3 proposal
   // can be switched to lodash.groupBy (https://lodash.com/docs/4.17.15#groupBy)
@@ -149,8 +122,9 @@ const getCommonDestinations = catchAsyncKiwi(async (req, res, next) => {
 
   // only the destinations that are common to all the origins in that request
   // i.e. if origins is ['JFK','LON', 'CDG'] and all origins have destination 'Dubai' but only 'JFK' and 'CDG' have destination 'Bangkok', only 'Dubai' will kept
-  const filteredDestinationCities = Array.from(destinations.keys()).filter(
-    (key) => isCommonDestination(destinations.get(key), origins)
+  const filteredDestinationCities = filterDestinationCities(
+    destinations,
+    origins
   );
 
   console.log(
@@ -170,16 +144,22 @@ const getCommonDestinations = catchAsyncKiwi(async (req, res, next) => {
   });
 });
 
-const getSpecialProtectedRoute = catchAsync(async (req, res, next) => {
-  res.status(200).json({
-    status: 'success',
-    message: 'got access to protected route',
-  });
-});
+const filterDestinationCities = (destinations, origins) => {
+  return Array.from(destinations.keys()).filter((key) =>
+    isCommonDestination(destinations.get(key), origins)
+  );
+};
+
+const isCommonDestination = (destination, origins) => {
+  // for each origin ('every'), I want to find it at least once as an origin ('cityCodeFrom') in the list of flights corresponding to this destination ('destinations.get(key)')
+  return origins.every(
+    (origin) =>
+      destination.findIndex((value) => value.cityCodeFrom === origin) > -1
+  );
+};
 
 module.exports = {
   getCheapestDestinations,
   getCommonDestinations,
-  getSpecialProtectedRoute,
   prepareItineraryData,
 };

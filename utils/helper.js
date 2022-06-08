@@ -6,7 +6,7 @@ Settings.defaultLocale = 'fr';
  * @param {*} itinerary
  * @returns
  */
-exports.cleanItineraryData = (input) => {
+const cleanItineraryData = (input) => {
   const itinerary = Object.assign({}, input);
 
   delete itinerary.type_flights;
@@ -105,3 +105,5 @@ const extractConnections = (flights) => {
 
 const formatTime = (d) =>
   DateTime.fromISO(d).toLocaleString(DateTime.DATETIME_SHORT);
+
+module.exports = { cleanItineraryData, extractConnections };

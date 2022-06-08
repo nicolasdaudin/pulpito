@@ -11,50 +11,50 @@ describe('AirportService', function () {
     test('should work the same for lower and upper case strings', function () {
       const airportsLower = airportService.searchByString('paris');
       const airportsUpper = airportService.searchByString('PARIS');
-      assert.strictEqual(airportsLower.length, airportsUpper.length);
+      expect(airportsLower.length === airportsUpper.length).toBe(true);
     });
 
     test('should retrieve an empty array for non existing strings', function () {
       const airports = airportService.searchByString('xxxxxxx');
-      assert.strictEqual(airports.length, 0);
+      expect(airports).toHaveLength(0);
     });
 
     test('should retrieve an empty array for empty strings', function () {
       const airports = airportService.searchByString('');
-      assert.strictEqual(airports.length, 0);
+      expect(airports).toHaveLength(0);
     });
 
     test('should retrieve an empty array for null strings', function () {
       const airports = airportService.searchByString();
-      assert.strictEqual(airports.length, 0);
+      expect(airports).toHaveLength(0);
     });
   });
 
   describe('findByIataCode', function () {
     test('should be able to retrieve airports by any IATA code', function () {
       const airport = airportService.findByIataCode('CDG');
-      assert.strictEqual(airport.iata_code, 'CDG');
+      expect(airport.iata_code).toBe('CDG');
     });
 
     test('should work the same for lower and upper IATA codes', function () {
       const airportLower = airportService.findByIataCode('CDG');
       const airportUpper = airportService.findByIataCode('cdg');
-      assert.strictEqual(airportLower.iata_code, airportUpper.iata_code);
+      expect(airportLower.iata_code === airportUpper.iata_code).toBe(true);
     });
 
     test('should return null for non existing IATA codes', function () {
       const airport = airportService.findByIataCode('XXX');
-      assert.ifError(airport);
+      expect(airport).toBeFalsy();
     });
 
     test('should return null for empty IATA codes', function () {
       const airport = airportService.findByIataCode('');
-      assert.ifError(airport);
+      expect(airport).toBeFalsy();
     });
 
     test('should return null for null IATA code', function () {
       const airport = airportService.findByIataCode();
-      assert.ifError(airport);
+      expect(airport).toBeFalsy();
     });
   });
 });

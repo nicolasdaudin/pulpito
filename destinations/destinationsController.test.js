@@ -15,6 +15,60 @@ const flightService = require('../data/flightService');
 const AppError = require('../utils/appError.js');
 
 describe('Destinations Controller', function () {
+  describe('prepareItineraryData', function () {
+    test('should compute all info about a set of flights', () => {
+      const itineraries = [
+        {
+          cityFrom: 'Madrid',
+          countryTo: { name: 'Spain' },
+          cityCodeTo: 'IBZ',
+          cityTo: 'Ibiza',
+          price: 78,
+          distance: 600,
+          duration: { departure: 85, return: 85 },
+        },
+        {
+          cityFrom: 'Bordeaux',
+          countryTo: { name: 'Spain' },
+          cityCodeTo: 'IBZ',
+          cityTo: 'Ibiza',
+          price: 65,
+          distance: 800,
+          duration: { departure: 105, return: 105 },
+        },
+        {
+          cityFrom: 'Brussels',
+          countryTo: { name: 'Spain' },
+          cityCodeTo: 'IBZ',
+          cityTo: 'Ibiza',
+          price: 130,
+          distance: 1500,
+          duration: { departure: 135, return: 135 },
+        },
+      ];
+      const itinerary = destinationsController.prepareItineraryData(
+        'Ibiza',
+        itineraries
+      );
+
+      expect(itinerary.countryTo).toBe('Spain');
+      expect(itinerary.cityCodeTo).toBe('IBZ');
+      expect(itinerary.totalPrice).toBe(78 + 65 + 130);
+    });
+  });
+
+  // TODO: implement test for filterDestinationCities and isCommonDestination
+  // describe('filterDestinationCities', function() {
+  //   test('filter only destinations that are common to all origins in that request', () => {
+
+  //   });
+  // })
+  // describe('isCommonDestination', function() {
+  //   test('filter only destinations that are common to all origins in that request', () => {
+
+  //   });
+  // })
+
   describe('getCheapestDestinations', function () {
     describe('success cases', function () {
       let req, res, next;
