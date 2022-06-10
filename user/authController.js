@@ -37,7 +37,7 @@ const createSendToken = (user, statusCode, res) => {
 };
 // sort of createUser but in the context of AUTH it's a signup.
 // it's a signup = we create the user and log in, that's why we send back the token
-exports.signup = catchAsync(async (req, res, next) => {
+const signup = catchAsync(async (req, res, next) => {
   // we could have done User.create(req.body) but we would allow API users to register themselves as 'admin' just by putting role=admin in the body. Doing this manually field by field prevents people to register as admin.
   const newUser = await User.create({
     name: req.body.name,
@@ -50,7 +50,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   createSendToken(newUser, 201, res);
 });
 
-exports.login = catchAsync(async (req, res, next) => {
+const login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
   // 1) Check if email and password exist
@@ -73,7 +73,7 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
-exports.protect = catchAsync(async (req, res, next) => {
+const protect = catchAsync(async (req, res, next) => {
   // 1) Get the token and check if it exists
   let token;
   if (
@@ -127,10 +127,13 @@ exports.protect = catchAsync(async (req, res, next) => {
 // 1 - we request a new password
 // 2 - we receive a token in an email
 // 3 - we send back this token with a new password
-exports.forgotPassword = catchAsync(async (req, res, next) => {
+const forgotPassword = catchAsync(async (req, res, next) => {
   // 1) Get user based on POSTed email
+  // console.log(req);
+
   const user = await User.findOne({ email: req.body.email });
 
+  console.log('user found', user);
   if (!user) {
     return next(new AppError('There is no user with this email address.', 404));
   }
@@ -142,24 +145,16 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
 
   // 3) Send it to user's email
-  // try with mailtrap.io
-  const resetURL = `${req.protocol}://${req.get(
-    'host'
-  )}/api/v1/users/resetPassword/${resetToken}`;
-  const message = `Forgot your password? Please submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
-
   try {
-    await email.sendMail({
-      email: user.email,
-      subject: 'Your password reset token (valid for 10 min)',
-      message,
-    });
+    await email.sendPasswordResetTokenEmail(req, user.email);
 
     res.status(200).json({
       status: 'success',
       message: 'Token sent to email!',
     });
   } catch (err) {
+    console.error(err);
+
     // if there has been an error, we reset the password reset token thing
     user.passwordResetToken = undefined;
     user.passwordExpires = undefined;
@@ -167,14 +162,14 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
     return next(
       new AppError(
-        'There was en error sending the email. Please try again later!'
-      ),
-      500
+        'There was en error sending the email. Please try again later!',
+        500
+      )
     );
   }
 });
 
-exports.resetPassword = catchAsync(async (req, res, next) => {
+const resetPassword = catchAsync(async (req, res, next) => {
   // 1) Get user based on the token
   const token = req.params.token;
   const { password, passwordConfirm } = req.body;
@@ -210,7 +205,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
-exports.updateMyPassword = catchAsync(async (req, res, next) => {
+const updateMyPassword = catchAsync(async (req, res, next) => {
   // 1) get user
   const user = await User.findById(req.user._id).select('+password');
 
@@ -239,3 +234,14 @@ exports.updateMyPassword = catchAsync(async (req, res, next) => {
   // 4) Log user in, send JWT
   createSendToken(user, 200, res);
 });
+
+module.exports = {
+  createSendToken,
+  signToken,
+  signup,
+  login,
+  protect,
+  resetPassword,
+  forgotPassword,
+  updateMyPassword,
+};

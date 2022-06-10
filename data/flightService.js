@@ -14,6 +14,7 @@ const DEFAULT_KIWI_PARAMS = {
 
 // FIXME: better handle errors
 const getFlights = async (params) => {
+  // console.log('calling getFlights');
   try {
     const response = await axios.get(process.env.KIWI_URL, {
       headers: {

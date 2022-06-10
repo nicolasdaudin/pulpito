@@ -2,6 +2,26 @@
 
 An API to help you decide your next surprise destination
 
+## WHY?
+
+Pulpito is a side project that helped learned the basics of Node.JS, Mongoose, REST APIs, TDD, ...
+
+It's an ongoing project.
+
+At the moment it only has an API but the idea is to also have a webapp.
+
+## Tests
+
+I tried to write a lot of tests, but did it after discovering about TDD so most of my code was written before adding the tests.
+
+Since my goal is to learn many things with this project (and not only TDD), I decided to stop at some point in writing the tests, and rather focus on the actual features and code.
+
+You can test the code like this :
+
+```
+npm test
+```
+
 ## Airports List
 
 All airports are in English, taken from the dataset available at /datasets/airport-codes, which is a download of https://datahub.io/core/airport-codes made on 17th of May 2022.

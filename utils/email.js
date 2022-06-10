@@ -9,7 +9,22 @@ const transport = nodemailer.createTransport({
   },
 });
 
-exports.sendMail = async (options) => {
+const sendPasswordResetTokenEmail = async (req, email) => {
+  console.log('calling sendPasswordResetTokenEmail');
+  // try with mailtrap.io
+  const resetURL = `${req.protocol}://${req.get(
+    'host'
+  )}/api/v1/users/resetPassword/${resetToken}`;
+  const message = `Forgot your password? Please submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
+
+  await sendMail({
+    email,
+    subject: 'Your password reset token (valid for 10 min)',
+    message,
+  });
+};
+
+const sendMail = async (options) => {
   return await transport.sendMail({
     from: `"Pulpito 🐙" <hello@pulpito.com>`,
     to: options.email,
@@ -17,4 +32,8 @@ exports.sendMail = async (options) => {
     text: options.message,
     // html:
   });
+};
+
+module.exports = {
+  sendPasswordResetTokenEmail,
 };

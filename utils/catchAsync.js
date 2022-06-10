@@ -39,7 +39,10 @@ const catchKiwiError = (err, next) => {
 
 exports.catchAsync = (fn) => {
   return (req, res, next) => {
-    fn(req, res, next).catch((err) => next(err));
+    return fn(req, res, next).catch((err) => {
+      console.error(err);
+      next(err);
+    });
   };
 };
 
