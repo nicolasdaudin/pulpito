@@ -15,7 +15,7 @@ const flightService = require('../data/flightService');
 const AppError = require('../utils/appError.js');
 
 describe('Destinations Controller', function () {
-  describe('prepareItineraryData', function () {
+  xdescribe('prepareItineraryData', function () {
     test('should compute all info about a set of flights', () => {
       const itineraries = [
         {

@@ -13,6 +13,7 @@ const AppError = require('./utils/appError');
 const destinationsRouter = require('./destinations/destinationsRoutes');
 const userRouter = require('./user/userRoutes');
 const airportRouter = require('./airports/airportRoutes');
+const viewRouter = require('./views/viewRoutes');
 
 // better to use early in the middleware.
 // set http security headers
@@ -33,6 +34,10 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again in an hour!',
 });
 app.use('/api', limiter);
+
+// VIEW ENGINE
+app.set('views', './views');
+app.set('view engine', 'pug');
 
 app.use(express.json({ limit: '10kb' })); // middleware to add body in the request data
 
@@ -58,13 +63,13 @@ app.use(
 // serving static files
 app.use(express.static(`${__dirname}/public`));
 
-app.get('/', (req, res) => {
-  console.log('connected');
-  res.status(200).json({
-    status: 'success',
-    message: 'connected',
-  });
-});
+// app.get('/', (req, res) => {
+//   console.log('connected');
+//   res.status(200).json({
+//     status: 'success',
+//     message: 'connected',
+//   });
+// });
 
 app.get('/test/', async (req, res) => {
   try {
@@ -81,7 +86,7 @@ app.get('/test/', async (req, res) => {
   }
 });
 
-// just one result per city, to get more available cities
+app.use('/', viewRouter);
 app.use('/api/v1/destinations', destinationsRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/airports', airportRouter);
