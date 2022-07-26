@@ -1,23 +1,36 @@
 const destinationsService = require('../destinations/destinationsService');
 
-exports.getHome = async (req, res) => {
+exports.getHome = (req, res) => {
+  res.render('home');
+};
+
+exports.getCommon = async (req, res) => {
+  console.log('req.body');
+  console.log(req.body);
+  const { departureDate, returnDate, origins } = req.body;
+
   const baseParams = {
-    departureDate: '09/12/2022',
-    returnDate: '11/12/2022',
+    departureDate,
+    returnDate,
   };
-  const allOriginParams = [
-    { ...baseParams, origin: 'MAD', adults: 1, children: 0, infants: 0 },
-    { ...baseParams, origin: 'BRU', adults: 7, children: 0, infants: 0 },
-    { ...baseParams, origin: 'BOD', adults: 1, children: 0, infants: 0 },
-  ];
-  const origins = ['MAD', 'BOD', 'BRU'];
+
+  const allOriginParams = origins.flyFrom.map((_, i) => {
+    return {
+      ...baseParams,
+      origin: origins.flyFrom[i],
+      adults: origins.adults[i],
+      children: origins.children[i],
+      infants: origins.infants[i],
+    };
+  });
+  const originCodes = origins.flyFrom;
 
   const commonItineraries = await destinationsService.buildCommonItineraries(
     allOriginParams,
-    origins
+    originCodes
   );
 
-  res.render('home', {
+  res.render('search', {
     status: 'success',
     results: commonItineraries.length,
     data: commonItineraries,

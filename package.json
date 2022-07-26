@@ -4,7 +4,7 @@
   "description": "API to help organize travels from different places to one destination",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "nodemon --ext js,pug server.js",
     "debug": "ndb server.js",
     "test": "jest --verbose --watchAll",
     "cover": "jest --coverage "

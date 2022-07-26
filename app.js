@@ -40,6 +40,7 @@ app.set('views', './views');
 app.set('view engine', 'pug');
 
 app.use(express.json({ limit: '10kb' })); // middleware to add body in the request data
+app.use(express.urlencoded({ extended: true, limit: '10kb' })); // parse data from forms, extended is for more complicated data
 
 // data sanitization against NoSQL query injection
 app.use(mongoSanitize());

@@ -1,75 +1,30 @@
 body
+  h1 Welcome to Pulpito 
+  a(href='/') Home page
+  h1 Lets search for some destinations ...
+  form(action="/common", method="post") 
+    .form__group 
+      label(for='departureDate') 
+        strong Date Départ
+      input#departureDate(type='text',required,name='departureDate',value='09/12/2022')
+    .form__group 
+      label(for='returnDate') 
+        strong Date Retour
+      input#returnDate(type='text',required,name='returnDate',value='11/12/2022')
+    - var flyFroms = ['MAD','AGP','BER','LON']
+    each flyFrom, i in flyFroms
+      .form__group 
+        - var index = i + 1
+        strong  Lieu de départ #{index}  - 
+        label(for=`origin_${index}`) De 
+        input(id=`origin_${index}`, type='text',required,name='origins[][flyFrom]', maxlength=3, value=`${flyFrom}`,minlength=3)
+        label(for=`adults_${index}`) Adultes
+        input(id=`adults_${index}`, type='number',required,name='origins[][adults]', value=1)
+        label(for='children_${index}') Enfants
+        input(id=`children_${index}`, type='number',required,name='origins[][children]', value=0)
+        label(for='infants_${index}') Bébés
+        input(id=`infants_${index}`, type='number',required,name='origins[][infants]', value=0)
+    
+    .form_group 
+      button Rechercher
 
-h1 Welcome to Pulpito 
-p Awesome right? #{results} results 
-p really
-
-each itinerary in data  
-  h3= `Destination : ${itinerary.cityTo} (${itinerary.countryTo}) - Prix total: ${itinerary.totalPrice} € - Distance totale : ${itinerary.totalDistance} km`
-  table.tftable 
-    tr
-      th From 
-      th To 
-      th VOL ALLER 
-      th Escales ALLER 
-      th Durée Aller
-      th VOL RETOUR 
-      th Escales Retour 
-      th Durée Retour
-      th Airlines 
-      th Prix total 
-      th Prix par adulte 
-    each flight in itinerary.flights 
-      tr 
-        td= flight.cityFrom 
-        td= `${flight.cityTo} (${flyTo})`
-        td= `départ ${flight.route.oneway.local_departure} <br/>arrivée ${flight.route.oneway.local_arrival}`
-        td= flight.route.oneway.connections
-        td= flight.route.oneway.duration
-        td= `départ ${flight.route.return.local_departure} <br/>arrivée ${flight.route.return.local_arrival}`
-        td= flight.route.return.connections
-        td= flight.route.return.duration 
-        td= flight.airlines
-        td= flight.price
-        td= flight.fare.adults
-
-
-
-//- {{#each response.data}}
-//-         <h6>Destination: {{cityTo}} ({{countryTo}}) - Prix total: {{totalPrice}} € </h6>
-//-         <table class="tftable" border="1">
-//-             <tr>
-//-                 <th>From</th>
-//-                 <th>To</th>
-//-                 <th>VOL ALLER</th> 
-//-                 <th>Escales Aller</th>
-//-                 <th>Durée Aller</th>           
-//-                 <th>VOL RETOUR</th>
-//-                 <th>Escales Retour</th>
-//-                 <th>Durée Retour</th>     
-//-                 <th>Airlines</th>
-//-                 <th>Prix total</th>
-//-                 <th>Prix par adulte</th>
-//-             </tr>       
-//-                 {{#each flights}}
-//-                 <tr>
-//-                     <td>{{cityFrom}}</td>
-//-                     <td>{{cityTo}} ({{flyTo}})</td>
-//-                     <td>départ {{route.oneway.local_departure}} <br>arrivée {{route.oneway.local_arrival}}</td> 
-//-                     <td>{{route.oneway.connections}}</td>
-//-                     <td>{{route.oneway.duration}}</td>
-                    
-//-                     <td>départ {{route.return.local_departure}} <br>arrivée {{route.return.local_arrival}}</td>                    
-//-                     <td>{{route.return.connections}}</td>
-//-                     <td>{{route.return.duration}}</td>
-
-//-                     <td>{{airlines}}</td>
-//-                     <td>{{price}}</td>
-//-                     <td>{{fare.adults}}</td>
-//-                 </tr>
-//-             {{/each}}
-//-         </table>
-//-         <br/>
-            
-//-     {{/each}}
-  

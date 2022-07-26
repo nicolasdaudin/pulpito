@@ -10,10 +10,10 @@ const DEFAULT_KIWI_PARAMS = {
   ret_to_diff_airport: 0,
   one_for_city: 1,
   fly_to: 'anywhere',
-  // atime_from: '10:00',
-  // atime_to: '22:00',
-  // ret_dtime_from: '15:00',
-  // ret_dtime_to: '21:00',
+  atime_from: '10:00',
+  atime_to: '22:00',
+  ret_dtime_from: '15:00',
+  ret_dtime_to: '21:00',
 };
 
 // FIXME: better handle errors
