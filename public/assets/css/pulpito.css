@@ -1,0 +1,58 @@
+.flight_inner_show_component .arrow_left {
+  flex-basis: 88px;
+  margin: 4px 1rem 0px;
+  background-image: url('../img/icon/plane-right-blue.png');
+  background-repeat: no-repeat;
+  background-position: 50% center;
+  text-align: center;
+  min-height: 24px;
+  min-width: 24px;
+  background-size: 24px;
+  transform: rotate(180deg);
+}
+
+.flight_inner_show_component .flight_duration {
+  width: 75px;
+}
+
+.flight_duration p {
+  font-size: 12px;
+  line-height: 15px;
+}
+
+.airline-details {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 0px;
+}
+
+.airline-details h3 {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.TabPanelInner p {
+  margin-bottom: 0px;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.flight_inner_show_component .flight_det_wrapper {
+  width: 125px;
+}
+
+.flight_show_down_wrapper {
+  display: flex;
+  border-bottom: 1px solid #cdcdcd;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media (max-width: 1199px) {
+  .flight_show_down_wrapper {
+    display: inherit;
+  }
+}

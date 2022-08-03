@@ -1,0 +1,90 @@
+
+header.main_header_arae
+  //  Top Bar 
+  .topbar-area
+    .container
+      .row.align-items-center
+        .col-lg-6.col-md-6.
+
+
+        .col-lg-6.col-md-6
+          ul.topbar-others-options
+            li
+              a(href='login.html') Login
+            li
+              a(href='register.html') Sign up
+            li
+              .dropdown.language-option
+                button.dropdown-toggle(type='button' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false')
+                  span.lang-name
+                .dropdown-menu.language-dropdown-menu
+                  a.dropdown-item(href='#') English
+                  a.dropdown-item(href='#') Spanish
+                  a.dropdown-item(href='#') French
+            li
+              .dropdown.language-option
+                button.dropdown-toggle(type='button' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false')
+                  span.lang-name
+                .dropdown-menu.language-dropdown-menu
+                  a.dropdown-item(href='#') USD
+                  a.dropdown-item(href='#') EUR
+  //  Navbar Bar 
+  .navbar-area
+    .main-responsive-nav
+      .container
+        .main-responsive-menu
+          .logo
+            a(href='index.html')
+              img(src='assets/img/logo.png' alt='logo')
+    .main-navbar
+      .container
+        nav.navbar.navbar-expand-md.navbar-light
+          a.navbar-brand(href='index.html')
+            img(src='assets/img/logo.png' alt='logo')
+          .collapse.navbar-collapse.mean-menu#navbarSupportedContent
+            ul.navbar-nav
+              li.nav-item
+                a.nav-link(href='/') Home
+              li.nav-item
+                a.nav-link(href='#').
+
+                  Destinations
+
+                ul.dropdown-menu
+                  li.nav-item
+                    a.nav-link(href='cheapest.html') Les moins chères
+                  li.nav-item
+                    a.nav-link(href='common.html') Se retrouver
+            .others-options.d-flex.align-items-center
+              .option-item
+                a.search-box(href='#')
+                  i.bi.bi-search
+//  search 
+.search-overlay
+  .d-table
+    .d-table-cell
+      .search-overlay-layer
+      .search-overlay-layer
+      .search-overlay-layer
+      .search-overlay-close
+        span.search-overlay-close-line
+        span.search-overlay-close-line
+      .search-overlay-form
+        form
+          input.input-search(type='text' placeholder='Search here...')
+          button(type='button')
+            i.fas.fa-search
+//  Common Banner Area 
+section#common_banner
+  .container
+    .row
+      .col-lg-12
+        .common_bannner_text
+          h2 Flight search result
+          ul
+            li
+              a(href='index.html') Home
+            li
+              span
+                i.fas.fa-circle
+              |  Flight search result

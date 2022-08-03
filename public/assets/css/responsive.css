@@ -1,0 +1,467 @@
+@media (min-width: 1400px) {
+
+    .container,
+    .container-lg,
+    .container-md,
+    .container-sm,
+    .container-xl,
+    .container-xxl {
+        max-width: 1440px;
+    }
+}
+
+@media (max-width: 1440px) {
+    .flight_Search_boxed input {
+        font-size: 18px;
+        width: 70%;
+    }
+
+    .dropdown_passenger_area button {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 1199px) {
+    .flight_show_down_wrapper {
+        display: inherit;
+    }
+
+    .flex_widht_less {
+        width: 68%;
+        padding-left: 0px;
+    }
+
+    .flight_refund_policy {
+        padding-top: 16px;
+    }
+
+    .room_book_item {
+        display: inherit;
+    }
+
+    .room_book_img img {
+        width: 100%;
+    }
+
+    .room_booking_right_side {
+        padding: 15px 25px 25px 25px;
+    }
+
+    .theme_nav_tab_item .nav-tabs .nav-link {
+        margin-bottom: 0;
+        background: 0 0;
+        border: 1px solid var(--main-color);
+        color: var(--black-color);
+        padding: 6px 20px;
+        border-radius: 5px;
+        margin-right: 14px;
+    }
+
+    .banner_one_text h1 {
+        font-size: 50px;
+    }
+
+    .tab_destinations_conntent h3 {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        width: 150px;
+    }
+
+    .video_play_area img {
+        height: 50vh;
+    }
+}
+
+@media (max-width: 992px) {
+
+    .vendor_img {
+        display: none;
+    }
+
+    .about_us_right {
+        padding-top: 60px;
+    }
+
+    .about_offer_banner {
+        padding-bottom: 30px;
+    }
+
+    .about_service_boxed {
+        margin-bottom: 30px;
+    }
+
+    .footer_link_area {
+        padding-bottom: 30px;
+    }
+
+    #home_one_banner {
+        padding: 275px 0 280px 0;
+    }
+
+    .topbar-list li:first-child {
+        display: none;
+    }
+
+    #footer_area {
+        padding: 70px 0px 40px 0;
+    }
+
+    .offer_area_box {
+        margin-bottom: 30px;
+    }
+
+    .theme_nav_tab_item .nav-tabs .nav-link {
+        margin-bottom: 10px;
+    }
+
+    .cat_form {
+        padding-top: 30px;
+    }
+
+    .flight_Search_boxed {
+        margin-bottom: 30px;
+    }
+
+    .imagination_boxed {
+        padding-top: 30px;
+    }
+
+    .contact_boxed {
+        margin-bottom: 30px;
+    }
+
+    .news_area_top_right {
+        padding-top: 30px;
+    }
+
+    .recent_news_img {
+        width: auto;
+    }
+
+    .flight_multis_area_wrapper {
+        display: inherit;
+        padding: 20px 0;
+    }
+
+}
+
+@media (max-width: 767px) {
+    .topbar-area {
+        display: none;
+    }
+
+    .room_booking_right_side {
+        display: inherit;
+    }
+
+    .room_person_select {
+        padding-left: 0px;
+        padding-top: 15px;
+    }
+
+    .flight_search_items {
+        display: inherit;
+    }
+
+    .common_author_form {
+        padding: 50px 0px 0px 0px;
+    }
+
+    .comment_area_boxed {
+        display: initial;
+    }
+
+    .comment_img {
+        width: 100%;
+    }
+
+    .comment_text {
+        padding-left: 0;
+        padding-top: 20px;
+        padding-bottom: 24px;
+    }
+
+    .counter_item {
+        border-bottom: 1px solid #e9e9e9;
+        border-right: none;
+    }
+
+    #consultation_area {
+        padding: 100px 0 175px 0;
+    }
+
+    .multi_city_form {
+        margin-bottom: 30px;
+        border-bottom: 2px solid #8b3eea;
+    }
+
+    .range_plan {
+        display: none;
+    }
+
+    .flight_categories_search {
+        position: initial;
+    }
+
+    .theme_search_form_tabbtn .nav-tabs {
+        justify-content: center;
+    }
+
+    .flight_categories_search .nav-tabs {
+        border-bottom: none;
+        justify-content: center;
+        margin-bottom: 30px;
+    }
+
+    .copyright_right {
+        text-align: center;
+    }
+
+    .copyright_left {
+        text-align: center;
+        padding-bottom: 10px;
+    }
+
+    .heading_left_area h2 span {
+        display: initial;
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .heading_left_area {
+        text-align: center;
+    }
+
+    .banner_one_text h1 {
+        font-size: 50px;
+        line-height: 50px;
+    }
+
+    #home_one_banner {
+        padding: 160px 0 155px 0;
+    }
+
+    .section_heading_center h2 {
+        padding-bottom: 11px;
+        font-size: 30px;
+    }
+
+    #theme_search_form {
+        margin-top: 50px;
+    }
+
+    .tour_details_heading_wrapper {
+        display: inherit;
+    }
+
+    .tour_details_top_heading_right {
+        padding-top: 20px;
+    }
+
+    .toru_details_top_bottom_item {
+        display: inline-grid;
+        align-items: center;
+    }
+
+    .main_header_arae {
+        position: inherit;
+        width: 100%;
+        z-index: 9999;
+    }
+
+    #common_banner {
+        padding: 100px 0 100px 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .room_booking_heading h3 {
+        width: auto;
+    }
+
+    .flight_search_left {
+        display: inherit;
+        padding: 0;
+        text-align: center;
+    }
+
+    .flight_search_middel {
+        display: inherit;
+        padding-left: 0;
+        text-align: center;
+    }
+
+    .flight_search_destination h6 {
+        padding-top: 10px;
+        margin: 0 auto;
+        padding-bottom: 15px;
+    }
+
+    .flight_search_destination {
+        padding-left: 0;
+    }
+
+    .flight_right_arrow {
+        text-align: center;
+        padding-bottom: 20px;
+    }
+
+    .download_pdf_area {
+        display: inherit;
+    }
+
+    .downloads_pdf_button {
+        padding-top: 20px;
+    }
+
+    .phone_tuch_area {
+        display: inherit;
+    }
+
+    .phone_tuch_area h3 a {
+        margin-top: 10px;
+        display: block;
+    }
+
+
+    .tour_details_top_heading h2 {
+        font-size: 28px;
+    }
+
+    .accordion_flex_area {
+        display: inherit;
+    }
+
+    .theme_search_form_tabbtn .nav-item {
+        margin-right: 10px;
+    }
+
+    .theme_search_form_tabbtn .nav-tabs .nav-link {
+        padding: 5px 8px;
+        font-size: 16px;
+    }
+
+    .theme_search_form_tabbtn {
+        margin-bottom: 15px;
+    }
+
+    .flight_categories_search .nav-tabs .nav-link {
+        padding: 0 7px;
+    }
+
+    .theme_search_form_tabbtn .nav-tabs .nav-link i {
+        padding-right: 5px;
+        font-size: 14px;
+    }
+
+    .cta_left {
+        display: inherit;
+    }
+
+    .cta_content {
+        padding-left: 0px;
+    }
+
+    .cta_icon {
+        width: 35%;
+        padding-bottom: 20px;
+    }
+
+    .footer_first_area {
+        padding-bottom: 30px;
+    }
+
+    .section_padding_top {
+        padding: 60px 0 0 0;
+    }
+
+    .destinations_big_offer h1 {
+        color: var(--white-color);
+        font-size: 80px;
+        line-height: 70px;
+        padding-bottom: 0;
+    }
+
+    .destinations_content_inner h2 {
+        color: var(--white-color);
+        padding-bottom: 12px;
+        font-size: 26px;
+    }
+
+    .destinations_big_offer h6 {
+        color: var(--white-color);
+        line-height: 37px;
+        padding-top: 0px;
+    }
+
+    .destinations_content_inner {
+        width: 100%;
+        text-align: center;
+    }
+
+    .destinations_big_offer {
+        justify-content: center;
+    }
+
+    .tour_details_top_bottom {
+        display: inherit;
+    }
+
+    .toru_details_top_bottom_item {
+        display: inherit;
+    }
+}
+
+@media (max-width: 480px) {
+    .booking_success_arae {
+        display: initial;
+        padding: 0px 0px;
+        text-align: center;
+    }
+
+    .booking_success_text {
+        padding-left: 0px;
+        padding-top: 20px
+    }
+
+    .room_fasa_area ul {
+        display: inherit;
+        padding-top: 0px;
+    }
+
+    .room_fasa_area ul li {
+        padding-right: 0px;
+        padding-bottom: 8px;
+    }
+
+    .recent_news_item {
+        display: block;
+    }
+
+    .recent_news_img {
+        width: 100%;
+    }
+
+    .recent_news_text {
+        padding-left: 0;
+        padding-top: 10px;
+    }
+
+    .theme_nav_tab_item .nav-tabs .nav-link {
+        padding: 4px 12px;
+        margin-right: 10px;
+        font-size: 14px;
+    }
+
+    .d-none-phone {
+        display: none;
+    }
+
+    .date_flex_area {
+        display: inherit;
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 361px) {}

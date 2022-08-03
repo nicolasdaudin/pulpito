@@ -1,0 +1,486 @@
+extends base
+
+block content 
+  //  Form Area 
+  section#theme_search_form_tour.fligth_top_search_main_form_wrapper
+    .container
+      .row
+        .col-lg-12
+          .theme_search_form_area
+            .row
+              .col-lg-12
+                .row
+                  .col-lg-12
+                    .flight_categories_search
+                      ul.nav.nav-tabs(role='tablist')
+                        li.nav-item(role='presentation')
+                          button.nav-link.active#oneway-tab(data-bs-toggle='tab' data-bs-target='#oneway_flight' type='button' role='tab' aria-controls='oneway_flight' aria-selected='true') Aller
+                        li.nav-item(role='presentation')
+                          button.nav-link#roundtrip-tab(data-bs-toggle='tab' data-bs-target='#roundtrip' type='button' role='tab' aria-controls='roundtrip' aria-selected='false') Aller/Retour
+                        li.nav-item(role='presentation')
+                          button.nav-link#multi_city-tab(data-bs-toggle='tab' data-bs-target='#multi_city' type='button' role='tab' aria-controls='multi_city' aria-selected='false') Plusieurs origines
+                .tab-content#myTabContent1
+                  .tab-pane.fade.show.active#oneway_flight(role='tabpanel' aria-labelledby='oneway-tab')
+                    .row
+                      .col-lg-12
+                        .oneway_search_form
+                          form(action='#!')
+                            .row
+                              .col-lg-3.col-md-6.col-sm-12.col-12
+                                .flight_Search_boxed
+                                  p From
+                                  input(type='text' value='New York')
+                                  span JFK - John F. Kennedy International...
+                                  .plan_icon_posation
+                                    i.fas.fa-plane-departure
+                              .col-lg-3.col-md-6.col-sm-12.col-12
+                                .flight_Search_boxed
+                                  p To
+                                  input(type='text' value='London ')
+                                  span LCY, London city airport 
+                                  .plan_icon_posation
+                                    i.fas.fa-plane-arrival
+                                  .range_plan
+                                    i.fas.fa-exchange-alt
+                              .col-lg-4.col-md-6.col-sm-12.col-12
+                                .form_search_date
+                                  .flight_Search_boxed.date_flex_area
+                                    .Journey_date
+                                      p Journey date
+                                      input(type='date' value='2022-05-05')
+                                      span Thursday
+                              .col-lg-2.col-md-6.col-sm-12.col-12
+                                .flight_Search_boxed.dropdown_passenger_area
+                                  p Passenger, Class
+                                  .dropdown
+                                    button.dropdown-toggle.final-count#dropdownMenuButton1(data-toggle='dropdown' type='button' data-bs-toggle='dropdown' aria-expanded='false').
+
+                                      0 Passenger
+
+                                    .dropdown-menu.dropdown_passenger_info(aria-labelledby='dropdownMenuButton1')
+                                      .traveller-calulate-persons
+                                        .passengers
+                                          h6 Passengers
+                                          .passengers-types
+                                            .passengers-type
+                                              .text
+                                                span.count.pcount 2
+                                                .type-label
+                                                  p Adult
+                                                  span 12+ yrs
+                                              .button-set
+                                                button.btn-add(type='button')
+                                                  i.fas.fa-plus
+                                                button.btn-subtract(type='button')
+                                                  i.fas.fa-minus
+                                            .passengers-type
+                                              .text
+                                                span.count.ccount 0
+                                                .type-label
+                                                  p.fz14.mb-xs-0.
+
+                                                    Children
+
+                                                  span 2 - Less than 12 yrs
+                                              .button-set
+                                                button.btn-add-c(type='button')
+                                                  i.fas.fa-plus
+                                                button.btn-subtract-c(type='button')
+                                                  i.fas.fa-minus
+                                            .passengers-type
+                                              .text
+                                                span.count.incount 0
+                                                .type-label
+                                                  p.fz14.mb-xs-0.
+
+                                                    Infant
+
+                                                  span Less than 2 yrs
+                                              .button-set
+                                                button.btn-add-in(type='button')
+                                                  i.fas.fa-plus
+                                                button.btn-subtract-in(type='button')
+                                                  i.fas.fa-minus
+                                        .cabin-selection
+                                          h6 Cabin Class
+                                          .cabin-list
+                                            button.label-select-btn(type='button')
+                                              span.muiButton-label.
+                                                Economy
+
+                                            button.label-select-btn.active(type='button')
+                                              span.muiButton-label.
+
+                                                Business
+
+                                            button.label-select-btn(type='button')
+                                              span.MuiButton-label First Class 
+                                  span Business
+                              .top_form_search_button
+                                button.btn.btn_theme.btn_md Search
+                  .tab-pane.fade#roundtrip(role='tabpanel' aria-labelledby='roundtrip-tab')
+                    .row
+                      .col-lg-12
+                        .oneway_search_form
+                          form(action='#!')
+                            .row
+                              .col-lg-3.col-md-6.col-sm-12.col-12
+                                .flight_Search_boxed
+                                  p From
+                                  input(type='text' value='New York')
+                                  span JFK - John F. Kennedy International...
+                                  .plan_icon_posation
+                                    i.fas.fa-plane-departure
+                              .col-lg-3.col-md-6.col-sm-12.col-12
+                                .flight_Search_boxed
+                                  p To
+                                  input(type='text' value='London ')
+                                  span LCY, London city airport 
+                                  .plan_icon_posation
+                                    i.fas.fa-plane-arrival
+                                  .range_plan
+                                    i.fas.fa-exchange-alt
+                              .col-lg-4.col-md-6.col-sm-12.col-12
+                                .form_search_date
+                                  .flight_Search_boxed.date_flex_area
+                                    .Journey_date
+                                      p Journey date
+                                      input(type='date' value='2022-05-05')
+                                      span Thursday
+                                    .Journey_date
+                                      p Return date
+                                      input(type='date' value='2022-05-08')
+                                      span Saturday
+                              .col-lg-2.col-md-6.col-sm-12.col-12
+                                .flight_Search_boxed.dropdown_passenger_area
+                                  p Passenger, Class
+                                  .dropdown
+                                    button.dropdown-toggle.final-count#dropdownMenuButton1(data-toggle='dropdown' type='button' data-bs-toggle='dropdown' aria-expanded='false').
+
+                                      0 Passenger
+
+                                    .dropdown-menu.dropdown_passenger_info(aria-labelledby='dropdownMenuButton1')
+                                      .traveller-calulate-persons
+                                        .passengers
+                                          h6 Passengers
+                                          .passengers-types
+                                            .passengers-type
+                                              .text
+                                                span.count.pcount 2
+                                                .type-label
+                                                  p Adult
+                                                  span 12+ yrs
+                                              .button-set
+                                                button.btn-add(type='button')
+                                                  i.fas.fa-plus
+                                                button.btn-subtract(type='button')
+                                                  i.fas.fa-minus
+                                            .passengers-type
+                                              .text
+                                                span.count.ccount 0
+                                                .type-label
+                                                  p.fz14.mb-xs-0.
+
+                                                    Children
+
+                                                  span 2 - Less than 12 yrs
+                                              .button-set
+                                                button.btn-add-c(type='button')
+                                                  i.fas.fa-plus
+                                                button.btn-subtract-c(type='button')
+                                                  i.fas.fa-minus
+                                            .passengers-type
+                                              .text
+                                                span.count.incount 0
+                                                .type-label
+                                                  p.fz14.mb-xs-0.
+
+                                                    Infant
+
+                                                  span Less than 2 yrs
+                                              .button-set
+                                                button.btn-add-in(type='button')
+                                                  i.fas.fa-plus
+                                                button.btn-subtract-in(type='button')
+                                                  i.fas.fa-minus
+                                        .cabin-selection
+                                          h6 Cabin Class
+                                          .cabin-list
+                                            button.label-select-btn(type='button')
+                                              span.muiButton-label.
+                                                Economy
+
+                                            button.label-select-btn.active(type='button')
+                                              span.muiButton-label.
+
+                                                Business
+
+                                            button.label-select-btn(type='button')
+                                              span.MuiButton-label First Class 
+                                  span Business
+                            .top_form_search_button
+                              button.btn.btn_theme.btn_md Rechercher
+                  .tab-pane.fade#multi_city(role='tabpanel' aria-labelledby='multi_city-tab')
+                    .row
+                      .col-lg-12
+                        .oneway_search_form
+                          form(action='#!')
+                            .multi_city_form_wrapper
+                              .multi_city_form
+                                .row
+                                  .col-lg-6.col-md-6.col-sm-12.col-12
+                                    .form_search_date
+                                      .flight_Search_boxed.date_flex_area
+                                        .Journey_date
+                                          p Aller
+                                          input(type='date' value='2022-05-05')
+                                          span Jeudi
+                                        .Journey_date
+                                          p Retour
+                                          input(type='date' value='2022-05-10')
+                                          span Samedi
+                              .multi_city_form
+                                .row
+                                  .col-lg-6.col-md-6.col-sm-12.col-12
+                                    .flight_Search_boxed
+                                      p De
+                                      input(type='text' value='New York')
+                                      span BOD, Aéroport de Bordeaux-Mérignac
+                                      .plan_icon_posation
+                                        i.fas.fa-plane-departure
+                                  .col-lg-6.col-md-6.col-sm-12.col-12
+                                    .flight_Search_boxed.dropdown_passenger_area
+                                      p Passagers
+                                      .dropdown
+                                        button.dropdown-toggle.final-count#dropdownMenuButton1(data-toggle='dropdown' type='button' data-bs-toggle='dropdown' aria-expanded='false').
+
+                                          0 Passagers
+
+                                        .dropdown-menu.dropdown_passenger_info(aria-labelledby='dropdownMenuButton1')
+                                          .traveller-calulate-persons
+                                            .passengers
+                                              h6 Passengers
+                                              .passengers-types
+                                                .passengers-type
+                                                  .text
+                                                    span.count.pcount 2
+                                                    .type-label
+                                                      p Adult
+                                                      span 12+ yrs
+                                                  .button-set
+                                                    button.btn-add(type='button')
+                                                      i.fas.fa-plus
+                                                    button.btn-subtract(type='button')
+                                                      i.fas.fa-minus
+                                                .passengers-type
+                                                  .text
+                                                    span.count.ccount 0
+                                                    .type-label
+                                                      p.fz14.mb-xs-0.
+
+                                                        Children
+
+                                                      span 2 - Less than 12 yrs
+                                                  .button-set
+                                                    button.btn-add-c(type='button')
+                                                      i.fas.fa-plus
+                                                    button.btn-subtract-c(type='button')
+                                                      i.fas.fa-minus
+                                                .passengers-type
+                                                  .text
+                                                    span.count.incount 0
+                                                    .type-label
+                                                      p.fz14.mb-xs-0.
+
+                                                        Infant
+
+                                                      span Less than 2 yrs
+                                                  .button-set
+                                                    button.btn-add-in(type='button')
+                                                      i.fas.fa-plus
+                                                    button.btn-subtract-in(type='button')
+                                                      i.fas.fa-minus
+                              .multi_city_form
+                                .row
+                                  .col-lg-6.col-md-6.col-sm-12.col-12
+                                    .flight_Search_boxed
+                                      p De
+                                      input(type='text' value='New York')
+                                      span MAD, Aeropuerto de Barajas
+                                      .plan_icon_posation
+                                        i.fas.fa-plane-departure
+                                  .col-lg-6.col-md-6.col-sm-12.col-12
+                                    .flight_Search_boxed.dropdown_passenger_area
+                                      p Passagers
+                                      .dropdown
+                                        button.dropdown-toggle.final-count#dropdownMenuButton1(data-toggle='dropdown' type='button' data-bs-toggle='dropdown' aria-expanded='false').
+
+                                          0 Passagers
+
+                                        .dropdown-menu.dropdown_passenger_info(aria-labelledby='dropdownMenuButton1')
+                                          .traveller-calulate-persons
+                                            .passengers
+                                              h6 Passagers
+                                              .passengers-types
+                                                .passengers-type
+                                                  .text
+                                                    span.count.pcount 2
+                                                    .type-label
+                                                      p Adulte
+                                                      span.
+                                                        12 ans et plus
+
+                                                  .button-set
+                                                    button.btn-add(type='button')
+                                                      i.fas.fa-plus
+                                                    button.btn-subtract(type='button')
+                                                      i.fas.fa-minus
+                                                .passengers-type
+                                                  .text
+                                                    span.count.ccount 0
+                                                    .type-label
+                                                      p.fz14.mb-xs-0.
+
+                                                        Enfants
+
+                                                      span 2 - Moins de 12 ans
+                                                  .button-set
+                                                    button.btn-add-c(type='button')
+                                                      i.fas.fa-plus
+                                                    button.btn-subtract-c(type='button')
+                                                      i.fas.fa-minus
+                                                .passengers-type
+                                                  .text
+                                                    span.count.incount 0
+                                                    .type-label
+                                                      p.fz14.mb-xs-0.
+
+                                                        Bébés
+
+                                                      span Moins de 2 ans
+                                                  .button-set
+                                                    button.btn-add-in(type='button')
+                                                      i.fas.fa-plus
+                                                    button.btn-subtract-in(type='button')
+                                                      i.fas.fa-minus
+                            .row
+                              .col-lg-12
+                                .add_multy_form
+                                  button#addMulticityRow(type='button') + Ajouter un point de départ
+                            .top_form_search_button
+                              button.btn.btn_theme.btn_md Rechercher
+  //  Flight Search Areas 
+  section#explore_area.section_padding
+    .container
+      //  Section Heading 
+      .row
+        .col-lg-12.col-md-12.col-sm-12.col-12
+          .section_heading_center
+            h2=`${data.length} destinations trouvées`
+      .row
+        .col-lg-3
+          .left_side_search_area
+            .left_side_search_boxed
+              .left_side_search_heading
+                h5 Filtrer par prix
+              .filter-price
+                #price-slider
+              button.apply(type='button') Appliquer
+            .left_side_search_boxed
+              .left_side_search_heading
+                h5 Escales
+              .tour_search_type
+                .form-check
+                  input.form-check-input#flexCheckDefaultf1(type='checkbox')
+                  label.form-check-label(for='flexCheckDefaultf1')
+                    span.area_flex_one
+                      span 1 escale
+                      span 20
+                .form-check
+                  input.form-check-input#flexCheckDefaultf2(type='checkbox')
+                  label.form-check-label(for='flexCheckDefaultf2')
+                    span.area_flex_one
+                      span 2 escales ou plus
+                      span 16
+                .form-check
+                  input.form-check-input#flexCheckDefaultf4(type='checkbox')
+                  label.form-check-label(for='flexCheckDefaultf4')
+                    span.area_flex_one
+                      span Sans escale
+                      span 22
+        .col-lg-9
+          .row
+            .col-lg-12
+              .flight_search_result_wrapper
+                each itinerary in data   
+                  .flight_search_item_wrappper
+                    .flight_search_items
+                      .multi_city_flight_lists
+                        .flight_multis_area_wrapper
+                          .flight_search_left
+                            .flight_search_destination
+                              p Destination:
+                              h3=itinerary.cityTo
+                              h6=itinerary.flyTo
+                      .flight_search_right
+                        h2=`${itinerary.totalPrice} €`
+                        a.btn.btn_theme.btn_sm(href='flight-booking-submission.html') Réserver
+                        h6(data-bs-toggle='collapse' data-bs-target='#collapseExample' aria-expanded='false' aria-controls='collapseExample')
+                          | Détails 
+                          i.fas.fa-chevron-down
+                    .flight_policy_refund.collapse#collapseExample
+                      each flight in itinerary.flights
+                        .flight_show_down_wrapper
+                          .airline-details
+                            h3=`De: ${flight.cityFrom}`
+                          .flight_inner_show_component
+                            .flight_det_wrapper
+                              .flight_det
+                                .code_time
+                                  span.code=flight.flyFrom
+                                  span.time 10:05
+                                p.airport.
+                                  Brussels Airport
+
+                                p.date 09 déc 2022
+                            .flight_duration
+                              .arrow_right
+                              span 02h 15m
+                            .flight_det_wrapper
+                              .flight_det
+                                .code_time
+                                  span.code DUB
+                                  span.time 11:50
+                                p.airport.
+                                  Dublin City Airport
+
+                                p.date 09 déc 2022
+                          .flight_inner_show_component
+                            .flight_det_wrapper
+                              .flight_det
+                                .code_time
+                                  span.code DUB
+                                  span.time 18:05
+                                p.airport.
+                                  Dublin City Airport
+
+                                p.date 11 déc 2022
+                            .flight_duration
+                              .arrow_left
+                              span 02h 20m
+                            .flight_det_wrapper
+                              .flight_det
+                                .code_time
+                                  span.code BRU
+                                  span.time 21:45
+                                p.airport.
+                                  Brussels Airport
+
+                                p.date 11 déc 2022
+                          .TabPanelInner
+                            .flight_info_taable
+                              h3 60 € / pers.
+                              p (420 € au total)
+                        
+                      
+            

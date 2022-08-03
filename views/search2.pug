@@ -1,0 +1,960 @@
+doctype html
+html(lang='fr')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width,initial-scale=1,shrink-to-fit=no')
+    //  Title 
+    title Pulpito - Destinations - C'est parti!
+    //  Bootstrap css 
+    link(rel='stylesheet' href='assets/css/bootstrap.min.css')
+    //  animate css 
+    link(rel='stylesheet' href='assets/css/animate.min.css')
+    //  Fontawesome css 
+    link(rel='stylesheet' href='assets/css/fontawesome.all.min.css')
+    link(rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/font/bootstrap-icons.css')
+    //  owl.carousel css 
+    link(rel='stylesheet' href='assets/css/owl.carousel.min.css')
+    //  Rangeslider css 
+    link(rel='stylesheet' href='assets/css/nouislider.css')
+    //  owl.theme.default css 
+    link(rel='stylesheet' href='assets/css/owl.theme.default.min.css')
+    //  navber css 
+    link(rel='stylesheet' href='assets/css/navber.css')
+    //  meanmenu css 
+    link(rel='stylesheet' href='assets/css/meanmenu.css')
+    //  Style css 
+    link(rel='stylesheet' href='assets/css/style.css')
+    //  Responsive css 
+    link(rel='stylesheet' href='assets/css/responsive.css')
+    //  Custom Pulpito css 
+    link(rel='stylesheet' href='assets/css/pulpito.css')
+    //  Favicon 
+    link(rel='icon' type='image/png' href='assets/img/favicon.png')
+  body
+    //  preloader Area 
+    .preloader
+      .d-table
+        .d-table-cell
+          .lds-spinner
+            div
+            div
+            div
+            div
+            div
+            div
+            div
+            div
+            div
+            div
+            div
+            div
+    //  Header Area 
+    header.main_header_arae
+      //  Top Bar 
+      .topbar-area
+        .container
+          .row.align-items-center
+            .col-lg-6.col-md-6.
+
+
+            .col-lg-6.col-md-6
+              ul.topbar-others-options
+                li
+                  a(href='login.html') Login
+                li
+                  a(href='register.html') Sign up
+                li
+                  .dropdown.language-option
+                    button.dropdown-toggle(type='button' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false')
+                      span.lang-name
+                    .dropdown-menu.language-dropdown-menu
+                      a.dropdown-item(href='#') English
+                      a.dropdown-item(href='#') Spanish
+                      a.dropdown-item(href='#') French
+                li
+                  .dropdown.language-option
+                    button.dropdown-toggle(type='button' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false')
+                      span.lang-name
+                    .dropdown-menu.language-dropdown-menu
+                      a.dropdown-item(href='#') USD
+                      a.dropdown-item(href='#') EUR
+      //  Navbar Bar 
+      .navbar-area
+        .main-responsive-nav
+          .container
+            .main-responsive-menu
+              .logo
+                a(href='index.html')
+                  img(src='assets/img/logo.png' alt='logo')
+        .main-navbar
+          .container
+            nav.navbar.navbar-expand-md.navbar-light
+              a.navbar-brand(href='index.html')
+                img(src='assets/img/logo.png' alt='logo')
+              .collapse.navbar-collapse.mean-menu#navbarSupportedContent
+                ul.navbar-nav
+                  li.nav-item
+                    a.nav-link(href='/') Home
+                  li.nav-item
+                    a.nav-link(href='#').
+
+                      Destinations
+
+                    ul.dropdown-menu
+                      li.nav-item
+                        a.nav-link(href='cheapest.html') Les moins chères
+                      li.nav-item
+                        a.nav-link(href='common.html') Se retrouver
+                .others-options.d-flex.align-items-center
+                  .option-item
+                    a.search-box(href='#')
+                      i.bi.bi-search
+    //  search 
+    .search-overlay
+      .d-table
+        .d-table-cell
+          .search-overlay-layer
+          .search-overlay-layer
+          .search-overlay-layer
+          .search-overlay-close
+            span.search-overlay-close-line
+            span.search-overlay-close-line
+          .search-overlay-form
+            form
+              input.input-search(type='text' placeholder='Search here...')
+              button(type='button')
+                i.fas.fa-search
+    //  Common Banner Area 
+    section#common_banner
+      .container
+        .row
+          .col-lg-12
+            .common_bannner_text
+              h2 Flight search result
+              ul
+                li
+                  a(href='index.html') Home
+                li
+                  span
+                    i.fas.fa-circle
+                  |  Flight search result
+    //  Form Area 
+    section#theme_search_form_tour.fligth_top_search_main_form_wrapper
+      .container
+        .row
+          .col-lg-12
+            .theme_search_form_area
+              .row
+                .col-lg-12
+                  .row
+                    .col-lg-12
+                      .flight_categories_search
+                        ul.nav.nav-tabs(role='tablist')
+                          li.nav-item(role='presentation')
+                            button.nav-link.active#oneway-tab(data-bs-toggle='tab' data-bs-target='#oneway_flight' type='button' role='tab' aria-controls='oneway_flight' aria-selected='true') One Way
+                          li.nav-item(role='presentation')
+                            button.nav-link#roundtrip-tab(data-bs-toggle='tab' data-bs-target='#roundtrip' type='button' role='tab' aria-controls='roundtrip' aria-selected='false') Roundtrip
+                          li.nav-item(role='presentation')
+                            button.nav-link#multi_city-tab(data-bs-toggle='tab' data-bs-target='#multi_city' type='button' role='tab' aria-controls='multi_city' aria-selected='false') Multi city
+                  .tab-content#myTabContent1
+                    .tab-pane.fade.show.active#oneway_flight(role='tabpanel' aria-labelledby='oneway-tab')
+                      .row
+                        .col-lg-12
+                          .oneway_search_form
+                            form(action='#!')
+                              .row
+                                .col-lg-3.col-md-6.col-sm-12.col-12
+                                  .flight_Search_boxed
+                                    p From
+                                    input(type='text' value='New York')
+                                    span JFK - John F. Kennedy International...
+                                    .plan_icon_posation
+                                      i.fas.fa-plane-departure
+                                .col-lg-3.col-md-6.col-sm-12.col-12
+                                  .flight_Search_boxed
+                                    p To
+                                    input(type='text' value='London ')
+                                    span LCY, London city airport 
+                                    .plan_icon_posation
+                                      i.fas.fa-plane-arrival
+                                    .range_plan
+                                      i.fas.fa-exchange-alt
+                                .col-lg-4.col-md-6.col-sm-12.col-12
+                                  .form_search_date
+                                    .flight_Search_boxed.date_flex_area
+                                      .Journey_date
+                                        p Journey date
+                                        input(type='date' value='2022-05-05')
+                                        span Thursday
+                                .col-lg-2.col-md-6.col-sm-12.col-12
+                                  .flight_Search_boxed.dropdown_passenger_area
+                                    p Passenger, Class
+                                    .dropdown
+                                      button.dropdown-toggle.final-count#dropdownMenuButton1(data-toggle='dropdown' type='button' data-bs-toggle='dropdown' aria-expanded='false').
+
+                                        0 Passenger
+
+                                      .dropdown-menu.dropdown_passenger_info(aria-labelledby='dropdownMenuButton1')
+                                        .traveller-calulate-persons
+                                          .passengers
+                                            h6 Passengers
+                                            .passengers-types
+                                              .passengers-type
+                                                .text
+                                                  span.count.pcount 2
+                                                  .type-label
+                                                    p Adult
+                                                    span 12+ yrs
+                                                .button-set
+                                                  button.btn-add(type='button')
+                                                    i.fas.fa-plus
+                                                  button.btn-subtract(type='button')
+                                                    i.fas.fa-minus
+                                              .passengers-type
+                                                .text
+                                                  span.count.ccount 0
+                                                  .type-label
+                                                    p.fz14.mb-xs-0.
+
+                                                      Children
+
+                                                    span 2 - Less than 12 yrs
+                                                .button-set
+                                                  button.btn-add-c(type='button')
+                                                    i.fas.fa-plus
+                                                  button.btn-subtract-c(type='button')
+                                                    i.fas.fa-minus
+                                              .passengers-type
+                                                .text
+                                                  span.count.incount 0
+                                                  .type-label
+                                                    p.fz14.mb-xs-0.
+
+                                                      Infant
+
+                                                    span Less than 2 yrs
+                                                .button-set
+                                                  button.btn-add-in(type='button')
+                                                    i.fas.fa-plus
+                                                  button.btn-subtract-in(type='button')
+                                                    i.fas.fa-minus
+                                          .cabin-selection
+                                            h6 Cabin Class
+                                            .cabin-list
+                                              button.label-select-btn(type='button')
+                                                span.muiButton-label.
+                                                  Economy
+
+                                              button.label-select-btn.active(type='button')
+                                                span.muiButton-label.
+
+                                                  Business
+
+                                              button.label-select-btn(type='button')
+                                                span.MuiButton-label First Class 
+                                    span Business
+                                .top_form_search_button
+                                  button.btn.btn_theme.btn_md Search
+                    .tab-pane.fade#roundtrip(role='tabpanel' aria-labelledby='roundtrip-tab')
+                      .row
+                        .col-lg-12
+                          .oneway_search_form
+                            form(action='#!')
+                              .row
+                                .col-lg-3.col-md-6.col-sm-12.col-12
+                                  .flight_Search_boxed
+                                    p From
+                                    input(type='text' value='New York')
+                                    span JFK - John F. Kennedy International...
+                                    .plan_icon_posation
+                                      i.fas.fa-plane-departure
+                                .col-lg-3.col-md-6.col-sm-12.col-12
+                                  .flight_Search_boxed
+                                    p To
+                                    input(type='text' value='London ')
+                                    span LCY, London city airport 
+                                    .plan_icon_posation
+                                      i.fas.fa-plane-arrival
+                                    .range_plan
+                                      i.fas.fa-exchange-alt
+                                .col-lg-4.col-md-6.col-sm-12.col-12
+                                  .form_search_date
+                                    .flight_Search_boxed.date_flex_area
+                                      .Journey_date
+                                        p Journey date
+                                        input(type='date' value='2022-05-05')
+                                        span Thursday
+                                      .Journey_date
+                                        p Return date
+                                        input(type='date' value='2022-05-08')
+                                        span Saturday
+                                .col-lg-2.col-md-6.col-sm-12.col-12
+                                  .flight_Search_boxed.dropdown_passenger_area
+                                    p Passenger, Class
+                                    .dropdown
+                                      button.dropdown-toggle.final-count#dropdownMenuButton1(data-toggle='dropdown' type='button' data-bs-toggle='dropdown' aria-expanded='false').
+
+                                        0 Passenger
+
+                                      .dropdown-menu.dropdown_passenger_info(aria-labelledby='dropdownMenuButton1')
+                                        .traveller-calulate-persons
+                                          .passengers
+                                            h6 Passengers
+                                            .passengers-types
+                                              .passengers-type
+                                                .text
+                                                  span.count.pcount 2
+                                                  .type-label
+                                                    p Adult
+                                                    span 12+ yrs
+                                                .button-set
+                                                  button.btn-add(type='button')
+                                                    i.fas.fa-plus
+                                                  button.btn-subtract(type='button')
+                                                    i.fas.fa-minus
+                                              .passengers-type
+                                                .text
+                                                  span.count.ccount 0
+                                                  .type-label
+                                                    p.fz14.mb-xs-0.
+
+                                                      Children
+
+                                                    span 2 - Less than 12 yrs
+                                                .button-set
+                                                  button.btn-add-c(type='button')
+                                                    i.fas.fa-plus
+                                                  button.btn-subtract-c(type='button')
+                                                    i.fas.fa-minus
+                                              .passengers-type
+                                                .text
+                                                  span.count.incount 0
+                                                  .type-label
+                                                    p.fz14.mb-xs-0.
+
+                                                      Infant
+
+                                                    span Less than 2 yrs
+                                                .button-set
+                                                  button.btn-add-in(type='button')
+                                                    i.fas.fa-plus
+                                                  button.btn-subtract-in(type='button')
+                                                    i.fas.fa-minus
+                                          .cabin-selection
+                                            h6 Cabin Class
+                                            .cabin-list
+                                              button.label-select-btn(type='button')
+                                                span.muiButton-label.
+                                                  Economy
+
+                                              button.label-select-btn.active(type='button')
+                                                span.muiButton-label.
+
+                                                  Business
+
+                                              button.label-select-btn(type='button')
+                                                span.MuiButton-label First Class 
+                                    span Business
+                              .top_form_search_button
+                                button.btn.btn_theme.btn_md Rechercher
+                    .tab-pane.fade#multi_city(role='tabpanel' aria-labelledby='multi_city-tab')
+                      .row
+                        .col-lg-12
+                          .oneway_search_form
+                            form(action='#!')
+                              .multi_city_form_wrapper
+                                .multi_city_form
+                                  .row
+                                    .col-lg-6.col-md-6.col-sm-12.col-12
+                                      .form_search_date
+                                        .flight_Search_boxed.date_flex_area
+                                          .Journey_date
+                                            p Aller
+                                            input(type='date' value='2022-05-05')
+                                            span Jeudi
+                                          .Journey_date
+                                            p Retour
+                                            input(type='date' value='2022-05-10')
+                                            span Samedi
+                                .multi_city_form
+                                  .row
+                                    .col-lg-6.col-md-6.col-sm-12.col-12
+                                      .flight_Search_boxed
+                                        p De
+                                        input(type='text' value='New York')
+                                        span BOD, Aéroport de Bordeaux-Mérignac
+                                        .plan_icon_posation
+                                          i.fas.fa-plane-departure
+                                    .col-lg-6.col-md-6.col-sm-12.col-12
+                                      .flight_Search_boxed.dropdown_passenger_area
+                                        p Passagers
+                                        .dropdown
+                                          button.dropdown-toggle.final-count#dropdownMenuButton1(data-toggle='dropdown' type='button' data-bs-toggle='dropdown' aria-expanded='false').
+
+                                            0 Passagers
+
+                                          .dropdown-menu.dropdown_passenger_info(aria-labelledby='dropdownMenuButton1')
+                                            .traveller-calulate-persons
+                                              .passengers
+                                                h6 Passengers
+                                                .passengers-types
+                                                  .passengers-type
+                                                    .text
+                                                      span.count.pcount 2
+                                                      .type-label
+                                                        p Adult
+                                                        span 12+ yrs
+                                                    .button-set
+                                                      button.btn-add(type='button')
+                                                        i.fas.fa-plus
+                                                      button.btn-subtract(type='button')
+                                                        i.fas.fa-minus
+                                                  .passengers-type
+                                                    .text
+                                                      span.count.ccount 0
+                                                      .type-label
+                                                        p.fz14.mb-xs-0.
+
+                                                          Children
+
+                                                        span 2 - Less than 12 yrs
+                                                    .button-set
+                                                      button.btn-add-c(type='button')
+                                                        i.fas.fa-plus
+                                                      button.btn-subtract-c(type='button')
+                                                        i.fas.fa-minus
+                                                  .passengers-type
+                                                    .text
+                                                      span.count.incount 0
+                                                      .type-label
+                                                        p.fz14.mb-xs-0.
+
+                                                          Infant
+
+                                                        span Less than 2 yrs
+                                                    .button-set
+                                                      button.btn-add-in(type='button')
+                                                        i.fas.fa-plus
+                                                      button.btn-subtract-in(type='button')
+                                                        i.fas.fa-minus
+                                .multi_city_form
+                                  .row
+                                    .col-lg-6.col-md-6.col-sm-12.col-12
+                                      .flight_Search_boxed
+                                        p De
+                                        input(type='text' value='New York')
+                                        span MAD, Aeropuerto de Barajas
+                                        .plan_icon_posation
+                                          i.fas.fa-plane-departure
+                                    .col-lg-6.col-md-6.col-sm-12.col-12
+                                      .flight_Search_boxed.dropdown_passenger_area
+                                        p Passagers
+                                        .dropdown
+                                          button.dropdown-toggle.final-count#dropdownMenuButton1(data-toggle='dropdown' type='button' data-bs-toggle='dropdown' aria-expanded='false').
+
+                                            0 Passagers
+
+                                          .dropdown-menu.dropdown_passenger_info(aria-labelledby='dropdownMenuButton1')
+                                            .traveller-calulate-persons
+                                              .passengers
+                                                h6 Passagers
+                                                .passengers-types
+                                                  .passengers-type
+                                                    .text
+                                                      span.count.pcount 2
+                                                      .type-label
+                                                        p Adulte
+                                                        span.
+                                                          12 ans et plus
+
+                                                    .button-set
+                                                      button.btn-add(type='button')
+                                                        i.fas.fa-plus
+                                                      button.btn-subtract(type='button')
+                                                        i.fas.fa-minus
+                                                  .passengers-type
+                                                    .text
+                                                      span.count.ccount 0
+                                                      .type-label
+                                                        p.fz14.mb-xs-0.
+
+                                                          Enfants
+
+                                                        span 2 - Moins de 12 ans
+                                                    .button-set
+                                                      button.btn-add-c(type='button')
+                                                        i.fas.fa-plus
+                                                      button.btn-subtract-c(type='button')
+                                                        i.fas.fa-minus
+                                                  .passengers-type
+                                                    .text
+                                                      span.count.incount 0
+                                                      .type-label
+                                                        p.fz14.mb-xs-0.
+
+                                                          Bébés
+
+                                                        span Moins de 2 ans
+                                                    .button-set
+                                                      button.btn-add-in(type='button')
+                                                        i.fas.fa-plus
+                                                      button.btn-subtract-in(type='button')
+                                                        i.fas.fa-minus
+                              .row
+                                .col-lg-12
+                                  .add_multy_form
+                                    button#addMulticityRow(type='button') + Ajouter un point de départ
+                              .top_form_search_button
+                                button.btn.btn_theme.btn_md Rechercher
+    //  Flight Search Areas 
+    section#explore_area.section_padding
+      .container
+        //  Section Heading 
+        .row
+          .col-lg-12.col-md-12.col-sm-12.col-12
+            .section_heading_center
+              h2 42 destinations trouvées
+        .row
+          .col-lg-3
+            .left_side_search_area
+              .left_side_search_boxed
+                .left_side_search_heading
+                  h5 Filtrer par prix
+                .filter-price
+                  #price-slider
+                button.apply(type='button') Appliquer
+              .left_side_search_boxed
+                .left_side_search_heading
+                  h5 Escales
+                .tour_search_type
+                  .form-check
+                    input.form-check-input#flexCheckDefaultf1(type='checkbox')
+                    label.form-check-label(for='flexCheckDefaultf1')
+                      span.area_flex_one
+                        span 1 escale
+                        span 20
+                  .form-check
+                    input.form-check-input#flexCheckDefaultf2(type='checkbox')
+                    label.form-check-label(for='flexCheckDefaultf2')
+                      span.area_flex_one
+                        span 2 escales ou plus
+                        span 16
+                  .form-check
+                    input.form-check-input#flexCheckDefaultf4(type='checkbox')
+                    label.form-check-label(for='flexCheckDefaultf4')
+                      span.area_flex_one
+                        span Sans escale
+                        span 22
+          .col-lg-9
+            .row
+              .col-lg-12
+                .flight_search_result_wrapper
+                  .flight_search_item_wrappper
+                    .flight_search_items
+                      .multi_city_flight_lists
+                        .flight_multis_area_wrapper
+                          .flight_search_left
+                            .flight_search_destination
+                              p Destination:
+                              h3 Dublin
+                              h6 DUB, Dublin City Airport
+                      .flight_search_right
+                        h2 650 €
+                        a.btn.btn_theme.btn_sm(href='flight-booking-submission.html') Réserver
+                        h6(data-bs-toggle='collapse' data-bs-target='#collapseExample' aria-expanded='false' aria-controls='collapseExample')
+                          | Détails 
+                          i.fas.fa-chevron-down
+                    .flight_policy_refund.collapse#collapseExample
+                      .flight_show_down_wrapper
+                        .airline-details
+                          h3 De: Bruxelles
+                        .flight_inner_show_component
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code BRU
+                                span.time 10:05
+                              p.airport.
+                                Brussels Airport
+
+                              p.date 09 déc 2022
+                          .flight_duration
+                            .arrow_right
+                            span 02h 15m
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code DUB
+                                span.time 11:50
+                              p.airport.
+                                Dublin City Airport
+
+                              p.date 09 déc 2022
+                        .flight_inner_show_component
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code DUB
+                                span.time 18:05
+                              p.airport.
+                                Dublin City Airport
+
+                              p.date 11 déc 2022
+                          .flight_duration
+                            .arrow_left
+                            span 02h 20m
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code BRU
+                                span.time 21:45
+                              p.airport.
+                                Brussels Airport
+
+                              p.date 11 déc 2022
+                        .TabPanelInner
+                          .flight_info_taable
+                            h3 60 € / pers.
+                            p (420 € au total)
+                      .flight_show_down_wrapper
+                        .airline-details
+                          h3 De: Madrid
+                        .flight_inner_show_component
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code MAD
+                                span.time 12:50
+                              p.airport.
+                                Aeropuerto de Barajas
+
+                              p.date 09 déc 2022
+                          .flight_duration
+                            .arrow_right
+                            span 02h 45m
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code DUB
+                                span.time 14:35
+                              p.airport.
+                                Dublin City Airport
+
+                              p.date 09 déc 2022
+                        .flight_inner_show_component
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code DUB
+                                span.time 18:05
+                              p.airport.
+                                Dublin City Airport
+
+                              p.date 11 déc 2022
+                          .flight_duration
+                            .arrow_left
+                            span 02h 35m
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code MAD
+                                span.time 22:00
+                              p.airport.
+                                Aeropuerto de Barajas
+
+                              p.date 11 déc 2022
+                        .TabPanelInner
+                          .flight_info_taable
+                            h3 85 € / pers.
+                            p (85 € au total)
+                      .flight_show_down_wrapper
+                        .airline-details
+                          h3 De: Bordeaux
+                        .flight_inner_show_component
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code BOD
+                                span.time 16:35
+                              p.airport.
+                                Bordeaux-Mérignac
+
+                              p.date 09 déc 2022
+                          .flight_duration
+                            .arrow_right
+                            span 02h 00m
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code DUB
+                                span.time 17:35
+                              p.airport.
+                                Dublin City Airport
+
+                              p.date 09 déc 2022
+                        .flight_inner_show_component
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code DUB
+                                span.time 16:30
+                              p.airport.
+                                Dublin City Airport
+
+                              p.date 11 déc 2022
+                          .flight_duration
+                            .arrow_left
+                            span 05h 20m
+                            p BHX
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code BOD
+                                span.time 23:55
+                              p.airport.
+                                Bordeaux-Mérignac
+
+                              p.date 11 déc 2022
+                        .TabPanelInner
+                          .flight_info_taable
+                            h3 112 € / pers.
+                            p (112 € au total)
+                  .flight_search_item_wrappper
+                    .flight_search_items
+                      .multi_city_flight_lists
+                        .flight_multis_area_wrapper
+                          .flight_search_left
+                            .flight_search_destination
+                              p Destination:
+                              h3 Porto
+                              h6 OPO, Porto Airport
+                      .flight_search_right
+                        h2 900 €
+                        a.btn.btn_theme.btn_sm(href='flight-booking-submission.html') Réserver
+                        h6(data-bs-toggle='collapse' data-bs-target='#collapseExample' aria-expanded='false' aria-controls='collapseExample')
+                          | Détails 
+                          i.fas.fa-chevron-down
+                    .flight_policy_refund.collapse#collapseExample
+                      .flight_show_down_wrapper
+                        .airline-details
+                          h3 De: Bruxelles
+                        .flight_inner_show_component
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code BRU
+                                span.time 10:05
+                              p.airport.
+                                Brussels Airport
+
+                              p.date 09 déc 2022
+                          .flight_duration
+                            .arrow_right
+                            span 02h 15m
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code POR
+                                span.time 11:50
+                              p.airport.
+                                Porto Airport
+
+                              p.date 09 déc 2022
+                        .flight_inner_show_component
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code POR
+                                span.time 18:05
+                              p.airport.
+                                Porto Airport
+
+                              p.date 11 déc 2022
+                          .flight_duration
+                            .arrow_left
+                            span 02h 20m
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code BRU
+                                span.time 21:45
+                              p.airport.
+                                Brussels Airport
+
+                              p.date 11 déc 2022
+                        .TabPanelInner
+                          .flight_info_taable
+                            h3 60 € / pers.
+                            p (420 € au total)
+                      .flight_show_down_wrapper
+                        .airline-details
+                          h3 De: Madrid
+                        .flight_inner_show_component
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code MAD
+                                span.time 12:50
+                              p.airport.
+                                Aeropuerto de Barajas
+
+                              p.date 09 déc 2022
+                          .flight_duration
+                            .arrow_right
+                            span 02h 45m
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code POR
+                                span.time 14:35
+                              p.airport.
+                                Porto Airport
+
+                              p.date 09 déc 2022
+                        .flight_inner_show_component
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code POR
+                                span.time 18:05
+                              p.airport.
+                                Porto Airport
+
+                              p.date 11 déc 2022
+                          .flight_duration
+                            .arrow_left
+                            span 02h 35m
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code MAD
+                                span.time 22:00
+                              p.airport.
+                                Aeropuerto de Barajas
+
+                              p.date 11 déc 2022
+                        .TabPanelInner
+                          .flight_info_taable
+                            h3 85 € / pers.
+                            p (85 € au total)
+                      .flight_show_down_wrapper
+                        .airline-details
+                          h3 De: Bordeaux
+                        .flight_inner_show_component
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code BOD
+                                span.time 16:35
+                              p.airport.
+                                Bordeaux-Mérignac
+
+                              p.date 09 déc 2022
+                          .flight_duration
+                            .arrow_right
+                            span 02h 00m
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code POR
+                                span.time 17:35
+                              p.airport.
+                                Porto Airport
+
+                              p.date 09 déc 2022
+                        .flight_inner_show_component
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code POR
+                                span.time 16:30
+                              p.airport.
+                                Porto Airport
+
+                              p.date 11 déc 2022
+                          .flight_duration
+                            .arrow_left
+                            span 02h 20m
+                          .flight_det_wrapper
+                            .flight_det
+                              .code_time
+                                span.code BOD
+                                span.time 23:55
+                              p.airport.
+                                Bordeaux-Mérignac
+
+                              p.date 11 déc 2022
+                        .TabPanelInner
+                          .flight_info_taable
+                            h3 112 € / pers.
+                            p (112 € au total)
+    //  Footer  
+    footer#footer_area
+      .container
+        .row
+          .col-lg-3.col-md-6.col-sm-6.col-12
+            .footer_heading_area
+              h5 Besoin de nous?
+            .footer_first_area
+              .footer_inquery_area
+                h5 Envoyez un email à notre support
+                h3
+                  a(href='mailto:support@pulpito.com') support@pulpito.com
+          .col-lg-2.offset-lg-1.col-md-6.col-sm-6.col-12
+            .footer_heading_area
+              h5 Nous
+            .footer_link_area
+              ul
+                li
+                  a(href='about.html') À propos de nous
+                li
+                  a(href='testimonials.html') Témoignages clients
+                li
+                  a(href='faqs.html') FAQ
+                li
+                  a(href='terms-service.html') CGV
+                li
+                  a(href='news.html') Blog
+          .col-lg-2.col-md-4.col-sm-6.col-12
+            .footer_heading_area
+              h5 Support
+            .footer_link_area
+              ul
+                li
+                  a(href='dashboard.html') Compte
+                li
+                  a(href='faq.html') FAQ
+                li
+                  a(href='testimonials.html') Témoignages Client
+                li
+                  a(href='contact.html') Contact
+                li
+                  a(href='privacy-policy.html') Vie privée
+    .copyright_area
+      .container
+        .row.align-items-center
+          .co-lg-6.col-md-6.col-sm-12.col-12
+            .copyright_left
+              p Copyright © 2022 Webaddikt SL - Tous droits réservés
+          .co-lg-6.col-md-6.col-sm-12.col-12
+            .copyright_right
+              img(src='assets/img/common/cards.png' alt='img')
+    .go-top
+      i.fas.fa-chevron-up
+      i.fas.fa-chevron-up
+    script(src='assets/js/jquery-3.6.0.min.js')
+    //  Bootstrap js 
+    script(src='assets/js/bootstrap.bundle.js')
+    //  Meanu js 
+    script(src='assets/js/jquery.meanmenu.js')
+    //  Range js 
+    script(src='assets/js/nouislider.min.js')
+    script(src='assets/js/wNumb.js')
+    //  owl carousel js 
+    script(src='assets/js/owl.carousel.min.js')
+    //  wow.js 
+    script(src='assets/js/wow.min.js')
+    //  Custom js 
+    script(src='assets/js/custom.js')
+    script(src='assets/js/add-form.js')
+    script(src='assets/js/form-dropdown.js')

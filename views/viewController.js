@@ -7,11 +7,20 @@ exports.getHome = (req, res) => {
 exports.getCommon = async (req, res) => {
   console.log('req.body');
   console.log(req.body);
-  const { departureDate, returnDate, origins } = req.body;
+  let { departureDate, returnDate, origins } = req.body;
 
-  const baseParams = {
+  let baseParams = {
     departureDate,
     returnDate,
+  };
+
+  // static data to simulate PUG
+  baseParams = { departureDate: '09/12/2022', returnDate: '11/12/2022' };
+  origins = {
+    flyFrom: ['MAD', 'AGP', 'BER', 'LON'],
+    adults: [6, 1, 1, 1],
+    children: [0, 0, 0, 0],
+    infants: [0, 0, 0, 0],
   };
 
   const allOriginParams = origins.flyFrom.map((_, i) => {
@@ -30,7 +39,8 @@ exports.getCommon = async (req, res) => {
     originCodes
   );
 
-  res.render('search', {
+  // const commonItineraries = [];
+  res.render('common', {
     status: 'success',
     results: commonItineraries.length,
     data: commonItineraries,
