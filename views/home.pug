@@ -1,30 +1,5 @@
-body
-  h1 Welcome to Pulpito 
-  a(href='/') Home page
-  h1 Lets search for some destinations ...
-  form(action="/common", method="post") 
-    .form__group 
-      label(for='departureDate') 
-        strong Date Départ
-      input#departureDate(type='text',required,name='departureDate',value='09/12/2022')
-    .form__group 
-      label(for='returnDate') 
-        strong Date Retour
-      input#returnDate(type='text',required,name='returnDate',value='11/12/2022')
-    - var flyFroms = ['MAD','AGP','BER','LON']
-    each flyFrom, i in flyFroms
-      .form__group 
-        - var index = i + 1
-        strong  Lieu de départ #{index}  - 
-        label(for=`origin_${index}`) De 
-        input(id=`origin_${index}`, type='text',required,name='origins[][flyFrom]', maxlength=3, value=`${flyFrom}`,minlength=3)
-        label(for=`adults_${index}`) Adultes
-        input(id=`adults_${index}`, type='number',required,name='origins[][adults]', value=1)
-        label(for='children_${index}') Enfants
-        input(id=`children_${index}`, type='number',required,name='origins[][children]', value=0)
-        label(for='infants_${index}') Bébés
-        input(id=`infants_${index}`, type='number',required,name='origins[][infants]', value=0)
-    
-    .form_group 
-      button Rechercher
+extends base
 
+block content 
+
+  include _search-form-basic
