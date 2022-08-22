@@ -51,6 +51,8 @@ const cleanItineraryData = (input) => {
         onewayFlights[onewayFlights.length - 1].utc_arrival
       ),
       connections: extractConnections(onewayFlights),
+      flyFrom: onewayFlights[0].flyFrom,
+      flyTo: onewayFlights[onewayFlights.length - 1].flyTo,
       duration: Duration.fromMillis(
         itinerary.duration.departure * 1000
       ).toFormat("hh'h'mm"),
@@ -69,6 +71,8 @@ const cleanItineraryData = (input) => {
         returnFlights[returnFlights.length - 1].utc_arrival
       ),
       connections: extractConnections(returnFlights),
+      flyFrom: returnFlights[0].flyFrom,
+      flyTo: returnFlights[returnFlights.length - 1].flyTo,
       duration: Duration.fromMillis(itinerary.duration.return * 1000).toFormat(
         "hh'h'mm"
       ),
@@ -104,6 +108,6 @@ const extractConnections = (flights) => {
 };
 
 const formatTime = (d) =>
-  DateTime.fromISO(d).toLocaleString(DateTime.DATETIME_SHORT);
+  DateTime.fromISO(d).toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY);
 
 module.exports = { cleanItineraryData, extractConnections };

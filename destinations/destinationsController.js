@@ -57,7 +57,24 @@ const getCommonDestinations = catchAsyncKiwi(async (req, res, next) => {
   });
 });
 
+const getCheapestWeekend = catchAsyncKiwi(async (req, res, next) => {
+  const params = flightService.prepareDefaultParams(req.query);
+
+  const response = await flightService.getWeekendFlights(params);
+  console.log('request.params', response.request.path);
+  // console.log('response.data.data', response.data.data);
+
+  const flights = response.data.data.map(cleanItineraryData);
+
+  res.status(200).json({
+    status: 'success',
+    results: flights.length, //response.data.data.length,
+    data: flights, //flights,
+  });
+});
+
 module.exports = {
   getCheapestDestinations,
   getCommonDestinations,
+  getCheapestWeekend,
 };

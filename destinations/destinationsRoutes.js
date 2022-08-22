@@ -3,6 +3,7 @@ const express = require('express');
 const {
   getCheapestDestinations,
   getCommonDestinations,
+  getCheapestWeekend,
 } = require('./destinationsController');
 const {
   validateRequestParamsOneOrigin,
@@ -20,4 +21,5 @@ router
   .route('/common')
   .get(validateRequestParamsManyOrigins, getCommonDestinations);
 
+router.route('/cheapestWeekend').get(getCheapestWeekend);
 module.exports = router;
