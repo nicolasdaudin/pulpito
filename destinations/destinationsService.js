@@ -22,7 +22,7 @@ exports.buildCommonItineraries = async (allOriginsParams, origins) => {
 
   // console.log(`${allResponses.length} itineraries need to be cleaned`);
   const itineraries = allResponses.map(cleanItineraryData);
-  console.log('itineraries[0]', itineraries[0]);
+  // console.log('itineraries[0]', itineraries[0]);
   // group the array by field item.flyTo and extract all possible destinations
   // Array.groupByToMap is in stage 3 proposal
   // can be switched to lodash.groupBy (https://lodash.com/docs/4.17.15#groupBy)

@@ -21,7 +21,11 @@ app.use(helmet());
 
 if (process.env.NODE_ENV === 'development') {
   // adding 'GET' log messages
-  app.use(morgan('dev'));
+  app.use(
+    morgan('dev', {
+      skip: (req, res) => req.originalUrl.includes('/assets/'),
+    })
+  );
 }
 
 // body parser, reading data from body into req.body
@@ -63,29 +67,6 @@ app.use(
 
 // serving static files
 app.use(express.static(`${__dirname}/public`));
-
-// app.get('/', (req, res) => {
-//   console.log('connected');
-//   res.status(200).json({
-//     status: 'success',
-//     message: 'connected',
-//   });
-// });
-
-app.get('/test/', async (req, res) => {
-  try {
-    const response = await axios.get(
-      'https://jsonplaceholder.typicode.com/users'
-    );
-    console.log(response.data);
-    res.status(200).json({
-      status: 'success',
-      data: response.data,
-    });
-  } catch (err) {
-    console.error(err);
-  }
-});
 
 app.use('/', viewRouter);
 app.use('/api/v1/destinations', destinationsRouter);

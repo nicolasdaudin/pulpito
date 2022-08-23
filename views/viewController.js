@@ -5,8 +5,16 @@ exports.getHome = (req, res) => {
 };
 
 exports.getCommon = async (req, res) => {
+  res.render('common', {
+    status: 'success',
+    results: 0,
+    data: [],
+  });
+};
+
+exports.getFlights = async (req, res) => {
   console.log('req.body', req.body);
-  console.log(req.body);
+
   let { departureDate, returnDate, origins } = req.body;
 
   let baseParams = {
