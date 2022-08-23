@@ -1,7 +1,7 @@
 {
   "name": "pulpito",
-  "version": "1.2.0",
-  "description": "API and APP to help organize travels from different places to one destination",
+  "version": "1.3.0",
+  "description": "API and APP to help organize travels from different places to one destination, and find cheapest weekends to a given destination",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
