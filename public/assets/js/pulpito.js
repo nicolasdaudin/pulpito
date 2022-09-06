@@ -1,6 +1,6 @@
 $(document).ready(function () {
   $('#addMulticityRow').on('click', function () {
-    if (document.querySelectorAll('.multi_city_form').length === 5) {
+    if (document.querySelectorAll('.multi_city_form').length === 9) {
       alert('Max City Limit Reached!!');
       return;
     }
@@ -12,15 +12,7 @@ $(document).ready(function () {
     );
     const newIndex = +lastCityForm.dataset.originsIndex + 1;
     const newCityForm = lastCityForm.cloneNode(true);
-    newCityForm.insertAdjacentHTML(
-      'afterbegin',
-      `<div class="col-lg-12">
-            <div class="multi_form_remove">
-                <button type="button"
-                    id="remove_multi_city">Remove</button>
-            </div>
-        </div>`
-    );
+
     newCityForm.dataset.originsIndex = newIndex;
     newCityForm
       .querySelector('.btn-add')
@@ -49,6 +41,11 @@ $(document).ready(function () {
         'click',
         substractBtnHandler.bind({ type: '.incount', minValue: 0 })
       );
+
+    const originInput = newCityForm.querySelector(
+      `input[name='origins[][flyFrom]'`
+    );
+    autocomplete(originInput, cities);
 
     formWrapper.appendChild(newCityForm);
   });
@@ -84,10 +81,7 @@ function updateOriginPassengersCount(index) {
   const children = +passengersTypes.querySelector('.ccount').value;
   const infants = +passengersTypes.querySelector('.incount').value;
 
-  console.log(adults, children, infants);
-
   const passengersCount = adults + children + infants;
-  console.log(passengersCount);
 
   passengersCountElement.innerHTML = `${passengersCount} Passager${
     passengersCount > 1 ? 's' : ''

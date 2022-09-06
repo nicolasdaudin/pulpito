@@ -4,7 +4,6 @@ exports.getAirports = (req, res) => {
   const queryString = req.query.q;
 
   const airports = airportService.searchByString(queryString);
-  // console.log(airports);
 
   res.status(200).json({
     status: 'success',

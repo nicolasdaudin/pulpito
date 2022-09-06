@@ -1,18 +1,19 @@
 const destinationsService = require('../destinations/destinationsService');
+const { catchAsync, catchAsyncKiwi } = require('../utils/catchAsync');
 
 exports.getHome = (req, res) => {
   res.render('home');
 };
 
-exports.getCommon = async (req, res) => {
+exports.getCommon = catchAsync(async (req, res, next) => {
   res.render('common', {
     status: 'success',
     results: 0,
     data: [],
   });
-};
+});
 
-exports.getFlights = async (req, res) => {
+exports.getFlights = catchAsync(async (req, res, next) => {
   console.log('req.body', req.body);
 
   let { departureDate, returnDate, origins } = req.body;
@@ -53,4 +54,4 @@ exports.getFlights = async (req, res) => {
     results: commonItineraries.length,
     data: commonItineraries,
   });
-};
+});

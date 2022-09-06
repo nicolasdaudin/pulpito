@@ -10,15 +10,16 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                 .col-lg-12
                   .flight_categories_search
                     ul.nav.nav-tabs(role='tablist')
-                      li.nav-item(role='presentation')
-                        button.nav-link.active#oneway-tab(data-bs-toggle='tab' data-bs-target='#oneway_flight' type='button' role='tab' aria-controls='oneway_flight' aria-selected='true') Aller
-                      li.nav-item(role='presentation')
-                        button.nav-link#roundtrip-tab(data-bs-toggle='tab' data-bs-target='#roundtrip' type='button' role='tab' aria-controls='roundtrip' aria-selected='false') Aller/Retour
+                      //-
+                        li.nav-item(role='presentation')
+                          button.nav-link.active#oneway-tab(data-bs-toggle='tab' data-bs-target='#oneway_flight' type='button' role='tab' aria-controls='oneway_flight' aria-selected='true') Aller
+                        li.nav-item(role='presentation')
+                          button.nav-link#roundtrip-tab(data-bs-toggle='tab' data-bs-target='#roundtrip' type='button' role='tab' aria-controls='roundtrip' aria-selected='false') Aller/Retour
                       li.nav-item(role='presentation')
                         button.nav-link#multi_city-tab(data-bs-toggle='tab' data-bs-target='#multi_city' type='button' role='tab' aria-controls='multi_city' aria-selected='false') Plusieurs origines
               .tab-content#myTabContent1
                 //- Tab Oneway/"Aller" ==> disabled at the moment. When we reactivate, be careful since the inputs for number of passengers have the same name and stuff, and it could collide for the $().on() jquery instructions for adding and substracting passengers on Multicity/"Plusieurs origines" tab. 
-                  .tab-pane.fade.show.active#oneway_flight(role='tabpanel' aria-labelledby='oneway-tab')
+                  .tab-pane.fade#oneway_flight(role='tabpanel' aria-labelledby='oneway-tab')
                     .row
                       .col-lg-12
                         .oneway_search_form
@@ -220,11 +221,11 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                             .top_form_search_button
                               button.btn.btn_theme.btn_md Rechercher
                   
-                .tab-pane.fade#multi_city(role='tabpanel' aria-labelledby='multi_city-tab')
+                .tab-pane.fade.show.active#multi_city(role='tabpanel' aria-labelledby='multi_city-tab')
                   .row
                     .col-lg-12
                       .oneway_search_form
-                        form(action='/common', method='post')
+                        form(action='/common', method='post', autocomplete='off')
                           .multi_city_form_wrapper
                             .multi_city_form
                               .row
@@ -238,16 +239,21 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                                       .Journey_date
                                         p Retour
                                         input(type='date',required,name='returnDate',value='2022-12-18')
-                                        span TODO? Samedi
-                            - var flyFroms = ['MAD','PAR','LYS']
-                            each flyFrom, i in flyFroms 
+                                        span TODO? Samedi                            
+                            each i in [0,1]
                               .multi_city_form(data-origins-index=`${i}`)
+                                - var firstRow = (i === 0)
+                                if !firstRow
+                                  .col-lg-12
+                                    .multi_form_remove
+                                      button(type='button' id="remove_multi_city") Enlever ce point de départ
                                 .row
                                   .col-lg-6.col-md-6.col-sm-12.col-12
-                                    .flight_Search_boxed
+                                    .flight_Search_boxed.autocomplete
                                       p De
-                                      input(type='text',required,name='origins[][flyFrom]',value=`${flyFrom}`,maxlength=3)
-                                      span=`TODO? ${flyFrom}`
+                                      //- input(type='text',required,name='origins[][flyFrom]',value=`${flyFrom}`,maxlength=3)
+                                      input(type='text',required,name='origins[][flyFrom]',placeholder='Choisissez un aéroport de départ...',maxlength=10)
+                                      span
                                       .plan_icon_posation
                                         i.fas.fa-plane-departure
                                   .col-lg-6.col-md-6.col-sm-12.col-12
