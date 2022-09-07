@@ -1,5 +1,6 @@
 const destinationsService = require('../destinations/destinationsService');
 const { catchAsync, catchAsyncKiwi } = require('../utils/catchAsync');
+const DateTime = require('luxon').DateTime;
 
 exports.getHome = (req, res) => {
   res.render('home');
@@ -19,8 +20,8 @@ exports.getFlights = catchAsync(async (req, res, next) => {
   let { departureDate, returnDate, origins } = req.body;
 
   let baseParams = {
-    departureDate,
-    returnDate,
+    departureDate: DateTime.fromISO(departureDate).toFormat(`dd'/'LL'/'yyyy`),
+    returnDate: DateTime.fromISO(returnDate).toFormat(`dd'/'LL'/'yyyy`),
   };
 
   // // static data to simulate PUG
