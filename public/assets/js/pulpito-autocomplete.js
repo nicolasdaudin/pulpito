@@ -1,28 +1,9 @@
-const cities = [
-  'Madrid MAD',
-  'London Luton LTN',
-  'London Gatwick GAT',
-  'London Stansted STN',
-  'Paris Charles de Gaulles CDG',
-  'Paris Orly ORY',
-  'Paris Beauvais BVA',
-  'Lyon Saint Exupéry LYS',
-  "Dublin O'Farrell DUB",
-  'Lisbon José Saramago LIS',
-  'Oporto OPO',
-  'Bangkok BKK',
-  'Sydney SYD',
-  'Bordeaux BOD',
-  'Toulouse TLS',
-  'Barcelona El Prat BCN',
-];
-
 function doesItemContainsInput(item, input) {
   // console.log('doesItemContainsInput', item, input);
   return item.toLowerCase().includes(input.toLowerCase());
 }
 
-function autocomplete(inp, arr) {
+function autocomplete(inp) {
   /*the autocomplete function takes only one argument, the text field element */
 
   var currentFocus;
@@ -158,4 +139,4 @@ function autocomplete(inp, arr) {
 const originsInput = document.querySelectorAll(
   `.multi_city_form input[name='origins[][flyFrom]'`
 );
-originsInput.forEach((originInput) => autocomplete(originInput, cities));
+originsInput.forEach((originInput) => autocomplete(originInput));

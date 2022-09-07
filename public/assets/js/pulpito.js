@@ -45,7 +45,7 @@ $(document).ready(function () {
     const originInput = newCityForm.querySelector(
       `input[name='origins[][flyFrom]'`
     );
-    autocomplete(originInput, cities);
+    autocomplete(originInput);
 
     formWrapper.appendChild(newCityForm);
   });
@@ -110,7 +110,6 @@ function substractCounter(selector, index, minValue) {
   );
   const passengerSelector = passengersTypes.querySelector(selector);
   let value = +passengerSelector.value;
-  console.log(value, minValue);
 
   if (value !== minValue) {
     value--;
