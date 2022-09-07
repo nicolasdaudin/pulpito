@@ -3,7 +3,7 @@ extends base
 block content 
 
   include _search-form-template
-
+    
   
   
   //  Flight Search Areas 
@@ -13,114 +13,115 @@ block content
       .row
         .col-lg-12.col-md-12.col-sm-12.col-12
           .section_heading_center
-            h2=`${data.length} destinations trouvées`
-      .row
-        .col-lg-3
-          .left_side_search_area
-            .left_side_search_boxed
-              .left_side_search_heading
-                h5 Filtrer par prix
-              .filter-price
-                #price-slider
-              button.apply(type='button') Appliquer
-            .left_side_search_boxed
-              .left_side_search_heading
-                h5 Escales
-              .tour_search_type
-                .form-check
-                  input.form-check-input#flexCheckDefaultf1(type='checkbox')
-                  label.form-check-label(for='flexCheckDefaultf1')
-                    span.area_flex_one
-                      span 1 escale
-                      span 20
-                .form-check
-                  input.form-check-input#flexCheckDefaultf2(type='checkbox')
-                  label.form-check-label(for='flexCheckDefaultf2')
-                    span.area_flex_one
-                      span 2 escales ou plus
-                      span 16
-                .form-check
-                  input.form-check-input#flexCheckDefaultf4(type='checkbox')
-                  label.form-check-label(for='flexCheckDefaultf4')
-                    span.area_flex_one
-                      span Sans escale
-                      span 22
-        .col-lg-9
-          .row
-            .col-lg-12
-              .flight_search_result_wrapper
-                each itinerary,i in data  
-                  - var index = i + 1 
-                  .flight_search_item_wrappper(data-bs-toggle='collapse' data-bs-target=`#collapseExample${index}` aria-expanded='false' aria-controls=`#collapseExample${index}`)
-                    .flight_search_items
-                      .multi_city_flight_lists
-                        .flight_multis_area_wrapper
-                          .flight_search_left
-                            .flight_search_destination
-                              p Destination:
-                              h3=itinerary.cityTo
-                              h6=itinerary.flyTo
-                      .flight_search_right
-                        h2=`${itinerary.totalPrice} €`
-                        a.btn.btn_theme.btn_sm(href='flight-booking-submission.html') Réserver
-                        h6(data-bs-toggle='collapse' data-bs-target=`#collapseExample${index}` aria-expanded='false' aria-controls=`#collapseExample${index}`)
-                          | Détails 
-                          i.fas.fa-chevron-down
-                    .flight_policy_refund.collapse(id=`collapseExample${index}`)
-                      each flight in itinerary.flights
-                        .flight_show_down_wrapper
-                          .airline-details
-                            h3=`De: ${flight.cityFrom}`
-                          - var onewayConnections = (flight.route.oneway.connections.length > 0) ? flight.route.oneway.connections : null
-                         
-                          .flight_inner_show_component
-                            .flight_det_wrapper
-                              .flight_det
-                                .code_time
-                                  span.code=flight.flyFrom
-                                  span.time=`${flight.route.oneway.local_departure.split(',')[1].trim()}`
-                                p.airport=`${flight.cityFrom}`
+            h2=`${results} destinations trouvées`
+      if (data)
+        .row
+          .col-lg-3
+            .left_side_search_area
+              .left_side_search_boxed
+                .left_side_search_heading
+                  h5 Filtrer par prix
+                .filter-price
+                  #price-slider
+                button.apply(type='button') Appliquer
+              .left_side_search_boxed
+                .left_side_search_heading
+                  h5 Escales
+                .tour_search_type
+                  .form-check
+                    input.form-check-input#flexCheckDefaultf1(type='checkbox')
+                    label.form-check-label(for='flexCheckDefaultf1')
+                      span.area_flex_one
+                        span 1 escale
+                        span 20
+                  .form-check
+                    input.form-check-input#flexCheckDefaultf2(type='checkbox')
+                    label.form-check-label(for='flexCheckDefaultf2')
+                      span.area_flex_one
+                        span 2 escales ou plus
+                        span 16
+                  .form-check
+                    input.form-check-input#flexCheckDefaultf4(type='checkbox')
+                    label.form-check-label(for='flexCheckDefaultf4')
+                      span.area_flex_one
+                        span Sans escale
+                        span 22
+          .col-lg-9
+            .row
+              .col-lg-12
+                .flight_search_result_wrapper
+                  each itinerary,i in data  
+                    - var index = i + 1 
+                    .flight_search_item_wrappper(data-bs-toggle='collapse' data-bs-target=`#collapseExample${index}` aria-expanded='false' aria-controls=`#collapseExample${index}`)
+                      .flight_search_items
+                        .multi_city_flight_lists
+                          .flight_multis_area_wrapper
+                            .flight_search_left
+                              .flight_search_destination
+                                p Destination:
+                                h3=itinerary.cityTo
+                                h6=itinerary.flyTo
+                        .flight_search_right
+                          h2=`${itinerary.totalPrice} €`
+                          a.btn.btn_theme.btn_sm(href='flight-booking-submission.html') Réserver
+                          h6(data-bs-toggle='collapse' data-bs-target=`#collapseExample${index}` aria-expanded='false' aria-controls=`#collapseExample${index}`)
+                            | Détails 
+                            i.fas.fa-chevron-down
+                      .flight_policy_refund.collapse(id=`collapseExample${index}`)
+                        each flight in itinerary.flights
+                          .flight_show_down_wrapper
+                            .airline-details
+                              h3=`De: ${flight.cityFrom}`
+                            - var onewayConnections = (flight.route.oneway.connections.length > 0) ? flight.route.oneway.connections : null
+                          
+                            .flight_inner_show_component
+                              .flight_det_wrapper
+                                .flight_det
+                                  .code_time
+                                    span.code=flight.flyFrom
+                                    span.time=`${flight.route.oneway.local_departure.split(',')[1].trim()}`
+                                  p.airport=`${flight.cityFrom}`
 
-                                p.date=`${flight.route.oneway.local_departure.split(',')[0].trim()}`
-                            .flight_duration
-                              .arrow_right
-                              if flight.route.oneway.connections.length > 0
-                                span=flight.route.oneway.connections
-                              p=flight.route.oneway.duration
-                            .flight_det_wrapper
-                              .flight_det
-                                .code_time
-                                  span.code=flight.flyTo
-                                  span.time=`${flight.route.oneway.local_arrival.split(',')[1].trim()}`
-                                p.airport=`${flight.cityTo}`
+                                  p.date=`${flight.route.oneway.local_departure.split(',')[0].trim()}`
+                              .flight_duration
+                                .arrow_right
+                                if flight.route.oneway.connections.length > 0
+                                  span=flight.route.oneway.connections
+                                p=flight.route.oneway.duration
+                              .flight_det_wrapper
+                                .flight_det
+                                  .code_time
+                                    span.code=flight.flyTo
+                                    span.time=`${flight.route.oneway.local_arrival.split(',')[1].trim()}`
+                                  p.airport=`${flight.cityTo}`
 
-                                p.date=`${flight.route.oneway.local_arrival.split(',')[0].trim()}`
-                          .flight_inner_show_component
-                            .flight_det_wrapper
-                              .flight_det
-                                .code_time
-                                  span.code=flight.flyTo
-                                  span.time=`${flight.route.return.local_departure.split(',')[1].trim()}`
-                                p.airport=`${flight.cityTo}`
+                                  p.date=`${flight.route.oneway.local_arrival.split(',')[0].trim()}`
+                            .flight_inner_show_component
+                              .flight_det_wrapper
+                                .flight_det
+                                  .code_time
+                                    span.code=flight.flyTo
+                                    span.time=`${flight.route.return.local_departure.split(',')[1].trim()}`
+                                  p.airport=`${flight.cityTo}`
 
-                                p.date=`${flight.route.return.local_departure.split(',')[0].trim()}`
-                            .flight_duration
-                              .arrow_left
-                              if flight.route.return.connections.length > 0
-                                span=flight.route.return.connections
-                              p=flight.route.return.duration
-                            .flight_det_wrapper
-                              .flight_det
-                                .code_time
-                                  span.code=flight.flyFrom
-                                  span.time=`${flight.route.return.local_arrival.split(',')[1].trim()}`
-                                p.airport=`${flight.cityFrom}`
+                                  p.date=`${flight.route.return.local_departure.split(',')[0].trim()}`
+                              .flight_duration
+                                .arrow_left
+                                if flight.route.return.connections.length > 0
+                                  span=flight.route.return.connections
+                                p=flight.route.return.duration
+                              .flight_det_wrapper
+                                .flight_det
+                                  .code_time
+                                    span.code=flight.flyFrom
+                                    span.time=`${flight.route.return.local_arrival.split(',')[1].trim()}`
+                                  p.airport=`${flight.cityFrom}`
 
-                                p.date=`${flight.route.return.local_arrival.split(',')[0].trim()}`
-                          .TabPanelInner
-                            .flight_info_taable
-                              h3=`${flight.fare.adults} € / pers.`
-                              p=`(${flight.price} € au total)`
+                                  p.date=`${flight.route.return.local_arrival.split(',')[0].trim()}`
+                            .TabPanelInner
+                              .flight_info_taable
+                                h3=`${flight.fare.adults} € / pers.`
+                                p=`(${flight.price} € au total)`
 
 
 

@@ -44,15 +44,24 @@ exports.getFlights = catchAsync(async (req, res, next) => {
   });
   const originCodes = origins.flyFrom;
 
-  const commonItineraries = await destinationsService.buildCommonItineraries(
-    allOriginParams,
-    originCodes
-  );
+  try {
+    const commonItineraries = await destinationsService.buildCommonItineraries(
+      allOriginParams,
+      originCodes
+    );
 
-  // const commonItineraries = [];
-  res.render('common', {
-    status: 'success',
-    results: commonItineraries.length,
-    data: commonItineraries,
-  });
+    // const commonItineraries = [];
+    res.status(200).render('common', {
+      status: 'success',
+      results: commonItineraries.length,
+      data: commonItineraries,
+    });
+  } catch (err) {
+    console.log(err.response.data);
+    res.status(err.response.status).render('common', {
+      status: 'error',
+      results: 0,
+      error: err.response.data.error,
+    });
+  }
 });

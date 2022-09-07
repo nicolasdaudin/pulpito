@@ -17,6 +17,9 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                           button.nav-link#roundtrip-tab(data-bs-toggle='tab' data-bs-target='#roundtrip' type='button' role='tab' aria-controls='roundtrip' aria-selected='false') Aller/Retour
                       li.nav-item(role='presentation')
                         button.nav-link#multi_city-tab(data-bs-toggle='tab' data-bs-target='#multi_city' type='button' role='tab' aria-controls='multi_city' aria-selected='false') Plusieurs origines
+              if error
+                .alert.alert-danger.alert-dismissible(role="alert")=error                  
+                  
               .tab-content#myTabContent1
                 //- Tab Oneway/"Aller" ==> disabled at the moment. When we reactivate, be careful since the inputs for number of passengers have the same name and stuff, and it could collide for the $().on() jquery instructions for adding and substracting passengers on Multicity/"Plusieurs origines" tab. 
                   .tab-pane.fade#oneway_flight(role='tabpanel' aria-labelledby='oneway-tab')
