@@ -1,4 +1,4 @@
-const { cleanItineraryData } = require('../utils/helper');
+const { cleanItineraryData } = require('../utils/apiHelper');
 const groupByToMap = require('core-js-pure/actual/array/group-by-to-map');
 const AppError = require('../utils/appError');
 const { catchAsync, catchAsyncKiwi } = require('../utils/catchAsync');
