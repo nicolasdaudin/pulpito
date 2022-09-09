@@ -11,7 +11,9 @@ describe('AirportService', function () {
     test('should work the same for lower and upper case strings', function () {
       const airportsLower = airportService.searchByString('paris');
       const airportsUpper = airportService.searchByString('PARIS');
+      const airportsLowerAndUpper = airportService.searchByString('PaRiS');
       expect(airportsLower.length === airportsUpper.length).toBe(true);
+      expect(airportsLower.length === airportsLowerAndUpper.length).toBe(true);
     });
 
     test('should retrieve an empty array for non existing strings', function () {
@@ -39,7 +41,11 @@ describe('AirportService', function () {
     test('should work the same for lower and upper IATA codes', function () {
       const airportLower = airportService.findByIataCode('CDG');
       const airportUpper = airportService.findByIataCode('cdg');
+      const airportLowerAndUpper = airportService.findByIataCode('CdG');
       expect(airportLower.iata_code === airportUpper.iata_code).toBe(true);
+      expect(airportLower.iata_code === airportLowerAndUpper.iata_code).toBe(
+        true
+      );
     });
 
     test('should return null for non existing IATA codes', function () {

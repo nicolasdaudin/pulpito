@@ -1,11 +1,8 @@
-const fs = require('fs');
-const utf8 = require('utf8');
 const countries = require('./countryService');
-const buffer = require('buffer');
+const airportCodes = require('../datasets/airport-codes.json');
+const utils = require('../utils/utils');
 
-const airports = JSON.parse(
-  fs.readFileSync(`${__dirname}/../datasets/airport-codes.json`)
-)
+const airports = airportCodes
   .filter((airport) =>
     ['medium_airport', 'large_airport'].includes(airport.type)
   )
@@ -26,17 +23,6 @@ const mediumAirports = airports.filter(
   (airport) => airport.type === `medium_airport`
 );
 
-const reencodeString = (str) => {
-  return utf8.decode(
-    buffer.transcode(Buffer.from(str), 'utf8', 'latin1').toString('latin1')
-  );
-};
-
-const normalizeString = (str) =>
-  reencodeString(str)
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
-
 const reencodeAirport = (airport) => {
   // if (airport.iata_code === 'AGP') {
   //   console.log(
@@ -50,9 +36,9 @@ const reencodeAirport = (airport) => {
   return {
     ...airport,
     municipality: airport.municipality
-      ? reencodeString(airport.municipality)
+      ? utils.reencodeString(airport.municipality)
       : null,
-    name: airport.name ? reencodeString(airport.name) : null,
+    name: airport.name ? utils.reencodeString(airport.name) : null,
   };
 };
 
@@ -60,11 +46,15 @@ const airportContainsQuerySearch = (airport, str) => {
   const strToLowerCase = str.toLowerCase();
   return (
     (airport.municipality &&
-      normalizeString(airport.municipality)
+      utils
+        .normalizeString(airport.municipality)
         .toLowerCase()
         .includes(strToLowerCase)) ||
     (airport.name &&
-      normalizeString(airport.name).toLowerCase().includes(strToLowerCase)) ||
+      utils
+        .normalizeString(airport.name)
+        .toLowerCase()
+        .includes(strToLowerCase)) ||
     (airport.iata_code &&
       airport.iata_code.toLowerCase().includes(strToLowerCase))
     //   ||
@@ -76,11 +66,15 @@ const airportStartsWithQuerySearch = (airport, str) => {
   const strToLowerCase = str.toLowerCase();
   return (
     (airport.municipality &&
-      normalizeString(airport.municipality)
+      utils
+        .normalizeString(airport.municipality)
         .toLowerCase()
         .startsWith(strToLowerCase)) ||
     (airport.name &&
-      normalizeString(airport.name).toLowerCase().startsWith(strToLowerCase)) ||
+      utils
+        .normalizeString(airport.name)
+        .toLowerCase()
+        .startsWith(strToLowerCase)) ||
     (airport.iata_code &&
       airport.iata_code.toLowerCase().startsWith(strToLowerCase))
     //   ||
@@ -114,8 +108,6 @@ exports.searchByString = (searchStr) => {
 
   const str = searchStr.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
-  console.log(searchStr, str);
-
   // then get the BIG airports starting with the query string
   const largeStartsWith = largeAirports.filter((airport) =>
     airportStartsWithQuerySearch(airport, str)
@@ -145,9 +137,6 @@ exports.searchByString = (searchStr) => {
     )
   );
 
-  // array of the corresponding airports
-  console.time(str);
-
   // for performance reasons, we convert to a Map to be able to map a iata_code to the corresponding airport. Which is much faster than doing a map and a find ...
   const airportsMap = new Map(
     airports.map((airport) => [airport.iata_code, airport])
@@ -156,8 +145,6 @@ exports.searchByString = (searchStr) => {
   const uniqueAirports = uniqueIataCodes.map((iata_code) =>
     airportsMap.get(iata_code)
   );
-
-  console.timeEnd(str);
 
   // finally filter out some unnecessary fields (like continent, ...) and reencode special characters for display
 
