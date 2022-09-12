@@ -1,8 +1,5 @@
 const fs = require('fs');
-
-const countriesJSON = JSON.parse(
-  fs.readFileSync(`${__dirname}/../datasets/countries.json`)
-);
+const countriesJSON = require('../datasets/countries.json');
 
 const countries = new Map();
 countriesJSON.forEach((country) => {
