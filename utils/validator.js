@@ -13,7 +13,7 @@ const isCommaSeparatedNumeric = (str) => {
   return splitted.every(isNumeric);
 };
 
-exports.validateRequestParamsManyOrigins = (req, res, next) => {
+const validateRequestParamsManyOrigins = (req, res, next) => {
   // const { origin, departureDate } = req.params;
   console.log(req.query);
 
@@ -138,7 +138,7 @@ exports.validateRequestParamsManyOrigins = (req, res, next) => {
   next();
 };
 
-exports.validateRequestParamsOneOrigin = (req, res, next) => {
+const validateRequestParamsOneOrigin = (req, res, next) => {
   // const { origin, departureDate } = req.params;
   console.log(req.query);
 
@@ -225,4 +225,11 @@ exports.validateRequestParamsOneOrigin = (req, res, next) => {
   }
 
   next();
+};
+
+module.exports = {
+  isCommaSeparatedAlpha,
+  isCommaSeparatedNumeric,
+  validateRequestParamsManyOrigins,
+  validateRequestParamsOneOrigin,
 };
