@@ -8,7 +8,7 @@ const {
 const {
   validateRequestParamsOneOrigin,
   validateRequestParamsManyOrigins,
-} = require('../utils/validator');
+} = require('../common/validatorService');
 const { protect } = require('../user/authController');
 
 const router = express.Router();

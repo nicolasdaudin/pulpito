@@ -1,4 +1,5 @@
 const validator = require('./validator');
+const { isAlpha, isDate, isNumeric } = require('validator');
 
 describe('validator utils ', () => {
   describe('isCommaSeparatedAlpha', () => {
@@ -49,7 +50,120 @@ describe('validator utils ', () => {
     });
   });
 
-  describe('validateRequestParamsManyOrigins', () => {});
+  describe('findMissingParams', () => {
+    const model = [
+      {
+        name: 'requiredParam1',
+        required: true,
+      },
+      {
+        name: 'requiredParam2',
+        required: true,
+      },
+      {
+        name: 'requiredParam3',
+        required: true,
+      },
+      {
+        name: 'nonRequiredParam1',
+        required: false,
+      },
+    ];
 
-  describe('validateRequestParamsOneOrigin', () => {});
+    test('should return an empty array if no parameters from given model are missing', () => {
+      const params = {
+        requiredParam1: 'foo',
+        requiredParam2: 'bar',
+        requiredParam3: 'foobar',
+        nonRequiredParam1: 'foobar',
+      };
+      expect(validator.findMissingParams(model, params)).toEqual([]);
+    });
+    test('should return an array of the missing parameters names when they are missing', function () {
+      const params = {
+        requiredParam3: 'foobar',
+        nonRequiredParam1: 'foobar',
+        nonRequiredParam2: 'boofar',
+      };
+      expect(validator.findMissingParams(model, params)).toContain(
+        'requiredParam1'
+      );
+      expect(validator.findMissingParams(model, params)).toContain(
+        'requiredParam2'
+      );
+    });
+  });
+
+  describe('findWrongTypeParams', () => {
+    const model = [
+      {
+        name: 'alphaParam',
+        typeCheck: isAlpha,
+      },
+      {
+        name: 'numericParam',
+        typeCheck: isNumeric,
+      },
+      {
+        name: 'dateParam',
+        typeCheck: (str) => isDate(str, { format: 'DD/MM/YYYY' }),
+      },
+    ];
+
+    test('should return an empty array if parameters have the correct type', () => {
+      const params = {
+        alphaParam: 'foo',
+        numericParam: '42',
+        dateParam: '22/06/1984',
+      };
+      expect(validator.findWrongTypeParams(model, params)).toEqual([]);
+    });
+
+    test(`should return ['alphaParam'] when alphaParam contains something else than letters`, () => {
+      const params = {
+        alphaParam: 'adaafafa4',
+        numericParam: '42',
+        dateParam: '22/06/1984',
+      };
+      expect(validator.findWrongTypeParams(model, params)).toEqual([
+        'alphaParam',
+      ]);
+    });
+
+    test(`should return ['numericParam'] when numericParam contains letters`, () => {
+      const params = {
+        alphaParam: 'foo',
+        numericParam: '4a2',
+        dateParam: '22/06/1984',
+      };
+      expect(validator.findWrongTypeParams(model, params)).toEqual([
+        'numericParam',
+      ]);
+    });
+
+    test(`should return ['dateParam'] when dateParam is not of the correct format`, () => {
+      const params = {
+        alphaParam: 'foo',
+        numericParam: '42',
+        dateParam: '1984/06/22',
+      };
+      expect(validator.findWrongTypeParams(model, params)).toEqual([
+        'dateParam',
+      ]);
+    });
+
+    test(`should return an array that contains 'alphaNumeric' and 'numericParam' when both parameters have a wrong type `, () => {
+      const params = {
+        alphaParam: 'f4oo',
+        numericParam: '4a2',
+        dateParam: '22/06/1984',
+      };
+      expect(validator.findWrongTypeParams(model, params)).toContain(
+        'alphaParam'
+      );
+      expect(validator.findWrongTypeParams(model, params)).toContain(
+        'numericParam'
+      );
+    });
+  });
 });
