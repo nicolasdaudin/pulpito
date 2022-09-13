@@ -17,6 +17,12 @@ describe('validator utils ', () => {
       expect(validator.isCommaSeparatedAlpha('MAD-OPO-BRU')).toBe(false);
       expect(validator.isCommaSeparatedAlpha('MAD OPO BRU')).toBe(false);
     });
+    test('should return false when argument is empty', function () {
+      expect(validator.isCommaSeparatedAlpha('')).toBe(false);
+    });
+    test('should return false when argument ends with a comma', function () {
+      expect(validator.isCommaSeparatedAlpha('MAD,')).toBe(false);
+    });
   });
 
   describe('isCommaSeparatedNumeric', () => {
@@ -34,6 +40,12 @@ describe('validator utils ', () => {
       expect(validator.isCommaSeparatedNumeric('1;2;3')).toBe(false);
       expect(validator.isCommaSeparatedNumeric('1-2-3')).toBe(false);
       expect(validator.isCommaSeparatedNumeric('1 2 3')).toBe(false);
+    });
+    test('should return false when argument is empty', function () {
+      expect(validator.isCommaSeparatedNumeric('')).toBe(false);
+    });
+    test('should return false when argument ends with a comma', function () {
+      expect(validator.isCommaSeparatedNumeric('2,4,')).toBe(false);
     });
   });
 
