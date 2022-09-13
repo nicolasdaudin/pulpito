@@ -1,6 +1,61 @@
 const { Settings, Duration, DateTime } = require('luxon');
 Settings.defaultLocale = 'fr';
 
+const filterDestinationCities = (destinations, origins) => {
+  return Array.from(destinations.keys()).filter((key) =>
+    isCommonDestination(destinations.get(key), origins)
+  );
+};
+
+const isCommonDestination = (destination, origins) => {
+  // for each origin ('every'), I want to find it at least once as an origin ('cityCodeFrom') in the list of flights corresponding to this destination ('destinations.get(key)')
+  return origins.every(
+    (origin) =>
+      destination.findIndex((value) => value.cityCodeFrom === origin) > -1
+  );
+};
+
+// Prepare an object with all the flights corresponding to that destination, and compute some values like total duration, total price...
+const prepareItineraryData = (dest, itineraries) => {
+  const itinerary = { cityTo: dest };
+
+  // corresponding origins to that particular destination, we remove flights that do not go to that destination
+  // itinerary.flights will have one item per origin
+  itinerary.flights = itineraries.filter(
+    (itinerary) => itinerary.cityTo === dest
+  );
+
+  // common to all origins, for that particular destination
+  itinerary.countryTo = itinerary.flights[0].countryTo.name;
+  itinerary.cityCodeTo = itinerary.flights[0].cityCodeTo;
+
+  // compute total price
+  itinerary.totalPrice = itinerary.flights.reduce(
+    (sum, flight) => sum + flight.price,
+    0
+  );
+
+  // total distance
+  itinerary.totalDistance = itinerary.flights.reduce(
+    (sum, flight) => sum + flight.distance,
+    0
+  );
+
+  // total duration departure
+  itinerary.totalDurationDepartureInMinutes = itinerary.flights.reduce(
+    (sum, flight) => sum + flight.duration.departure / 60,
+    0
+  );
+
+  // total duration return
+  itinerary.totalDurationReturnInMinutes = itinerary.flights.reduce(
+    (sum, flight) => sum + flight.duration['return'] / 60,
+    0
+  );
+
+  return itinerary;
+};
+
 /**
  * Remove unnecessary info from API payload
  * @param {*} itinerary
@@ -110,4 +165,10 @@ const extractConnections = (flights) => {
 const formatTime = (d) =>
   DateTime.fromISO(d).toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY);
 
-module.exports = { cleanItineraryData, extractConnections };
+module.exports = {
+  cleanItineraryData,
+  extractConnections,
+  filterDestinationCities,
+  isCommonDestination,
+  prepareItineraryData,
+};

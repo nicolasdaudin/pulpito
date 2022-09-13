@@ -67,6 +67,13 @@ maybe('Flight Service', function () {
     });
   });
 
+  describe('prepareAxiosParams', function () {
+    test.todo('works');
+  });
+  describe('getWeekendFlights', function () {
+    test.todo('works');
+  });
+
   describe('prepareDefaultParams', function () {
     test('should used user params when present', () => {
       const params = {
