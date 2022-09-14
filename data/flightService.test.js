@@ -44,26 +44,32 @@ maybe('Flight Service', function () {
       spy.mockRestore();
     });
 
-    test('should receive a 400 error when empty params for KIWI service', async function () {
-      expect(async () => {
+    test('should throw a 400 error when empty params for KIWI service', async function () {
+      try {
         await flightService.getFlights({});
-      }).rejects.toThrow(/400/);
+      } catch (e) {
+        expect(e.message).toMatch(/400/);
+      }
     });
 
-    test('should receive a 400 error when missing params for KIWI service', async function () {
-      const { fly_from, ...others } = FLIGHT_API_PARAMS_FIXTURE;
+    test('should throw a 400 error when missing params for KIWI service', async function () {
+      const { fly_from } = FLIGHT_API_PARAMS_FIXTURE;
 
-      expect(async () => {
+      try {
         await flightService.getFlights({ fly_from });
-      }).rejects.toThrow(/400/);
+      } catch (e) {
+        expect(e.message).toMatch(/400/);
+      }
     });
 
-    test('should receive a 422 error when non-existing origin for KIWI service', async function () {
-      expect(async () => {
+    test('should throw a 422 error when non-existing origin for KIWI service', async function () {
+      try {
         await flightService.getFlights(
           FLIGHT_API_PARAMS_FIXTURE_NON_EXISTING_ORIGIN
         );
-      }).rejects.toThrow(/422/);
+      } catch (e) {
+        expect(e.message).toMatch(/422/);
+      }
     });
   });
 
