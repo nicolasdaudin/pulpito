@@ -1,9 +1,8 @@
-const { cleanItineraryData } = require('../utils/apiHelper');
+const helper = require('../utils/apiHelper');
 const groupByToMap = require('core-js-pure/actual/array/group-by-to-map');
 const AppError = require('../utils/appError');
 const { catchAsync, catchAsyncKiwi } = require('../utils/catchAsync');
 const flightService = require('../data/flightService');
-const axios = require('axios').default;
 const destinationsService = require('./destinationsService');
 
 /**
@@ -16,12 +15,12 @@ const destinationsService = require('./destinationsService');
  * @param {*} res
  */
 const getCheapestDestinations = catchAsyncKiwi(async (req, res, next) => {
-  const params = flightService.prepareDefaultParams(req.query);
+  const params = helper.prepareDefaultAPIParams(req.query);
 
   const response = await flightService.getFlights(params);
   // console.log('response.data.data', response.data.data);
 
-  const flights = response.data.data.map(cleanItineraryData);
+  const flights = response.data.data.map(helper.cleanItineraryData);
 
   res.status(200).json({
     status: 'success',
@@ -39,7 +38,7 @@ const getCheapestDestinations = catchAsyncKiwi(async (req, res, next) => {
  * @param {*} res
  */
 const getCommonDestinations = catchAsyncKiwi(async (req, res, next) => {
-  const allOriginsParams = flightService.prepareSeveralOriginParams(req.query);
+  const allOriginsParams = helper.prepareSeveralOriginAPIParams(req.query);
 
   // const instance = prepareAxiosRequest();
 
@@ -58,13 +57,13 @@ const getCommonDestinations = catchAsyncKiwi(async (req, res, next) => {
 });
 
 const getCheapestWeekend = catchAsyncKiwi(async (req, res, next) => {
-  const params = flightService.prepareDefaultParams(req.query);
+  const params = helper.prepareDefaultAPIParams(req.query);
 
   const response = await flightService.getWeekendFlights(params);
   console.log('request.params', response.request.path);
   // console.log('response.data.data', response.data.data);
 
-  const flights = response.data.data.map(cleanItineraryData);
+  const flights = response.data.data.map(helper.cleanItineraryData);
 
   res.status(200).json({
     status: 'success',

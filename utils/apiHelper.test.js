@@ -158,4 +158,68 @@ describe('API Helper', function () {
       expect(helper.isCommonDestination(destination, origins)).toBe(false);
     });
   });
+
+  describe('prepareDefaultAPIParams', function () {
+    test('should used user params when present', () => {
+      const params = {
+        adults: 3,
+        children: 2,
+        infants: 3,
+      };
+
+      const preparedParams = helper.prepareDefaultAPIParams(params);
+
+      expect(preparedParams.adults).toBe(params.adults);
+      expect(preparedParams.children).toBe(params.children);
+      expect(preparedParams.infants).toBe(params.infants);
+    });
+
+    test('should include default params when missing', () => {
+      const params = {};
+
+      const preparedParams = helper.prepareDefaultAPIParams(params);
+
+      expect(preparedParams.adults).toBe(1);
+      expect(preparedParams.children).toBe(0);
+      expect(preparedParams.infants).toBe(0);
+    });
+  });
+
+  describe('prepareSeveralOriginAPIParams', function () {
+    test('should return an array of same lengh than the number of origins', () => {
+      const params = {
+        origin: 'MAD,CRL,BRU,SXF,JFK',
+      };
+
+      const preparedParams = helper.prepareSeveralOriginAPIParams(params);
+
+      expect(preparedParams.length).toBe(params.origin.split(',').length);
+    });
+
+    test('should return 1 adult, 0 children, 0 infant for each origin if nothing specified', () => {
+      const params = {
+        origin: 'MAD,CRL,BRU,SXF,JFK',
+      };
+
+      const preparedParams = helper.prepareSeveralOriginAPIParams(params);
+
+      expect(preparedParams[0].adults).toBe(1);
+      expect(preparedParams[0].children).toBe(0);
+      expect(preparedParams[0].infants).toBe(0);
+    });
+
+    test('should return the correct number of adults, children and infants for each origin when specified', () => {
+      const params = {
+        origin: 'MAD,CRL,BRU,SXF,JFK',
+        adults: '1,2,1,3,1',
+        children: '0,0,3,1,1',
+      };
+
+      const preparedParams = helper.prepareSeveralOriginAPIParams(params);
+
+      expect(preparedParams[1].adults).toBe(2);
+      expect(preparedParams[2].children).toBe(3);
+      expect(preparedParams[0].infants).toBe(0);
+    });
+  });
 });
