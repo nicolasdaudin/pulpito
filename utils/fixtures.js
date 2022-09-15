@@ -20,6 +20,28 @@ const FLIGHT_API_PARAMS_FIXTURE_NON_EXISTING_ORIGIN = {
   // adults: 1,
 };
 
+const FLIGHT_API_PARAMS_FIXTURE_WEEKEND = {
+  origin: 'MAD',
+  destination: 'PAR',
+  departureDateFrom: DateTime.now()
+    .plus({ months: 1 })
+    .toFormat(KIWI_DATE_FORMAT),
+  departureDateTo: DateTime.now()
+    .plus({ months: 4 })
+    .toFormat(KIWI_DATE_FORMAT),
+};
+
+const FLIGHT_API_PARAMS_FIXTURE_WEEKEND_NON_EXISTING_ORIGIN = {
+  origin: 'PXR',
+  destination: 'MAD',
+  departureDateFrom: DateTime.now()
+    .plus({ months: 1 })
+    .toFormat(KIWI_DATE_FORMAT),
+  departureDateTo: DateTime.now()
+    .plus({ months: 4 })
+    .toFormat(KIWI_DATE_FORMAT),
+};
+
 const CHEAPEST_DESTINATION_QUERY_FIXTURE = {
   origin: 'CDG',
   departureDate: DateTime.now().plus({ weeks: 1 }).toFormat(KIWI_DATE_FORMAT),
@@ -2316,8 +2338,8 @@ module.exports = {
   KIWI_DATE_FORMAT,
   FLIGHT_API_PARAMS_FIXTURE,
   FLIGHT_API_PARAMS_FIXTURE_NON_EXISTING_ORIGIN,
-  //RETURN_KIWI_ITINERARY_FIXTURE,
-  //ONE_WAY_KIWI_ITINERARY_FIXTURE,
+  FLIGHT_API_PARAMS_FIXTURE_WEEKEND,
+  FLIGHT_API_PARAMS_FIXTURE_WEEKEND_NON_EXISTING_ORIGIN,
   CHEAPEST_DESTINATION_QUERY_FIXTURE,
   CHEAPEST_DESTINATION_KIWI_RESULT_FIXTURE,
   COMMON_DESTINATION_QUERY_FIXTURE,

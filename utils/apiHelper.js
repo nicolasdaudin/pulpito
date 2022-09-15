@@ -165,10 +165,27 @@ const extractConnections = (flights) => {
 const formatTime = (d) =>
   DateTime.fromISO(d).toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY);
 
+const prepareAxiosParams = (params) => {
+  var urlSearchParams = new URLSearchParams();
+
+  for (param in params) {
+    // console.log('prepareAxiosParams', param, params[param]);
+    if (Array.isArray(params[param])) {
+      for (key in params[param]) {
+        urlSearchParams.append(param, params[param][key]);
+      }
+    } else {
+      if (params[param]) urlSearchParams.append(param, params[param]);
+    }
+  }
+  return urlSearchParams;
+};
+
 module.exports = {
   cleanItineraryData,
   extractConnections,
   filterDestinationCities,
   isCommonDestination,
   prepareItineraryData,
+  prepareAxiosParams,
 };

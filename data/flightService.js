@@ -1,19 +1,5 @@
 const axios = require('axios').default;
-
-const prepareAxiosParams = (params) => {
-  var urlSearchParams = new URLSearchParams();
-  for (param in params) {
-    if (Array.isArray(params[param])) {
-      console.log(param, params[param]);
-      for (key in params[param]) {
-        urlSearchParams.append(param, params[param][key]);
-      }
-    } else {
-      urlSearchParams.append(param, params[param]);
-    }
-  }
-  return urlSearchParams;
-};
+const helper = require('../utils/apiHelper');
 
 const getWeekendFlights = async (params) => {
   // var flyingDaysParams = new URLSearchParams();
@@ -65,9 +51,8 @@ const getWeekendFlights = async (params) => {
       headers: {
         apikey: process.env.KIWI_API_KEY,
       },
-      params: prepareAxiosParams(axiosParams),
+      params: helper.prepareAxiosParams(axiosParams),
     });
-
     return response;
   } catch (err) {
     // console.error(err.message);
@@ -80,7 +65,6 @@ const getWeekendFlights = async (params) => {
 
 // FIXME: better handle errors
 const getFlights = async (params) => {
-  // console.log('calling getFlights');
   try {
     const response = await axios.get(process.env.KIWI_URL, {
       headers: {
