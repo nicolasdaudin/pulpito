@@ -26,11 +26,11 @@ describe('AuthController', () => {
   beforeEach(() => {
     res = {
       status: jest.fn().mockImplementation(function (arg) {
-        console.log('calling res.status');
+        // console.log('calling res.status');
         return this;
       }),
       json: jest.fn().mockImplementation(function (obj) {
-        console.log('calling res.json');
+        // console.log('calling res.json');
         this.data = obj.data;
         this.message = obj.message;
       }),
@@ -108,7 +108,7 @@ describe('AuthController', () => {
         const sendPasswordResetTokenEmailSpy = jest
           .spyOn(email, 'sendPasswordResetTokenEmail')
           .mockImplementation(() => {
-            console.log('not sending an actual email');
+            //console.log('not sending an actual email');
           });
 
         await authController.forgotPassword(req, res, next);
@@ -117,8 +117,8 @@ describe('AuthController', () => {
 
         // retrieve the new user from DB
         const updatedUser = await User.findById(newUser.id);
-        console.log('newUser', newUser);
-        console.log('updatedUser', updatedUser);
+        //console.log('newUser', newUser);
+        //console.log('updatedUser', updatedUser);
         expect(updatedUser.passwordResetToken).not.toBeUndefined();
 
         expect(res.status).toHaveBeenCalledWith(200);
@@ -187,11 +187,11 @@ describe('AuthController', () => {
           const fakeStatusCode = faker.internet.httpStatusCode();
           const res = {
             status: jest.fn().mockImplementation(function (arg) {
-              console.log('calling res.status');
+              //console.log('calling res.status');
               return this;
             }),
             json: jest.fn().mockImplementation(function (obj) {
-              console.log('calling res.json');
+              //console.log('calling res.json');
               this.data = obj.data;
               this.message = obj.message;
             }),
@@ -226,7 +226,7 @@ describe('AuthController', () => {
             password: fakePassword,
             passwordConfirm: fakePassword,
           };
-          //console.log(fakeUser);
+          ////console.log(fakeUser);
           let newUser;
 
           // to finished

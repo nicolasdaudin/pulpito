@@ -37,9 +37,9 @@ const buildCommonItineraries = async (allOriginsParams, origins) => {
     origins
   );
 
-  console.log(
-    `${filteredDestinationCities.length} common destinations found: ${filteredDestinationCities}`
-  );
+  // console.log(
+  //   `${filteredDestinationCities.length} common destinations found: ${filteredDestinationCities}`
+  // );
 
   // For each destination, have an array with the flights, total price and total distance and total duration
   // (preparing for display)

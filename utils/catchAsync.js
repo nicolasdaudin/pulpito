@@ -1,10 +1,10 @@
 const AppError = require('./appError');
 
 const handleKiwiError = (err) => {
-  console.log(
-    'Error while processing the request to KIWI : ',
-    err.response.data
-  );
+  // console.log(
+  //   'Error while processing the request to KIWI : ',
+  //   err.response.data
+  // );
 
   if (err.response.status === 422 || err.response.status === 400) {
     // an error occurred on 3rd party Kiwi because of some input query parameters fed to to Pulpito API client (if error 422) or because some parameters for KIWI are missing (error 400)

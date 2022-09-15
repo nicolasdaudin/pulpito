@@ -15,7 +15,7 @@ exports.getCommon = catchAsync(async (req, res, next) => {
 });
 
 exports.getFlights = catchAsync(async (req, res, next) => {
-  console.log('req.body', req.body);
+  // console.log('req.body', req.body);
 
   let { departureDate, returnDate, origins } = req.body;
 
@@ -57,7 +57,7 @@ exports.getFlights = catchAsync(async (req, res, next) => {
       data: commonItineraries,
     });
   } catch (err) {
-    console.log(err.response.data);
+    // console.log(err.response.data);
     res.status(err.response.status).render('common', {
       status: 'error',
       results: 0,

@@ -133,7 +133,7 @@ const forgotPassword = catchAsync(async (req, res, next) => {
 
   const user = await User.findOne({ email: req.body.email });
 
-  console.log('user found', user);
+  // console.log('user found', user);
   if (!user) {
     return next(new AppError('There is no user with this email address.', 404));
   }
