@@ -60,11 +60,10 @@ const getCheapestWeekend = catchAsyncKiwi(async (req, res, next) => {
   const params = helper.prepareDefaultAPIParams(req.query);
 
   const response = await flightService.getWeekendFlights(params);
-  console.log('request.params', response.request.path);
+  // console.log('request.params', response.request.path);
   // console.log('response.data.data', response.data.data);
 
   const flights = response.data.data.map(helper.cleanItineraryData);
-
   res.status(200).json({
     status: 'success',
     results: flights.length, //response.data.data.length,

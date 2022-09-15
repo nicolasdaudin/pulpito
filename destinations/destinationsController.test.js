@@ -1,6 +1,7 @@
 const destinationsController = require('./destinationsController.js');
 const {
   CHEAPEST_DESTINATION_QUERY_FIXTURE,
+  CHEAPEST_WEEKEND_QUERY_FIXTURE,
   CHEAPEST_DESTINATION_KIWI_RESULT_FIXTURE,
   CHEAPEST_DESTINATION_QUERY_FIXTURE_NON_EXISTING_ORIGIN,
   COMMON_DESTINATION_QUERY_FIXTURE_NON_EXISTING_ORIGIN,
@@ -14,8 +15,8 @@ const {
 const flightService = require('../data/flightService');
 const AppError = require('../utils/appError.js');
 
+// FIXME: should be improved or at least checked. Maybe need to refactor, add or remove some tests. I want to move forward and add some e2e tests so I won't spend time on this at the moment, but I could do it later.
 describe('Destinations Controller', function () {
-  // FIXME: should be improved or at least checked. Not sure if the tests are enough... but I will focus my time on E2E tests
   describe('getCheapestDestinations', function () {
     describe('success cases', function () {
       let req, res, next;
@@ -152,7 +153,6 @@ describe('Destinations Controller', function () {
     });
   });
 
-  // FIXME: should be improved or at least checked. Not sure if the tests are enough... but I will focus my time on E2E tests
   describe('getCommonDestinations', function () {
     describe('success cases', function () {
       let req, res, next;
@@ -334,6 +334,142 @@ describe('Destinations Controller', function () {
   });
 
   describe('getCheapestWeekend', function () {
-    test.todo('works');
+    describe('success cases', function () {
+      let req, res, next;
+      let getFlightsSpy;
+      beforeEach(() => {
+        getFlightsSpy = jest
+          .spyOn(flightService, 'getWeekendFlights')
+          .mockResolvedValue({
+            data: {
+              data: CHEAPEST_DESTINATION_KIWI_RESULT_FIXTURE,
+            },
+          });
+
+        req = {
+          query: CHEAPEST_WEEKEND_QUERY_FIXTURE,
+        };
+
+        res = {
+          status: jest.fn().mockImplementation(function (arg) {
+            return this;
+          }),
+          json: jest.fn().mockImplementation(function (obj) {
+            this.data = obj.data;
+          }),
+          data: null,
+        };
+        next = jest.fn();
+      });
+      afterAll(() => {
+        getFlightsSpy.mockRestore();
+      });
+
+      test('should use flightService', async function () {
+        await destinationsController.getCheapestWeekend(req, res, next);
+
+        // check that getWeekendFlights has been called
+        expect(flightService.getWeekendFlights).toHaveBeenCalled();
+      });
+
+      test('should search for one adult if nothing specified', async function () {
+        await destinationsController.getCheapestWeekend(req, res, next);
+
+        expect(flightService.getWeekendFlights).toHaveBeenCalledWith(
+          expect.objectContaining({
+            adults: 1,
+            children: 0,
+            infants: 0,
+          })
+        );
+      });
+
+      test('should return success if all good', async function () {
+        await destinationsController.getCheapestWeekend(req, res, next);
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(Array.isArray(res.data)).toBe(true);
+        expect(res.data[0]).toHaveProperty('flyFrom');
+
+        expect(res.data[0].flyFrom).toBe(
+          CHEAPEST_DESTINATION_KIWI_RESULT_FIXTURE[0].flyFrom
+        );
+        expect(res.data).toHaveLength(
+          CHEAPEST_DESTINATION_KIWI_RESULT_FIXTURE.length
+        );
+        // checking that it has been cleaned
+        expect(res.data[0]).not.toHaveProperty('countryFrom');
+      });
+
+      // this is an error case for getFlights, but for getFlightsWeekend we add params nights_in_dst_from and nights_in_dest_to which are enough for Kiwi to perform a search, even though there are no departure dates interval (from->to) and destination.
+      test('should return success when only origin is specified, and no possible departure dates and no destination ', async function () {
+        const req = { query: { origin: 'CDG' } };
+
+        await destinationsController.getCheapestWeekend(req, res, next);
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(Array.isArray(res.data)).toBe(true);
+        expect(res.data[0]).toHaveProperty('flyFrom');
+
+        expect(res.data[0].flyFrom).toBe(
+          CHEAPEST_DESTINATION_KIWI_RESULT_FIXTURE[0].flyFrom
+        );
+        expect(res.data).toHaveLength(
+          CHEAPEST_DESTINATION_KIWI_RESULT_FIXTURE.length
+        );
+        // checking that it has been cleaned
+        expect(res.data[0]).not.toHaveProperty('countryFrom');
+      });
+    });
+    describe('error cases', function () {
+      let res, next;
+      beforeEach(() => {
+        res = {
+          status: jest.fn().mockImplementation(function (arg) {
+            return this;
+          }),
+          json: jest.fn().mockImplementation(function (obj) {
+            this.data = obj.data;
+          }),
+          data: null,
+        };
+        next = jest.fn();
+      });
+
+      // TODO: is it necessary? before getCheapestDestination, we have a middleware checking for input params
+      test('should return error 400 when no input parameters ', async function () {
+        const req = { query: {} };
+
+        await destinationsController.getCheapestWeekend(req, res, next);
+
+        // check that response is an error
+        expect(next).toHaveBeenCalledWith(expect.any(AppError));
+
+        expect(next).toHaveBeenCalledWith(
+          expect.objectContaining({
+            statusCode: 400,
+            message: expect.stringContaining('departure location'),
+          })
+        );
+      });
+
+      test('should return error 400 when unknown origin like PXR ', async function () {
+        const req = {
+          query: CHEAPEST_DESTINATION_QUERY_FIXTURE_NON_EXISTING_ORIGIN,
+        };
+
+        await destinationsController.getCheapestWeekend(req, res, next);
+
+        // check that response is an error
+        expect(next).toHaveBeenCalledWith(expect.any(AppError));
+
+        expect(next).toHaveBeenCalledWith(
+          expect.objectContaining({
+            statusCode: 400,
+            message: expect.stringContaining('no locations'),
+          })
+        );
+      });
+    });
   });
 });

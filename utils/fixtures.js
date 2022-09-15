@@ -48,6 +48,17 @@ const CHEAPEST_DESTINATION_QUERY_FIXTURE = {
   returnDate: DateTime.now().plus({ weeks: 2 }).toFormat(KIWI_DATE_FORMAT),
 };
 
+const CHEAPEST_WEEKEND_QUERY_FIXTURE = {
+  origin: 'CDG',
+  destination: 'MAD',
+  departureDateFrom: DateTime.now()
+    .plus({ months: 1 })
+    .toFormat(KIWI_DATE_FORMAT),
+  departureDateTo: DateTime.now()
+    .plus({ months: 4 })
+    .toFormat(KIWI_DATE_FORMAT),
+};
+
 const COMMON_DESTINATION_QUERY_FIXTURE = {
   origin: 'MAD,BOD,BRU', // do not change since COMMON_DESTINATION_KIWI_RESULT_FIXTURE_MAD and others will have to be updated
   departureDate: DateTime.now().plus({ weeks: 1 }).toFormat(KIWI_DATE_FORMAT),
@@ -2342,6 +2353,7 @@ module.exports = {
   FLIGHT_API_PARAMS_FIXTURE_WEEKEND_NON_EXISTING_ORIGIN,
   CHEAPEST_DESTINATION_QUERY_FIXTURE,
   CHEAPEST_DESTINATION_KIWI_RESULT_FIXTURE,
+  CHEAPEST_WEEKEND_QUERY_FIXTURE,
   COMMON_DESTINATION_QUERY_FIXTURE,
   COMMON_DESTINATION_QUERY_FIXTURE_INCORRECT_ORIGIN_FORMAT,
   CHEAPEST_DESTINATION_QUERY_FIXTURE_NON_EXISTING_ORIGIN,
