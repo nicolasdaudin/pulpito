@@ -146,7 +146,7 @@ const cleanItineraryData = (input) => {
   delete itinerary.virtual_interlining;
   delete itinerary.transfers;
   delete itinerary.booking_token;
-  delete itinerary.deep_link;
+  // delete itinerary.deep_link;
   delete itinerary.local_arrival;
   delete itinerary.local_departure;
   delete itinerary.utc_arrival;

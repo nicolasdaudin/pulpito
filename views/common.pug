@@ -52,7 +52,8 @@ block content
                 .flight_search_result_wrapper
                   each itinerary,i in data  
                     - var index = i + 1 
-                    .flight_search_item_wrappper(data-bs-toggle='collapse' data-bs-target=`#collapseExample${index}` aria-expanded='false' aria-controls=`#collapseExample${index}`)
+                    //- .flight_search_item_wrappper(data-bs-toggle='collapse' data-bs-target=`#collapseExample${index}` aria-expanded='false' aria-controls=`#collapseExample${index}`)
+                    .flight_search_item_wrappper
                       .flight_search_items
                         .multi_city_flight_lists
                           .flight_multis_area_wrapper
@@ -62,8 +63,11 @@ block content
                                 h3=itinerary.cityTo
                                 h6=itinerary.flyTo
                         .flight_search_right
-                          h2=`${itinerary.totalPrice} €`
-                          a.btn.btn_theme.btn_sm(href='flight-booking-submission.html') Réserver
+                          - var links = [];
+                          each flight in itinerary.flights 
+                            - links.push(flight.deep_link)
+                          h2=`${itinerary.totalPrice} €`                          
+                          a.btn.btn_theme.btn_sm.btn_book_all(data-links=links) Réserver tous les vols ↗️
                           h6(data-bs-toggle='collapse' data-bs-target=`#collapseExample${index}` aria-expanded='false' aria-controls=`#collapseExample${index}`)
                             | Détails 
                             i.fas.fa-chevron-down
@@ -122,6 +126,7 @@ block content
                               .flight_info_taable
                                 h3=`${flight.fare.adults} € / pers.`
                                 p=`(${flight.price} € au total)`
+                                a.btn.btn_theme.btn_sm.btn_book(target='_blank',href=`${flight.deep_link}`) Réserver ce vol ↗️
 
 
 

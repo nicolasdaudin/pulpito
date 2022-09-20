@@ -166,3 +166,18 @@ $(document).ready(function () {
     $(this).addClass('active');
   });
 });
+
+const openLinks = (links) => {
+  links.forEach((link) => {
+    window.open(link, '_blank');
+  });
+};
+
+const flightSearchResultWrapper = document.querySelector(
+  '.flight_search_result_wrapper'
+);
+flightSearchResultWrapper.addEventListener('click', (e) => {
+  const btnBookAll = e.target.closest('.btn_book_all');
+  if (!btnBookAll) return;
+  openLinks(JSON.parse(btnBookAll.dataset.links));
+});
