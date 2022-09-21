@@ -1,6 +1,7 @@
 const destinationsService = require('../destinations/destinationsService');
 const { catchAsync, catchAsyncKiwi } = require('../utils/catchAsync');
 const DateTime = require('luxon').DateTime;
+const airportService = require('../airports/airportService');
 
 exports.getHome = (req, res) => {
   res.render('home');
@@ -15,7 +16,7 @@ exports.getCommon = catchAsync(async (req, res, next) => {
 });
 
 exports.getFlights = catchAsync(async (req, res, next) => {
-  // console.log('req.body', req.body);
+  console.log('req.body', req.body);
 
   let { departureDate, returnDate, origins } = req.body;
 
@@ -50,14 +51,19 @@ exports.getFlights = catchAsync(async (req, res, next) => {
       originCodes
     );
 
+    req.body.origins.flyFromDesc = req.body.origins.flyFrom.map((iataCode) => {
+      const airportInfo = airportService.findByIataCode(iataCode);
+      return `${airportInfo.municipality} - ${airportInfo.name} (${airportInfo.iata_code}) - ${airportInfo.country}`;
+    });
+
     // const commonItineraries = [];
     res.status(200).render('common', {
       status: 'success',
       results: commonItineraries.length,
       data: commonItineraries,
+      request: req.body,
     });
   } catch (err) {
-    // console.log(err.response.data);
     res.status(err.response.status).render('common', {
       status: 'error',
       results: 0,

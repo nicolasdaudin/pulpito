@@ -19,7 +19,7 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                         button.nav-link#multi_city-tab(data-bs-toggle='tab' data-bs-target='#multi_city' type='button' role='tab' aria-controls='multi_city' aria-selected='false') Plusieurs origines
               if error
                 .alert.alert-danger.alert-dismissible(role="alert")=error                  
-                  
+
               .tab-content#myTabContent1
                 //- Tab Oneway/"Aller" ==> disabled at the moment. When we reactivate, be careful since the inputs for number of passengers have the same name and stuff, and it could collide for the $().on() jquery instructions for adding and substracting passengers on Multicity/"Plusieurs origines" tab. 
                   .tab-pane.fade#oneway_flight(role='tabpanel' aria-labelledby='oneway-tab')
@@ -223,7 +223,7 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                                   span Business
                             .top_form_search_button
                               button.btn.btn_theme.btn_md Rechercher
-                  
+
                 .tab-pane.fade.show.active#multi_city(role='tabpanel' aria-labelledby='multi_city-tab')
                   .row
                     .col-lg-12
@@ -237,13 +237,25 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                                     .flight_Search_boxed.date_flex_area
                                       .Journey_date
                                         p Aller
-                                        input(type='date',required,name='departureDate',value='2022-12-16')
+                                        input(type='date',required,name='departureDate',value=request ? request.departureDate: '')
                                         span TODO? Jeudi
                                       .Journey_date
                                         p Retour
-                                        input(type='date',required,name='returnDate',value='2022-12-18')
+                                        input(type='date',required,name='returnDate',value=request ? request.returnDate : '')
                                         span TODO? Samedi                            
-                            each i in [0,1]
+                            - var PLACEHOLDER = 'placeholder'
+                            - var flyFroms = [PLACEHOLDER, PLACEHOLDER];  
+                            - var adults = ['1','1'];
+                            - var children = ['0','0'];
+                            - var infants = ['0','0'];    
+                            - var flyFromDesc = ['',''];
+                            if request
+                              - flyFroms = request.origins.flyFrom 
+                              - adults = request.origins.adults 
+                              - children = request.origins.children 
+                              - infants = request.origins.infants
+                              - flyFromDesc = request.origins.flyFromDesc
+                            each flyFrom, i in flyFroms
                               .multi_city_form(data-origins-index=`${i}`)
                                 - var firstRow = (i === 0)
                                 if !firstRow
@@ -255,17 +267,17 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                                     .flight_Search_boxed.autocomplete
                                       p De
                                       //- input(type='text',required,name='origins[][flyFrom]',value=`${flyFrom}`,maxlength=3)
-                                      input(type='text',required,name='origins[][flyFrom]',placeholder='Choisissez un aéroport de départ...',maxlength=10)
-                                      span
-                                      .plan_icon_posation
-                                        i.fas.fa-plane-departure
+                                      input(type='text',required,name='origins[][flyFrom]',
+                                        placeholder=flyFrom===PLACEHOLDER?'Choisissez un aéroport de départ...':'',
+                                        value=flyFrom===PLACEHOLDER?'':flyFrom,
+                                        maxlength=10
+                                      )
+                                      span=flyFromDesc[i]
                                   .col-lg-6.col-md-6.col-sm-12.col-12
                                     .flight_Search_boxed.dropdown_passenger_area
                                       p Passagers
                                       .dropdown
-                                        button.dropdown-toggle.final-count#dropdownMenuButton1(data-toggle='dropdown' type='button' data-bs-toggle='dropdown' aria-expanded='false').
-
-                                          1 Passagers
+                                        button.dropdown-toggle.final-count#dropdownMenuButton1(data-toggle='dropdown' type='button' data-bs-toggle='dropdown' aria-expanded='false')=`${Number(adults[i])+Number(children[i])+Number(infants[i])} Passagers`
 
                                         .dropdown-menu.dropdown_passenger_info(aria-labelledby='dropdownMenuButton1')
                                           .traveller-calulate-persons
@@ -274,7 +286,7 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                                               .passengers-types
                                                 .passengers-type
                                                   .text
-                                                    input.count.pcount(type='number',readonly,required,name='origins[][adults]',value=1) 
+                                                    input.count.pcount(type='number',readonly,required,name='origins[][adults]',value=adults[i]) 
                                                     .type-label
                                                       p Adultes
                                                       span 12+ ans
@@ -285,7 +297,7 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                                                       i.fas.fa-minus
                                                 .passengers-type
                                                   .text
-                                                    input.count.ccount(type='number',readonly,required,name='origins[][children]',value=0) 
+                                                    input.count.ccount(type='number',readonly,required,name='origins[][children]',value=children[i]) 
                                                     .type-label
                                                       p.fz14.mb-xs-0.
 
@@ -299,7 +311,7 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                                                       i.fas.fa-minus
                                                 .passengers-type
                                                   .text
-                                                    input.count.incount(type='number',readonly,required,name='origins[][infants]',value=0) 
+                                                    input.count.incount(type='number',readonly,required,name='origins[][infants]',value=infants[i]) 
                                                     .type-label
                                                       p.fz14.mb-xs-0.
 

@@ -24,15 +24,7 @@ const mediumAirports = airports.filter(
 );
 
 const reencodeAirport = (airport) => {
-  // if (airport.iata_code === 'AGP') {
-  //   console.log(
-  //     utf8.decode(
-  //       buffer
-  //         .transcode(Buffer.from(airport.municipality), 'utf8', 'latin1')
-  //         .toString('latin1')
-  //     )
-  //   );
-  // }
+  if (!airport) return null;
   return {
     ...airport,
     municipality: airport.municipality
@@ -157,9 +149,10 @@ exports.searchByString = (searchStr) => {
 exports.findByIataCode = (iataCode) => {
   if (!iataCode) return null;
 
-  return airports.find(
+  const airport = airports.find(
     (airport) =>
       airport.iata_code &&
       airport.iata_code.toLowerCase() === iataCode.toLowerCase()
   );
+  return reencodeAirport(airport);
 };
