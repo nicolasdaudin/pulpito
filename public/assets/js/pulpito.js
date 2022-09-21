@@ -165,19 +165,40 @@ $(document).ready(function () {
     $('.cabin-list button.active').removeClass('active');
     $(this).addClass('active');
   });
-});
 
-const openLinks = (links) => {
-  links.forEach((link) => {
-    window.open(link, '_blank');
+  // handle click on "Book all flights" button on search results - to open at once all the booking links
+  const openLinks = (links) => {
+    links.forEach((link) => {
+      window.open(link, '_blank');
+    });
+  };
+
+  const flightSearchResultWrapper = document.querySelector(
+    '.flight_search_result_wrapper'
+  );
+  flightSearchResultWrapper.addEventListener('click', (e) => {
+    const btnBookAll = e.target.closest('.btn_book_all');
+    if (!btnBookAll) return;
+    openLinks(JSON.parse(btnBookAll.dataset.links));
   });
-};
 
-const flightSearchResultWrapper = document.querySelector(
-  '.flight_search_result_wrapper'
-);
-flightSearchResultWrapper.addEventListener('click', (e) => {
-  const btnBookAll = e.target.closest('.btn_book_all');
-  if (!btnBookAll) return;
-  openLinks(JSON.parse(btnBookAll.dataset.links));
+  // update the URL in the navigation bar with info from the search query (since we can't redirect from pug)
+
+  const originInputs = document.querySelectorAll(
+    `.multi_city_form input[name='origins[][flyFrom]'`
+  );
+  console.log('firstoriginvalue', originInputs[0].value);
+  if (originInputs[0].value) {
+    // form has been filled with values
+    const searchForm = document
+      .querySelector('.multi_city_form')
+      .closest('form');
+
+    const formData = new FormData(searchForm);
+    const urlQueryParamsFromFormData = new URLSearchParams(formData);
+
+    const newUrl = '/common?' + urlQueryParamsFromFormData.toString();
+
+    window.history.replaceState({}, document.title, newUrl);
+  }
 });

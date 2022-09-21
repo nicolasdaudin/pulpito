@@ -185,6 +185,50 @@ describe('API Helper', function () {
     });
   });
 
+  describe('prepareSeveralOriginAPIParamsFromView', function () {
+    test('should return an array of same lengh than the number of origins', () => {
+      const params = {
+        origins: { flyFrom: ['MAD', 'CRL', 'BRU', 'SXF', 'JFK'] },
+      };
+
+      const preparedParams =
+        helper.prepareSeveralOriginAPIParamsFromView(params);
+
+      expect(preparedParams.length).toBe(params.origins.flyFrom.length);
+    });
+
+    test('should return 1 adult, 0 children, 0 infant for each origin if nothing specified', () => {
+      const params = {
+        origins: { flyFrom: ['MAD', 'CRL', 'BRU', 'SXF', 'JFK'] },
+      };
+
+      const preparedParams =
+        helper.prepareSeveralOriginAPIParamsFromView(params);
+
+      expect(preparedParams[0].adults).toBe(1);
+      expect(preparedParams[0].children).toBe(0);
+      expect(preparedParams[0].infants).toBe(0);
+    });
+
+    test('should return the correct number of adults, children and infants for each origin when specified', () => {
+      const params = {
+        origins: {
+          flyFrom: ['AGP', 'SEZ', 'OPO'],
+          adults: ['2', '3', '2'],
+          children: ['2', '1', '0'],
+          infants: ['0', '0', '1'],
+        },
+      };
+
+      const preparedParams =
+        helper.prepareSeveralOriginAPIParamsFromView(params);
+
+      expect(preparedParams[0].adults).toBe(2);
+      expect(preparedParams[1].children).toBe(1);
+      expect(preparedParams[2].infants).toBe(1);
+    });
+  });
+
   describe('prepareSeveralOriginAPIParams', function () {
     test('should return an array of same lengh than the number of origins', () => {
       const params = {

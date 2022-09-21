@@ -190,7 +190,62 @@ const prepareDefaultAPIParams = (params) => {
   };
 };
 
-// TODO: (CLEAN CODE) check if this method return the same kind of objects than prepareDefaultParams above.
+/**
+ * Prepares params to use with KIWI api. Params come from View controllers
+ *
+ * TODO: (CLEAN CODE) check if this method return the same kind of objects than prepareDefaultParams above.
+ * TODO: unify API params and View Controllers params
+ *
+ * @param {*} params object with origins being an object with all the info for each origin
+ *  {
+      departureDate: '2022-09-30',
+      returnDate: '2022-10-05',
+      origins: {
+        flyFrom: [ 'AGP', 'SEZ', 'OPO' ],
+        adults: [ '1', '1', '1' ],
+        children: [ '0', '0', '0' ],
+        infants: [ '0', '0', '0' ]
+      }
+    }
+ * @returns
+ */
+const prepareSeveralOriginAPIParamsFromView = (params) => {
+  let { departureDate, returnDate, origins } = params;
+
+  let baseParams = {
+    departureDate: DateTime.fromISO(departureDate).toFormat(`dd'/'LL'/'yyyy`),
+    returnDate: DateTime.fromISO(returnDate).toFormat(`dd'/'LL'/'yyyy`),
+  };
+
+  const allOriginParams = origins.flyFrom.map((_, i) => {
+    return {
+      ...baseParams,
+      origin: origins.flyFrom[i],
+      adults: origins.adults ? +origins.adults[i] : 1,
+      children: origins.children ? +origins.children[i] : 0,
+      infants: origins.infants ? +origins.infants[i] : 0,
+    };
+  });
+
+  return allOriginParams;
+};
+
+/**
+ * Prepares params to use with KIWI api. Params come from API calls.
+ * 
+ * TODO: (CLEAN CODE) check if this method return the same kind of objects than prepareDefaultParams above.
+ * TODO: unify API params and View Controllers params
+ * 
+ * @param {*} params object with origin being a string of comma-separated iata codes., and adults a string of comma separated number of adults  i.e.
+ *  {
+      departureDate: '09/12/2022',
+      returnDate: '11/12/2022',
+      adults: '1,1,7',
+      children: '1,1,2',
+      origin: 'MAD,OPO,LIS'
+    }
+ * @returns
+ */
 const prepareSeveralOriginAPIParams = (params) => {
   const origins = params.origin.split(',');
   const adults = params.adults
@@ -223,4 +278,5 @@ module.exports = {
   prepareAxiosParams,
   prepareDefaultAPIParams,
   prepareSeveralOriginAPIParams,
+  prepareSeveralOriginAPIParamsFromView,
 };

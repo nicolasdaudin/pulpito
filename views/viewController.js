@@ -2,48 +2,62 @@ const destinationsService = require('../destinations/destinationsService');
 const { catchAsync, catchAsyncKiwi } = require('../utils/catchAsync');
 const DateTime = require('luxon').DateTime;
 const airportService = require('../airports/airportService');
+const helper = require('../utils/apiHelper');
 
 exports.getHome = (req, res) => {
   res.render('home');
 };
 
 exports.getCommon = catchAsync(async (req, res, next) => {
-  res.render('common', {
-    status: 'success',
-    results: 0,
-    data: [],
-  });
+  if (!req.query || !req.query.origins) {
+    return res.status(200).render('common', {
+      status: 'success',
+      results: 0,
+      data: [],
+    });
+  }
+
+  const allOriginParams = helper.prepareSeveralOriginAPIParamsFromView(
+    req.query
+  );
+
+  const originCodes = req.query.origins.flyFrom;
+
+  try {
+    const commonItineraries = await destinationsService.buildCommonItineraries(
+      allOriginParams,
+      originCodes
+    );
+
+    req.query.origins.flyFromDesc = req.query.origins.flyFrom.map(
+      (iataCode) => {
+        const airportInfo = airportService.findByIataCode(iataCode);
+        return `${airportInfo.municipality} - ${airportInfo.name} (${airportInfo.iata_code}) - ${airportInfo.country}`;
+      }
+    );
+
+    // const commonItineraries = [];
+    res.status(200).render('common', {
+      status: 'success',
+      results: commonItineraries.length,
+      data: commonItineraries,
+      request: req.query,
+    });
+  } catch (err) {
+    res.status(err.response.status).render('common', {
+      status: 'error',
+      results: 0,
+      error: err.response.data.error,
+    });
+  }
 });
 
 exports.getFlights = catchAsync(async (req, res, next) => {
-  console.log('req.body', req.body);
+  const allOriginParams = helper.prepareSeveralOriginAPIParamsFromView(
+    req.body
+  );
 
-  let { departureDate, returnDate, origins } = req.body;
-
-  let baseParams = {
-    departureDate: DateTime.fromISO(departureDate).toFormat(`dd'/'LL'/'yyyy`),
-    returnDate: DateTime.fromISO(returnDate).toFormat(`dd'/'LL'/'yyyy`),
-  };
-
-  // // static data to simulate PUG
-  // baseParams = { departureDate: '09/12/2022', returnDate: '11/12/2022' };
-  // origins = {
-  //   flyFrom: ['MAD', 'AGP', 'BER', 'LON'],
-  //   adults: [6, 1, 1, 1],
-  //   children: [0, 0, 0, 0],
-  //   infants: [0, 0, 0, 0],
-  // };
-
-  const allOriginParams = origins.flyFrom.map((_, i) => {
-    return {
-      ...baseParams,
-      origin: origins.flyFrom[i],
-      adults: origins.adults[i],
-      children: origins.children[i],
-      infants: origins.infants[i],
-    };
-  });
-  const originCodes = origins.flyFrom;
+  const originCodes = req.body.origins.flyFrom;
 
   try {
     const commonItineraries = await destinationsService.buildCommonItineraries(
