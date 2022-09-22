@@ -23,6 +23,5 @@ router
   .route('/common')
   .get(filterParams, validateRequestParamsManyOrigins, getCommonDestinations);
 
-// TODO: params validation is missing
 router.route('/cheapestWeekend').get(getCheapestWeekend);
 module.exports = router;
