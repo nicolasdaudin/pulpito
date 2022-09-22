@@ -187,7 +187,6 @@ $(document).ready(function () {
   const originInputs = document.querySelectorAll(
     `.multi_city_form input[name='origins[][flyFrom]'`
   );
-  console.log('firstoriginvalue', originInputs[0].value);
   if (originInputs[0].value) {
     // form has been filled with values
     const searchForm = document
