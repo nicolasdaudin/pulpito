@@ -2,6 +2,21 @@ const validator = require('../utils/validator');
 const { isAlpha, isDate, isNumeric } = require('validator');
 const AppError = require('../utils/appError');
 
+const PARAMS_TO_FILTER = ['sort', 'limit', 'page'];
+
+const filterParams = (req, res, next) => {
+  req.filter = {};
+  if (req.query) {
+    PARAMS_TO_FILTER.forEach((param) => {
+      if (req.query[param]) {
+        req.filter[param] = req.query[param];
+        delete req.query[param];
+      }
+    });
+  }
+  next();
+};
+
 const validateRequestParamsManyOrigins = (req, res, next) => {
   // FIXME: is this really necessary to be so specific about parameter types? isn't it better to have a good documentation and only send an error msg like "Parameters have wrong type"
   const requestModelParams = [
@@ -191,7 +206,9 @@ const validateRequestParamsOneOrigin = (req, res, next) => {
   next();
 };
 
+// TODO: validate request param for cheapest weekend requests
 module.exports = {
   validateRequestParamsManyOrigins,
   validateRequestParamsOneOrigin,
+  filterParams,
 };
