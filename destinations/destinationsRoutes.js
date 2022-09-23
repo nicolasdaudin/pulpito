@@ -11,8 +11,6 @@ const {
   filterParams,
 } = require('../common/validatorService');
 
-const { protect } = require('../user/authController');
-
 const router = express.Router();
 
 // router.route('/protect').get(protect, getSpecialProtectedRoute);
