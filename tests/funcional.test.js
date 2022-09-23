@@ -302,7 +302,7 @@ describe('End to end tests', () => {
         expect(response.body.data[0].flyFrom).toBe('MAD');
       });
 
-      test('should return a 400 error and a fail status for a non existing origin', async () => {
+      xtest('should return a 400 error and a fail status for a non existing origin', async () => {
         const response = await request(app)
           .get(routePath)
           .query({
@@ -313,7 +313,7 @@ describe('End to end tests', () => {
         expect(response.body.status).toBe('fail');
         expect(response.body.message).toMatch('no locations to fly from');
       });
-      test('should return a 400 error and a fail status if some parameters are missing', async () => {
+      xtest('should return a 400 error and a fail status if some parameters are missing', async () => {
         const { departureDateFrom, departureDateTo, ...others } = params;
 
         const response = await request(app)
@@ -324,7 +324,7 @@ describe('End to end tests', () => {
         expect(response.body.message).toMatch('must be specified');
       });
 
-      test('should return a 400 error and a fail status if dates are not in the correct format ', async () => {
+      xtest('should return a 400 error and a fail status if dates are not in the correct format ', async () => {
         const dates = {
           departureDateFrom: DateTime.now()
             .plus({ months: 1 })
