@@ -1,16 +1,29 @@
 const validator = require('../utils/validator');
 const { isAlpha, isDate, isNumeric } = require('validator');
 const AppError = require('../utils/appError');
+const { RESULTS_SEARCH_LIMIT } = require('../config');
 
-const PARAMS_TO_FILTER = ['sort', 'limit', 'page'];
+const PARAMS_TO_FILTER = [
+  { name: 'sort', default: null },
+  { name: 'limit', default: RESULTS_SEARCH_LIMIT },
+  { name: 'page', default: 1 },
+];
 
 const filterParams = (req, res, next) => {
   req.filter = {};
   if (req.query) {
     PARAMS_TO_FILTER.forEach((param) => {
-      if (req.query[param]) {
-        req.filter[param] = req.query[param];
-        delete req.query[param];
+      if (req.query[param.name]) {
+        // if param present in the queryString, we add it to req.filter and remove it from req.query
+
+        req.filter[param.name] = req.query[param.name];
+
+        delete req.query[param.name];
+      } else {
+        // if param not present but he has a default value, we add it to req.filter
+        if (param.default) {
+          req.filter[param.name] = param.default;
+        }
       }
     });
   }

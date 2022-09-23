@@ -49,6 +49,12 @@ block content
           .col-lg-9
             .row
               .col-lg-12
+                if (pagination)
+                  .pagination 
+                    if (pagination.previous)
+                      a.btn.btn_theme.btn_sm.btn_previous(href=`${pagination.previous}`) ⬅️ Précédent
+                    if (pagination.next)
+                      a.btn.btn_theme.btn_sm.btn_next(href=`${pagination.next}`) Suivant ➡️ 
                 .flight_search_result_wrapper
                   each itinerary,i in data  
                     - var index = i + 1 
@@ -127,6 +133,7 @@ block content
                                 h3=`${flight.fare.adults} € / pers.`
                                 p=`(${flight.price} € au total)`
                                 a.btn.btn_theme.btn_sm.btn_book(target='_blank',href=`${flight.deep_link}`) Réserver ce vol ↗️
+                  
 
 
 
