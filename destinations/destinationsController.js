@@ -4,6 +4,7 @@ const AppError = require('../utils/appError');
 const { catchAsync, catchAsyncKiwi } = require('../utils/catchAsync');
 const flightService = require('../data/flightService');
 const destinationsService = require('./destinationsService');
+const resultsHelper = require('../utils/resultsHelper');
 
 /**
  * Find cheapest destinations from this origin.
@@ -19,13 +20,14 @@ const getCheapestDestinations = catchAsyncKiwi(async (req, res, next) => {
 
   const response = await flightService.getFlights(params);
   // console.log('response.data.data', response.data.data);
+  let itineraries = response.data.data.map(helper.cleanItineraryData);
 
-  const flights = response.data.data.map(helper.cleanItineraryData);
+  itineraries = resultsHelper.paginate(itineraries, req.filter);
 
   res.status(200).json({
     status: 'success',
-    results: flights.length, //response.data.data.length,
-    data: flights, //flights,
+    results: itineraries.length, //response.data.data.length,
+    data: itineraries, //itineraries,
   });
 });
 
@@ -47,11 +49,17 @@ const getCommonDestinations = catchAsyncKiwi(async (req, res, next) => {
 
   const origins = req.query.origin.split(',');
 
-  const commonItineraries = await destinationsService.buildCommonItineraries(
+  let commonItineraries = await destinationsService.buildCommonItineraries(
     allOriginsParams,
-    origins,
-    req.filter
+    origins
   );
+
+  // console.log('buildComm... filterParams', filterParams);
+  // console.log('buildComm... commonItineraries', commonItineraries.length);
+
+  // console.log('page,limit', page, limit);
+  commonItineraries = resultsHelper.paginate(commonItineraries, req.filter);
+  // console.log('buildComm... commonItineraries', commonItineraries.length);
 
   res.status(200).json({
     status: 'success',
@@ -66,12 +74,14 @@ const getCheapestWeekend = catchAsyncKiwi(async (req, res, next) => {
   const response = await flightService.getWeekendFlights(params);
   // console.log('request.params', response.request.path);
   // console.log('response.data.data', response.data.data);
+  let itineraries = response.data.data.map(helper.cleanItineraryData);
 
-  const flights = response.data.data.map(helper.cleanItineraryData);
+  itineraries = resultsHelper.paginate(itineraries, req.filter);
+
   res.status(200).json({
     status: 'success',
-    results: flights.length, //response.data.data.length,
-    data: flights, //flights,
+    results: itineraries.length, //response.data.data.length,
+    data: itineraries, //flights,
   });
 });
 

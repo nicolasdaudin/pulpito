@@ -1,4 +1,8 @@
-const paginate = (itineraries, page, limit) => {
+const { RESULTS_SEARCH_LIMIT } = require('../config');
+
+const paginate = (itineraries, filterParams) => {
+  const page = filterParams?.page ?? 1;
+  const limit = filterParams?.limit ?? RESULTS_SEARCH_LIMIT;
   const result = JSON.parse(JSON.stringify(itineraries));
   return result.slice((page - 1) * limit, page * limit);
   // return result;

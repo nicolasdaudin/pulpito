@@ -1,14 +1,8 @@
 const flightService = require('../data/flightService');
 const groupByToMap = require('core-js-pure/actual/array/group-by-to-map');
 const helper = require('../utils/apiHelper');
-const { paginate } = require('../utils/resultsHelper');
-const { RESULTS_SEARCH_LIMIT } = require('../config');
 
-const buildCommonItineraries = async (
-  allOriginsParams,
-  origins,
-  filterParams = {}
-) => {
+const buildCommonItineraries = async (allOriginsParams, origins) => {
   // create one GET call for each origin
   const searchDestinations = allOriginsParams.map((params) =>
     flightService.getFlights(params)
@@ -50,17 +44,9 @@ const buildCommonItineraries = async (
   // For each destination, have an array with the flights, total price and total distance and total duration
   // (preparing for display)
   // and sort by price
-  let commonItineraries = filteredDestinationCities
+  const commonItineraries = filteredDestinationCities
     .map((dest) => helper.prepareItineraryData(dest, itineraries))
     .sort((a, b) => a.totalPrice - b.totalPrice);
-
-  // console.log('buildComm... filterParams', filterParams);
-  // console.log('buildComm... commonItineraries', commonItineraries.length);
-  const page = filterParams?.page ?? 1;
-  const limit = filterParams?.limit ?? RESULTS_SEARCH_LIMIT;
-  // console.log('page,limit', page, limit);
-  commonItineraries = paginate(commonItineraries, page, limit);
-  // console.log('buildComm... commonItineraries', commonItineraries.length);
 
   return commonItineraries;
 };
