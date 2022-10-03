@@ -8,8 +8,6 @@ const { DateTime } = require('luxon');
 const KIWI_DATE_FORMAT = `dd'/'LL'/'yyyy`;
 
 describe('End to end tests', () => {
-  jest.setTimeout(10000);
-
   beforeAll(async () => {
     const DB = process.env.DATABASE.replace(
       '<PASSWORD>',
@@ -153,7 +151,7 @@ describe('End to end tests', () => {
         expect(response.statusCode).toBe(200);
         expect(response.body.results).toBeGreaterThan(0);
         expect(response.body.data[0].flyFrom).toBe('MAD');
-      });
+      }, 10000);
 
       test('should return a 400 error and a fail status for a non existing origin', async () => {
         const params = {
@@ -202,7 +200,7 @@ describe('End to end tests', () => {
             origins.includes(flight.cityCodeFrom)
           )
         ).toBe(true);
-      });
+      }, 10000);
 
       test('should return a 400 error and a fail status for a non existing origin', async () => {
         const origins = ['MAD', 'BOD', 'PXR'];
@@ -241,10 +239,10 @@ describe('End to end tests', () => {
         const dates = {
           departureDate: DateTime.now()
             .plus({ weeks: 1 })
-            .toFormat(`LL'/'dd'/'yyyy`), // month/day/year format
+            .toFormat(`LL'-'dd'-'yyyy`), // month/day/year format
           returnDate: DateTime.now()
             .plus({ weeks: 1 })
-            .toFormat(`LL'/'dd'/'yyyy`),
+            .toFormat(`LL'-'dd'-'yyyy`),
         };
         const origins = ['MAD', 'BOD', 'BRU'];
         const params = {
@@ -254,7 +252,8 @@ describe('End to end tests', () => {
         const response = await request(app).get(routePath).query(params);
         expect(response.statusCode).toBe(400);
         expect(response.body.status).toBe('fail');
-        expect(response.body.message).toMatch('expected type');
+        // expect(response.body.message).toMatch('expected type');
+        expect(response.body.message).toMatch('invalid date');
       });
 
       test('should return a 200 ok with empty results if there are no common destinations', async () => {
@@ -291,7 +290,7 @@ describe('End to end tests', () => {
         expect(response.statusCode).toBe(200);
         expect(response.body.results).toBeGreaterThan(0);
         expect(response.body.data[0].flyFrom).toBe('MAD');
-      });
+      }, 10000);
 
       test('should return a list of destinations even when only the origin is specified', async () => {
         const response = await request(app)
@@ -300,7 +299,7 @@ describe('End to end tests', () => {
         expect(response.statusCode).toBe(200);
         expect(response.body.results).toBeGreaterThan(0);
         expect(response.body.data[0].flyFrom).toBe('MAD');
-      });
+      }, 10000);
 
       xtest('should return a 400 error and a fail status for a non existing origin', async () => {
         const response = await request(app)

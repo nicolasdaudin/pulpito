@@ -55,4 +55,47 @@ describe('Results Helper', () => {
       ]);
     });
   });
+
+  describe('getURLFromRequest', () => {
+    test('return a well-formed URLSearchParams object from req.query', () => {
+      const req = {
+        query: {
+          departureDate: '2022-09-22',
+          origins: {
+            flyFrom: ['MAD', 'LIS'],
+            adults: ['1', '1'],
+            children: ['0', '0'],
+            infants: ['0', '0'],
+          },
+        },
+      };
+
+      const url = helper.getURLFromRequest(req);
+      expect(url).toBeInstanceOf(URLSearchParams);
+      expect(url.get('departureDate')).toBe('2022-09-22');
+      expect(url.getAll('origins[][flyFrom]')).toEqual(
+        expect.arrayContaining(['MAD', 'LIS'])
+      );
+    });
+    test('return a well-formed URLSearchParams object from req.body', () => {
+      const req = {
+        body: {
+          departureDate: '2022-09-22',
+          origins: {
+            flyFrom: ['MAD', 'LIS'],
+            adults: ['1', '1'],
+            children: ['0', '0'],
+            infants: ['0', '0'],
+          },
+        },
+      };
+
+      const url = helper.getURLFromRequest(req);
+      expect(url).toBeInstanceOf(URLSearchParams);
+      expect(url.get('departureDate')).toBe('2022-09-22');
+      expect(url.getAll('origins[][flyFrom]')).toEqual(
+        expect.arrayContaining(['MAD', 'LIS'])
+      );
+    });
+  });
 });

@@ -3,6 +3,7 @@ const { catchAsync, catchAsyncKiwi } = require('../utils/catchAsync');
 const DateTime = require('luxon').DateTime;
 const airportService = require('../airports/airportService');
 const helper = require('../utils/apiHelper');
+const resultsHelper = require('../utils/resultsHelper');
 const { RESULTS_SEARCH_LIMIT } = require('../config');
 
 exports.getHome = (req, res) => {
@@ -41,19 +42,7 @@ exports.getCommon = catchAsync(async (req, res, next) => {
 
     console.log('getCommon req.query', req.query);
 
-    const urlSearchParamsBase = new URLSearchParams();
-    const { departureDate, returnDate, origins } = req.query;
-    if (departureDate)
-      urlSearchParamsBase.append('departureDate', departureDate);
-    if (returnDate) urlSearchParamsBase.append('returnDate', returnDate);
-    if (origins) {
-      origins.flyFrom.forEach((_, i) => {
-        urlSearchParamsBase.append('origins[][flyFrom]', origins.flyFrom[i]);
-        urlSearchParamsBase.append('origins[][adults]', origins.adults[i]);
-        urlSearchParamsBase.append('origins[][children]', origins.children[i]);
-        urlSearchParamsBase.append('origins[][infants]', origins.infants[i]);
-      });
-    }
+    const urlSearchParamsBase = resultsHelper.getURLFromRequest(req);
     console.log(
       'getCommon urlSearchParamsBase',
       urlSearchParamsBase.toString()
@@ -113,25 +102,18 @@ exports.searchFlights = catchAsync(async (req, res, next) => {
 
     console.log('searchFlights req.body', req.body);
 
-    const urlSearchParamsBase = new URLSearchParams();
-    const { departureDate, returnDate, origins } = req.body;
-    if (departureDate)
-      urlSearchParamsBase.append('departureDate', departureDate);
-    if (returnDate) urlSearchParamsBase.append('returnDate', returnDate);
-    if (origins) {
-      origins.flyFrom.forEach((_, i) => {
-        urlSearchParamsBase.append('origins[][flyFrom]', origins.flyFrom[i]);
-        urlSearchParamsBase.append('origins[][adults]', origins.adults[i]);
-        urlSearchParamsBase.append('origins[][children]', origins.children[i]);
-        urlSearchParamsBase.append('origins[][infants]', origins.infants[i]);
-      });
-    }
+    const urlSearchParamsBase = resultsHelper.getURLFromRequest(req);
 
-    urlSearchParamsBase.append('page', 2);
+    // urlSearchParamsBase.append('page', 2);
     console.log(
       'searchFlights urlSearchParamsBase',
       urlSearchParamsBase.toString()
     );
+
+    const next =
+      commonItineraries.length === RESULTS_SEARCH_LIMIT
+        ? `/common?${urlSearchParamsBase.toString()}&page=2`
+        : null;
 
     // const commonItineraries = [];
     res.status(200).render('common', {
@@ -140,7 +122,7 @@ exports.searchFlights = catchAsync(async (req, res, next) => {
       data: commonItineraries,
       request: req.body,
       pagination: {
-        next: '/common?' + urlSearchParamsBase.toString(),
+        next,
       },
     });
   } catch (err) {
