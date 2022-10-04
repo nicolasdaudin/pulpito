@@ -30,13 +30,13 @@ const prepareItineraryData = (dest, itineraries) => {
   itinerary.cityCodeTo = itinerary.flights[0].cityCodeTo;
 
   // compute total price
-  itinerary.totalPrice = itinerary.flights.reduce(
+  itinerary.price = itinerary.flights.reduce(
     (sum, flight) => sum + flight.price,
     0
   );
 
   // total distance
-  itinerary.totalDistance = itinerary.flights.reduce(
+  itinerary.distance = itinerary.flights.reduce(
     (sum, flight) => sum + flight.distance,
     0
   );

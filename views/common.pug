@@ -72,7 +72,7 @@ block content
                           - var links = [];
                           each flight in itinerary.flights 
                             - links.push(flight.deep_link)
-                          h2=`${itinerary.totalPrice} €`                          
+                          h2=`${itinerary.price} €`                          
                           a.btn.btn_theme.btn_sm.btn_book_all(data-links=links) Réserver tous les vols ↗️
                           h6(data-bs-toggle='collapse' data-bs-target=`#collapseExample${index}` aria-expanded='false' aria-controls=`#collapseExample${index}`)
                             | Détails 

@@ -44,9 +44,9 @@ const buildCommonItineraries = async (allOriginsParams, origins) => {
   // For each destination, have an array with the flights, total price and total distance and total duration
   // (preparing for display)
   // and sort by price
-  const commonItineraries = filteredDestinationCities
-    .map((dest) => helper.prepareItineraryData(dest, itineraries))
-    .sort((a, b) => a.totalPrice - b.totalPrice);
+  const commonItineraries = filteredDestinationCities.map((dest) =>
+    helper.prepareItineraryData(dest, itineraries)
+  );
 
   return commonItineraries;
 };

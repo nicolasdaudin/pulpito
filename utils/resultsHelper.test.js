@@ -66,6 +66,51 @@ describe('Results Helper', () => {
     );
   });
 
+  describe('sort', () => {
+    const itineraries = [
+      { cityTo: 'Bangkok', price: 1300, distance: 5000 },
+      { cityTo: 'Barcelona', price: 213, distance: 1900 },
+      { cityTo: 'London', price: 200, distance: 2200 },
+      { cityTo: 'Paris', price: 80, distance: 2000 },
+    ];
+
+    test('should sort by ascending price when no sort parameters', () => {
+      const sorted = helper.sort(itineraries, {});
+      expect(sorted[0].cityTo).toEqual('Paris');
+      expect(sorted[1].cityTo).toEqual('London');
+      expect(sorted[2].cityTo).toEqual('Barcelona');
+      expect(sorted[3].cityTo).toEqual('Bangkok');
+    });
+
+    test('should sort by ascending total price when sort=price parameter is provided', () => {
+      const sorted = helper.sort(itineraries, { sort: 'price' });
+      expect(sorted[0].cityTo).toEqual('Paris');
+      expect(sorted[1].cityTo).toEqual('London');
+      expect(sorted[2].cityTo).toEqual('Barcelona');
+      expect(sorted[3].cityTo).toEqual('Bangkok');
+    });
+    test('should sort by ascending total distance when sort=distance parameter is provided', () => {
+      const sorted = helper.sort(itineraries, { sort: 'distance' });
+      expect(sorted[0].cityTo).toEqual('Barcelona');
+      expect(sorted[1].cityTo).toEqual('Paris');
+      expect(sorted[2].cityTo).toEqual('London');
+      expect(sorted[3].cityTo).toEqual('Bangkok');
+    });
+    test('should sort by ascending price when the sort parameter is a non-sortable field', () => {
+      const sorted = helper.sort(itineraries, { sort: 'departureDate' });
+      expect(sorted[0].cityTo).toEqual('Paris');
+      expect(sorted[1].cityTo).toEqual('London');
+      expect(sorted[2].cityTo).toEqual('Barcelona');
+      expect(sorted[3].cityTo).toEqual('Bangkok');
+    });
+
+    test('should return an empty array if the itineraries argument is empty', () => {
+      const sorted = helper.sort([], {});
+      expect(sorted).toBeInstanceOf(Array);
+      expect(sorted).toHaveLength(0);
+    });
+  });
+
   describe('getURLFromRequest', () => {
     test('return a well-formed URLSearchParams object from req.query', () => {
       const req = {

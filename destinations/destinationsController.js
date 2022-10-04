@@ -22,7 +22,7 @@ const getCheapestDestinations = catchAsyncKiwi(async (req, res, next) => {
   // console.log('response.data.data', response.data.data);
   let itineraries = response.data.data.map(helper.cleanItineraryData);
 
-  itineraries = resultsHelper.paginate(itineraries, req.filter);
+  itineraries = resultsHelper.applyFilters(itineraries, req.filter);
 
   res.status(200).json({
     status: 'success',
@@ -58,8 +58,7 @@ const getCommonDestinations = catchAsyncKiwi(async (req, res, next) => {
   // console.log('buildComm... commonItineraries', commonItineraries.length);
 
   // console.log('page,limit', page, limit);
-  commonItineraries = resultsHelper.paginate(commonItineraries, req.filter);
-  // console.log('buildComm... commonItineraries', commonItineraries.length);
+  commonItineraries = resultsHelper.applyFilters(commonItineraries, req.filter);
 
   res.status(200).json({
     status: 'success',
@@ -76,7 +75,7 @@ const getCheapestWeekend = catchAsyncKiwi(async (req, res, next) => {
   // console.log('response.data.data', response.data.data);
   let itineraries = response.data.data.map(helper.cleanItineraryData);
 
-  itineraries = resultsHelper.paginate(itineraries, req.filter);
+  itineraries = resultsHelper.applyFilters(itineraries, req.filter);
 
   res.status(200).json({
     status: 'success',

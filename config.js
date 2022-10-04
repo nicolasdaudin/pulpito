@@ -1,3 +1,4 @@
 const RESULTS_SEARCH_LIMIT = 20;
+const DEFAULT_SORT_FIELD = 'price';
 
-module.exports = { RESULTS_SEARCH_LIMIT };
+module.exports = { RESULTS_SEARCH_LIMIT, DEFAULT_SORT_FIELD };

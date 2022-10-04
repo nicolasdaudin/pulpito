@@ -27,9 +27,12 @@ exports.getCommon = catchAsync(async (req, res, next) => {
   const originCodes = req.query.origins.flyFrom;
 
   try {
-    const commonItineraries = await destinationsService.buildCommonItineraries(
+    let commonItineraries = await destinationsService.buildCommonItineraries(
       allOriginParams,
-      originCodes,
+      originCodes
+    );
+    commonItineraries = resultsHelper.applyFilters(
+      commonItineraries,
       req.filter
     );
 
@@ -90,9 +93,14 @@ exports.searchFlights = catchAsync(async (req, res, next) => {
   const originCodes = req.body.origins.flyFrom;
 
   try {
-    const commonItineraries = await destinationsService.buildCommonItineraries(
+    let commonItineraries = await destinationsService.buildCommonItineraries(
       allOriginParams,
       originCodes
+    );
+
+    commonItineraries = resultsHelper.applyFilters(
+      commonItineraries,
+      req.filter
     );
 
     req.body.origins.flyFromDesc = req.body.origins.flyFrom.map((iataCode) => {

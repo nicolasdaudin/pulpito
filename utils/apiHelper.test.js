@@ -102,7 +102,7 @@ describe('API Helper', function () {
     test('should compute all info about a set of flights', () => {
       const itinerary = helper.prepareItineraryData('Ibiza', itineraries);
 
-      expect(itinerary.totalPrice).toBe(78 + 65 + 130);
+      expect(itinerary.price).toBe(78 + 65 + 130);
     });
   });
 
