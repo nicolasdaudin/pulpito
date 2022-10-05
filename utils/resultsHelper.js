@@ -1,18 +1,93 @@
 const { RESULTS_SEARCH_LIMIT, DEFAULT_SORT_FIELD } = require('../config');
 const airportService = require('../airports/airportService');
+const { filterParams } = require('../common/validatorService');
+
+const filterByMaxConnections = (itinerary, maxConnections) => {
+  let nbConnections = 0;
+  if (itinerary.flights) {
+    // if several origins
+    nbConnections = itinerary.flights.reduce(
+      (max, flight) =>
+        Math.max(
+          max,
+          flight.route.oneway.connections.length,
+          flight.route.return.connections.length
+        ),
+      0
+    );
+  } else {
+    nbConnections = Math.max(
+      flight.route.oneway.connections.length,
+      flight.route.return.connections.length
+    );
+  }
+  return nbConnections <= maxConnections;
+};
+
+const filterByPriceRange = (itinerary, priceFrom, priceTo) => {
+  let minPrice = 2000;
+  let maxPrice = 0;
+  if (itinerary.flights) {
+    // if several origins
+    minPrice = itinerary.flights.reduce(
+      (min, flight) => Math.min(min, flight.price),
+      minPrice
+    );
+    maxPrice = itinerary.flights.reduce(
+      (max, flight) => Math.max(max, flight.price),
+      maxPrice
+    );
+  } else {
+    // if one origin
+    minPrice = flight.price;
+    maxPrice = flight.price;
+  }
+
+  return minPrice >= priceFrom && maxPrice <= priceTo;
+};
+
+const filter = (itineraries, filterParams) => {
+  let result = JSON.parse(JSON.stringify(itineraries));
+
+  // filter by max number of connections allowed on each individual flight
+  if (filterParams.maxConnections) {
+    console.log(result.length);
+    result = result.filter((itinerary) => {
+      const filtered = filterByMaxConnections(
+        itinerary,
+        filterParams.maxConnections
+      );
+      return filtered;
+    });
+    console.log(result.length);
+  }
+
+  // filter by price range
+  if (filterParams.priceFrom) {
+    result = result.filter((itinerary) => {
+      const filtered = filterByPriceRange(
+        itinerary,
+        filterParams.priceFrom,
+        filterParams.priceTo
+      );
+      return filtered;
+    });
+  }
+
+  return result;
+};
 
 // TODO : refactor all of this as an ES6 class holding the itineraries on which we could apply paginate and sort methods...
-
 const paginate = (itineraries, filterParams) => {
-  const page = filterParams?.page ?? 1;
-  const limit = filterParams?.limit ?? RESULTS_SEARCH_LIMIT;
+  const page = filterParams.page ?? 1;
+  const limit = filterParams.limit ?? RESULTS_SEARCH_LIMIT;
   const result = JSON.parse(JSON.stringify(itineraries));
   return result.slice((page - 1) * limit, page * limit);
   // return result;
 };
 
 const sort = (itineraries, filterParams) => {
-  const sortBy = filterParams?.sort ?? DEFAULT_SORT_FIELD;
+  const sortBy = filterParams.sort ?? DEFAULT_SORT_FIELD;
   const result = JSON.parse(JSON.stringify(itineraries));
   if (sortBy === 'price') return result.sort((a, b) => a.price - b.price);
   if (sortBy === 'distance')
@@ -22,7 +97,8 @@ const sort = (itineraries, filterParams) => {
 
 const applyFilters = (itineraries, filterParams) => {
   console.log('applyfilters - filterParams', filterParams);
-  let filtered = sort(itineraries, filterParams);
+  let filtered = filter(itineraries, filterParams);
+  filtered = sort(filtered, filterParams);
   filtered = paginate(filtered, filterParams);
   return filtered;
 };
@@ -56,11 +132,11 @@ const buildNavigationUrlsFromRequest = (req, baseUrl, hasNextUrl) => {
   const urlSearchParamsBase = getCurrentUrlFromRequest(req);
   console.log(
     'buildNavigationUrlsFromRequest - req.filter.page',
-    req.filter?.page
+    req.filter.page
   );
 
-  const currentPage = req.filter?.page ? +req.filter.page : 1;
-  const sortParam = req.filter?.sort ? `&sort=${req.filter.sort}` : '';
+  const currentPage = req.filter.page ? +req.filter.page : 1;
+  const sortParam = req.filter.sort ? `&sort=${req.filter.sort}` : '';
 
   const previousPage = currentPage - 1;
   const nextPage = currentPage + 1;
@@ -94,6 +170,7 @@ const buildNavigationUrlsFromRequest = (req, baseUrl, hasNextUrl) => {
 };
 
 module.exports = {
+  filter,
   paginate,
   sort,
   getCurrentUrlFromRequest,

@@ -10,5 +10,6 @@ router.get('/', viewController.getHome);
 router.get('/common', filterParams, viewController.getCommon);
 
 // TODO: param requests are not 'validated' although they are validated on front-end
-router.post('/common', viewController.searchFlights);
+// we use filterParams to add an empty filter object on req parameter.
+router.post('/common', filterParams, viewController.searchFlights);
 module.exports = router;

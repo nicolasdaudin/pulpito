@@ -7,6 +7,9 @@ const PARAMS_TO_FILTER = [
   { name: 'sort', default: null },
   { name: 'limit', default: RESULTS_SEARCH_LIMIT },
   { name: 'page', default: 1 },
+  { name: 'maxConnections' },
+  { name: 'priceFrom' },
+  { name: 'priceTo' },
 ];
 
 const filterParams = (req, res, next) => {
