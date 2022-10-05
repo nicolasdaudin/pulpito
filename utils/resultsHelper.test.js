@@ -111,7 +111,7 @@ describe('Results Helper', () => {
     });
   });
 
-  describe('getURLFromRequest', () => {
+  describe('getCurrentUrlFromRequest', () => {
     test('return a well-formed URLSearchParams object from req.query', () => {
       const req = {
         query: {
@@ -125,7 +125,7 @@ describe('Results Helper', () => {
         },
       };
 
-      const url = helper.getURLFromRequest(req);
+      const url = helper.getCurrentUrlFromRequest(req);
       expect(url).toBeInstanceOf(URLSearchParams);
       expect(url.get('departureDate')).toBe('2022-09-22');
       expect(url.getAll('origins[][flyFrom]')).toEqual(
@@ -145,12 +145,24 @@ describe('Results Helper', () => {
         },
       };
 
-      const url = helper.getURLFromRequest(req);
+      const url = helper.getCurrentUrlFromRequest(req);
       expect(url).toBeInstanceOf(URLSearchParams);
       expect(url.get('departureDate')).toBe('2022-09-22');
       expect(url.getAll('origins[][flyFrom]')).toEqual(
         expect.arrayContaining(['MAD', 'LIS'])
       );
     });
+  });
+
+  describe('applyFilters', () => {
+    test.todo('should work');
+  });
+
+  describe('fillAirportDescriptions', () => {
+    test.todo('should work');
+  });
+
+  describe('buildNavigationUrlsFromRequest', () => {
+    test.todo('should work');
   });
 });

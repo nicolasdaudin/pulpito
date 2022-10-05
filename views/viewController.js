@@ -36,45 +36,22 @@ exports.getCommon = catchAsync(async (req, res, next) => {
       req.filter
     );
 
-    req.query.origins.flyFromDesc = req.query.origins.flyFrom.map(
-      (iataCode) => {
-        const airportInfo = airportService.findByIataCode(iataCode);
-        return `${airportInfo.municipality} - ${airportInfo.name} (${airportInfo.iata_code}) - ${airportInfo.country}`;
-      }
+    req.query.origins.flyFromDesc = resultsHelper.fillAirportDescriptions(
+      req.query.origins.flyFrom
     );
 
-    console.log('getCommon req.query', req.query);
-
-    const urlSearchParamsBase = resultsHelper.getURLFromRequest(req);
-    console.log(
-      'getCommon urlSearchParamsBase',
-      urlSearchParamsBase.toString()
-    );
-
-    console.log('req.filter.page', req.filter.page);
-    const previousPage = +req.filter.page - 1;
-    const nextPage = +req.filter.page + 1;
-    const previous =
-      previousPage > 0
-        ? `/common?${urlSearchParamsBase.toString()}&page=${previousPage}`
-        : null;
-    const next =
+    const navigation = resultsHelper.buildNavigationUrlsFromRequest(
+      req,
+      `/common`,
       commonItineraries.length === RESULTS_SEARCH_LIMIT
-        ? `/common?${urlSearchParamsBase.toString()}&page=${nextPage}`
-        : null;
+    );
 
-    console.log('previous', previous);
-    console.log('next', next);
-    // const commonItineraries = [];
     res.status(200).render('common', {
       status: 'success',
       results: commonItineraries.length,
       data: commonItineraries,
       request: req.query,
-      pagination: {
-        previous,
-        next,
-      },
+      navigation,
     });
   } catch (err) {
     res.status(err.response.status).render('common', {
@@ -103,25 +80,15 @@ exports.searchFlights = catchAsync(async (req, res, next) => {
       req.filter
     );
 
-    req.body.origins.flyFromDesc = req.body.origins.flyFrom.map((iataCode) => {
-      const airportInfo = airportService.findByIataCode(iataCode);
-      return `${airportInfo.municipality} - ${airportInfo.name} (${airportInfo.iata_code}) - ${airportInfo.country}`;
-    });
-
-    console.log('searchFlights req.body', req.body);
-
-    const urlSearchParamsBase = resultsHelper.getURLFromRequest(req);
-
-    // urlSearchParamsBase.append('page', 2);
-    console.log(
-      'searchFlights urlSearchParamsBase',
-      urlSearchParamsBase.toString()
+    req.body.origins.flyFromDesc = resultsHelper.fillAirportDescriptions(
+      req.body.origins.flyFrom
     );
 
-    const next =
+    const navigation = resultsHelper.buildNavigationUrlsFromRequest(
+      req,
+      `/common`,
       commonItineraries.length === RESULTS_SEARCH_LIMIT
-        ? `/common?${urlSearchParamsBase.toString()}&page=2`
-        : null;
+    );
 
     // const commonItineraries = [];
     res.status(200).render('common', {
@@ -129,9 +96,7 @@ exports.searchFlights = catchAsync(async (req, res, next) => {
       results: commonItineraries.length,
       data: commonItineraries,
       request: req.body,
-      pagination: {
-        next,
-      },
+      navigation,
     });
   } catch (err) {
     console.error(err);

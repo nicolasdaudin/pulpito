@@ -112,3 +112,17 @@
   background-color: DodgerBlue !important;
   color: #ffffff;
 }
+
+.filter_results {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* link for navigating between results pages */
+a.btn_navigation {
+  color: var(--main-color);
+  border: none;
+  background: transparent;
+  padding: 5px 10px;
+}

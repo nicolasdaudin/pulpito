@@ -49,12 +49,16 @@ block content
           .col-lg-9
             .row
               .col-lg-12
-                if (pagination)
-                  .pagination 
-                    if (pagination.previous)
-                      a.btn.btn_theme.btn_sm.btn_previous(href=`${pagination.previous}`) ⬅️ Précédent
-                    if (pagination.next)
-                      a.btn.btn_theme.btn_sm.btn_next(href=`${pagination.next}`) Suivant ➡️ 
+                if (navigation)
+                  .filter_results                    
+                    .pagination_results 
+                      if (navigation.previous)
+                        a.btn_navigation.btn_previous(type='button' href=`${navigation.previous}`) < Précédent
+                      if (navigation.next)
+                        a.btn_navigation.btn_next(type='button' href=`${navigation.next}`) Suivant >
+                    .sort_results Trier par :
+                      a.btn_navigation.btn_sort-by-price(type='button' href=`${navigation.sortByPrice}`) Prix 
+                      a.btn_navigation.btn_sort-by-distance(type='button' href=`${navigation.sortByDistance}`) Distance 
                 .flight_search_result_wrapper
                   each itinerary,i in data  
                     - var index = i + 1 
