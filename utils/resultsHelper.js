@@ -70,7 +70,14 @@ const getFilters = (itineraries, filterParams) => {
 
   const priceFrom = filterParams.priceFrom;
   const priceTo = filterParams.priceTo;
-  return { minPossiblePrice, maxPossiblePrice, priceFrom, priceTo };
+  const maxConnections = filterParams.maxConnections;
+  return {
+    minPossiblePrice,
+    maxPossiblePrice,
+    priceFrom,
+    priceTo,
+    maxConnections,
+  };
 };
 
 /**

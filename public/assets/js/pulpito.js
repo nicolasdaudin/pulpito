@@ -214,7 +214,11 @@ $(document).ready(function () {
       priceFrom,
       priceTo
     );
-    priceSlider.noUiSlider.updateOptions({
+    // remove the slider created by the template, not sure how it works or how to access it.
+    // and we don't want to modify the template...
+
+    priceSlider.noUiSlider.destroy();
+    noUiSlider.create(priceSlider, {
       start: [+priceFrom, +priceTo],
       connect: true,
       step: 25,
@@ -231,22 +235,40 @@ $(document).ready(function () {
     });
   }
 
+  const btnRadioMaxConnections = document.querySelector(
+    '.btn_radio_max_connections'
+  );
+
   // handle click on 'Apply' for search filters
   const btnApplySearchFilters = document.querySelector('.apply_search_filters');
   if (btnApplySearchFilters) {
     btnApplySearchFilters.addEventListener('click', (e) => {
-      if (!priceSlider) return;
+      let urlParams = [];
+      if (priceSlider) {
+        // get sliders value
+        const [priceFrom, priceTo] = priceSlider.noUiSlider
+          .get()
+          .map((value) => Number(value.replace(' €', '')));
 
-      // get sliders value
-      const [priceFrom, priceTo] = priceSlider.noUiSlider
-        .get()
-        .map((value) => Number(value.replace(' €', '')));
+        urlParams.push(`&priceFrom=${priceFrom}`, `&priceTo=${priceTo}`);
+      }
+
+      if (btnRadioMaxConnections) {
+        const btnRadioMaxConnectionsChecked =
+          btnRadioMaxConnections.querySelector(
+            'input[name="maxConnections"]:checked'
+          );
+        console.log(btnRadioMaxConnectionsChecked.value);
+        urlParams.push(
+          `&maxConnections=${btnRadioMaxConnectionsChecked.value}`
+        );
+      }
 
       // get current url and append these two new params
       const currentUrl = window.location.href;
       console.log('current url', currentUrl);
 
-      const newUrl = `${currentUrl}&priceFrom=${priceFrom}&priceTo=${priceTo}`;
+      const newUrl = `${currentUrl}${urlParams.join('')}`;
       console.log('gonna open this url:', newUrl);
 
       // open location

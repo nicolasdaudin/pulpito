@@ -27,25 +27,26 @@ block content
               .left_side_search_boxed
                 .left_side_search_heading
                   h5 Escales
-                .tour_search_type
+                .tour_search_type.btn_radio_max_connections
                   .form-check
-                    input.form-check-input#flexCheckDefaultf1(type='checkbox')
+                    input.form-check-input#flexCheckDefaultf1(name='maxConnections' type='radio' value=0 checked=filters.maxConnections==='0')
                     label.form-check-label(for='flexCheckDefaultf1')
                       span.area_flex_one
-                        span 1 escale
-                        span 20
+                        span Direct (Sans escale)
+                        span 
                   .form-check
-                    input.form-check-input#flexCheckDefaultf2(type='checkbox')
+                    input.form-check-input#flexCheckDefaultf2(name='maxConnections' type='radio' value=1 checked=filters.maxConnections==='1')
                     label.form-check-label(for='flexCheckDefaultf2')
                       span.area_flex_one
-                        span 2 escales ou plus
-                        span 16
+                        span Jusque 1 escale
+                        span 
                   .form-check
-                    input.form-check-input#flexCheckDefaultf4(type='checkbox')
-                    label.form-check-label(for='flexCheckDefaultf4')
+                    input.form-check-input#flexCheckDefaultf2(name='maxConnections' type='radio' value=2 checked=!filters.maxConnections || filters.maxConnections==='2')
+                    label.form-check-label(for='flexCheckDefaultf3')
                       span.area_flex_one
-                        span Sans escale
-                        span 22
+                        span Tous les vols
+                        span 
+                  
           .col-lg-9
             .row
               .col-lg-12
