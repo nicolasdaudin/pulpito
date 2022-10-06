@@ -200,4 +200,57 @@ $(document).ready(function () {
 
     window.history.replaceState({}, document.title, newUrl);
   }
+
+  // update price ranger filters on document load
+  const priceSlider = document.querySelector('#price-slider');
+  if (priceSlider) {
+    // getting options from datasets-
+    const { minPossiblePrice, maxPossiblePrice, priceFrom, priceTo } =
+      priceSlider.dataset;
+    console.log(
+      'update price slider',
+      minPossiblePrice,
+      maxPossiblePrice,
+      priceFrom,
+      priceTo
+    );
+    priceSlider.noUiSlider.updateOptions({
+      start: [+priceFrom, +priceTo],
+      connect: true,
+      step: 25,
+      margin: 50,
+      range: {
+        min: +minPossiblePrice,
+        max: +maxPossiblePrice,
+      },
+      tooltips: true,
+      format: wNumb({
+        decimals: 0,
+        suffix: ' €',
+      }),
+    });
+  }
+
+  // handle click on 'Apply' for search filters
+  const btnApplySearchFilters = document.querySelector('.apply_search_filters');
+  if (btnApplySearchFilters) {
+    btnApplySearchFilters.addEventListener('click', (e) => {
+      if (!priceSlider) return;
+
+      // get sliders value
+      const [priceFrom, priceTo] = priceSlider.noUiSlider
+        .get()
+        .map((value) => Number(value.replace(' €', '')));
+
+      // get current url and append these two new params
+      const currentUrl = window.location.href;
+      console.log('current url', currentUrl);
+
+      const newUrl = `${currentUrl}&priceFrom=${priceFrom}&priceTo=${priceTo}`;
+      console.log('gonna open this url:', newUrl);
+
+      // open location
+      window.open(newUrl, '_self');
+    });
+  }
 });

@@ -22,8 +22,8 @@ block content
                 .left_side_search_heading
                   h5 Filtrer par prix
                 .filter-price
-                  #price-slider
-                button.apply(type='button') Appliquer
+                  #price-slider(data-min-possible-price=filters ? filters.minPossiblePrice: 0,data-max-possible-price=filters ? filters.maxPossiblePrice: 2000,data-price-from=filters ? (filters.priceFrom ? filters.priceFrom : filters.minPossiblePrice ) : 0,data-price-to=filters ? (filters.priceTo ? filters.priceTo : filters.maxPossiblePrice ) : 2000)
+                button.apply.apply_search_filters(type='button') Appliquer
               .left_side_search_boxed
                 .left_side_search_heading
                   h5 Escales

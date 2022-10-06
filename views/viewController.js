@@ -31,6 +31,9 @@ exports.getCommon = catchAsync(async (req, res, next) => {
       allOriginParams,
       originCodes
     );
+    const filters = resultsHelper.getFilters(commonItineraries, req.filter);
+    console.log('searchFlights filters', filters);
+
     commonItineraries = resultsHelper.applyFilters(
       commonItineraries,
       req.filter
@@ -51,6 +54,7 @@ exports.getCommon = catchAsync(async (req, res, next) => {
       results: commonItineraries.length,
       data: commonItineraries,
       request: req.query,
+      filters,
       navigation,
     });
   } catch (err) {
@@ -75,6 +79,8 @@ exports.searchFlights = catchAsync(async (req, res, next) => {
       originCodes
     );
 
+    const filters = resultsHelper.getFilters(commonItineraries, req.filter);
+    console.log('searchFlights filters', filters);
     commonItineraries = resultsHelper.applyFilters(
       commonItineraries,
       req.filter
@@ -96,6 +102,7 @@ exports.searchFlights = catchAsync(async (req, res, next) => {
       results: commonItineraries.length,
       data: commonItineraries,
       request: req.body,
+      filters,
       navigation,
     });
   } catch (err) {

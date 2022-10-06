@@ -53,25 +53,6 @@ const prepareItineraryData = (dest, itineraries) => {
     0
   );
 
-  itinerary.maxConnections = itinerary.flights.reduce(
-    (max, flight) =>
-      Math.max(
-        max,
-        flight.route.oneway.connections.length,
-        flight.route.return.connections.length
-      ),
-    0
-  );
-
-  itinerary.minFlightPrice = itinerary.flights.reduce(
-    (min, flight) => Math.min(min, flight.price),
-    2000
-  );
-  itinerary.maxFlightPrice = itinerary.flights.reduce(
-    (max, flight) => Math.max(max, flight.price),
-    0
-  );
-
   return itinerary;
 };
 

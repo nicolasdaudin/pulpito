@@ -25,7 +25,7 @@ const filterByMaxConnections = (itinerary, maxConnections) => {
 };
 
 const filterByPriceRange = (itinerary, priceFrom, priceTo) => {
-  let minPrice = 2000;
+  let minPrice = 20000;
   let maxPrice = 0;
   if (itinerary.flights) {
     // if several origins
@@ -46,6 +46,39 @@ const filterByPriceRange = (itinerary, priceFrom, priceTo) => {
   return minPrice >= priceFrom && maxPrice <= priceTo;
 };
 
+/**
+ * Returns an object with the necessary info to display the results and the search filters, like current sort parameter, min possible itinerary price, max possible price....
+ * @param {*} itineraries
+ * @param {*} filterParams
+ */
+const getFilters = (itineraries, filterParams) => {
+  const minPossiblePrice = itineraries.reduce((min, itinerary) => {
+    const tempMin = itinerary.flights.reduce(
+      (min, flight) => Math.min(min, flight.price),
+      20000
+    );
+    return Math.min(tempMin, min);
+  }, 20000);
+
+  const maxPossiblePrice = itineraries.reduce((max, itinerary) => {
+    const tempMax = itinerary.flights.reduce(
+      (max, flight) => Math.max(max, flight.price),
+      0
+    );
+    return Math.max(tempMax, max);
+  }, 0);
+
+  const priceFrom = filterParams.priceFrom;
+  const priceTo = filterParams.priceTo;
+  return { minPossiblePrice, maxPossiblePrice, priceFrom, priceTo };
+};
+
+/**
+ * Returns a copy of itineraries with only itineraries that passed the different params in filterParams
+ * @param {*} itineraries
+ * @param {*} filterParams
+ * @returns
+ */
 const filter = (itineraries, filterParams) => {
   let result = JSON.parse(JSON.stringify(itineraries));
 
@@ -97,6 +130,8 @@ const sort = (itineraries, filterParams) => {
 
 const applyFilters = (itineraries, filterParams) => {
   console.log('applyfilters - filterParams', filterParams);
+  if (!itineraries || !filterParams) return itineraries;
+
   let filtered = filter(itineraries, filterParams);
   filtered = sort(filtered, filterParams);
   filtered = paginate(filtered, filterParams);
@@ -175,6 +210,7 @@ module.exports = {
   sort,
   getCurrentUrlFromRequest,
   applyFilters,
+  getFilters,
   fillAirportDescriptions,
   buildNavigationUrlsFromRequest,
 };
