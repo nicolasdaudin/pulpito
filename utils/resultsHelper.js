@@ -170,45 +170,45 @@ const fillAirportDescriptions = (iataCodes) => {
   });
 };
 
-const buildNavigationUrlsFromRequest = (req, baseUrl, hasNextUrl) => {
+const buildNavigationUrlsFromRequest = (req, route, hasNextUrl) => {
   const urlSearchParamsBase = getCurrentUrlFromRequest(req);
-  console.log(
-    'buildNavigationUrlsFromRequest - req.filter.page',
-    req.filter.page
-  );
 
-  const currentPage = req.filter.page ? +req.filter.page : 1;
-  const sortParam = req.filter.sort ? `&sort=${req.filter.sort}` : '';
+  const { page, sort, priceFrom, priceTo, maxConnections } = req.filter;
+
+  console.log('buildNavigationUrlsFromRequest - page', page);
+
+  const currentPage = page ? +page : 1;
+  const sortParam = sort ? `&sort=${sort}` : '';
+  const priceFromParam = priceFrom ? `&priceFrom=${priceFrom}` : '';
+  const priceToParam = priceTo ? `&priceTo=${priceTo}` : '';
+  const maxConnectionsParam = maxConnections
+    ? `&maxConnections=${maxConnections}`
+    : '';
 
   const previousPage = currentPage - 1;
   const nextPage = currentPage + 1;
 
+  const baseUrl = `${route}?${urlSearchParamsBase.toString()}${priceFromParam}${priceToParam}${maxConnectionsParam}`;
+  console.log('buildNavigationUrlsFromRequest - baseUrl', baseUrl);
+
   const previous =
-    previousPage > 0
-      ? `${baseUrl}?${urlSearchParamsBase.toString()}&page=${previousPage}${sortParam}`
-      : null;
-  const next = hasNextUrl
-    ? `${baseUrl}?${urlSearchParamsBase.toString()}&page=${nextPage}${sortParam}`
-    : null;
+    previousPage > 0 ? `${baseUrl}&page=${previousPage}${sortParam}` : null;
+  const next = hasNextUrl ? `${baseUrl}&page=${nextPage}${sortParam}` : null;
 
-  const sortByPrice = `${baseUrl}?${urlSearchParamsBase.toString()}&sort=price`;
-  const sortByDistance = `${baseUrl}?${urlSearchParamsBase.toString()}&sort=distance`;
+  const sortByPrice = sort !== 'price' ? `${baseUrl}&sort=price` : '';
+  const sortByDistance = sort !== 'distance' ? `${baseUrl}&sort=distance` : '';
 
-  console.log('buildNavigationUrlsFromRequest - previous', previous);
-  console.log('buildNavigationUrlsFromRequest - next', next);
-  console.log('buildNavigationUrlsFromRequest - sortParam', sortParam);
-  console.log('buildNavigationUrlsFromRequest - sortByPrice', sortByPrice);
-  console.log(
-    'buildNavigationUrlsFromRequest - sortByDistance',
-    sortByDistance
-  );
-
-  return {
+  const navigation = {
     previous,
     next,
+    sort,
     sortByPrice,
     sortByDistance,
   };
+
+  console.log('buildNavigationUrlsFromRequest - navigation', navigation);
+
+  return navigation;
 };
 
 module.exports = {

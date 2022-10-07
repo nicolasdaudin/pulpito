@@ -124,5 +124,10 @@ a.btn_navigation {
   color: var(--main-color);
   border: none;
   background: transparent;
-  padding: 5px 10px;
+  padding: 5px 5px 5px 5px;
+}
+
+.sort_results span {
+  font-weight: bold;
+  padding: 5px 5px 5px 5px;
 }

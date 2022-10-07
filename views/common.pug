@@ -57,9 +57,14 @@ block content
                         a.btn_navigation.btn_previous(type='button' href=`${navigation.previous}`) < Précédent
                       if (navigation.next)
                         a.btn_navigation.btn_next(type='button' href=`${navigation.next}`) Suivant >
-                    .sort_results Trier par :
-                      a.btn_navigation.btn_sort-by-price(type='button' href=`${navigation.sortByPrice}`) Prix 
-                      a.btn_navigation.btn_sort-by-distance(type='button' href=`${navigation.sortByDistance}`) Distance 
+                    .sort_results(data-sort=navigation.sort) Trier par :
+                      if (navigation.sort === 'price')
+                        span Prix 
+                        a.btn_navigation.btn_sort-by-distance(type='button' href=`${navigation.sortByDistance}`) Distance 
+                      if (navigation.sort === 'distance') 
+                        a.btn_navigation.btn_sort-by-price(type='button' href=`${navigation.sortByPrice}`) Prix
+                        span Distance
+                      
                 .flight_search_result_wrapper
                   each itinerary,i in data  
                     - var index = i + 1 

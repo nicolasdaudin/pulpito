@@ -264,6 +264,12 @@ $(document).ready(function () {
         );
       }
 
+      // retrive sort paran
+      const sortResultsElement = document.querySelector('.sort_results');
+      if (sortResultsElement) {
+        urlParams.push(`&sort=${sortResultsElement.dataset.sort}`);
+      }
+
       // get current url and append these two new params
       const currentUrl = window.location.href;
       console.log('current url', currentUrl);

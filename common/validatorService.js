@@ -1,10 +1,10 @@
 const validator = require('../utils/validator');
 const { isAlpha, isDate, isNumeric } = require('validator');
 const AppError = require('../utils/appError');
-const { RESULTS_SEARCH_LIMIT } = require('../config');
+const { RESULTS_SEARCH_LIMIT, DEFAULT_SORT_FIELD } = require('../config');
 
 const PARAMS_TO_FILTER = [
-  { name: 'sort', default: null },
+  { name: 'sort', default: DEFAULT_SORT_FIELD },
   { name: 'limit', default: RESULTS_SEARCH_LIMIT },
   { name: 'page', default: 1 },
   { name: 'maxConnections' },
