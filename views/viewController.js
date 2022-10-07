@@ -7,71 +7,33 @@ const resultsHelper = require('../utils/resultsHelper');
 const { RESULTS_SEARCH_LIMIT } = require('../config');
 
 exports.getHome = (req, res) => {
-  res.render('home');
+  res.status(200).render('home');
 };
 
-exports.getCommon = catchAsync(async (req, res, next) => {
-  console.log('getCommon req.query', req.query);
-  if (!req.query || !req.query.origins) {
-    return res.status(200).render('common', {
+exports.getSearchPage = (req, res) => {
+  res.status(200).render('search', {
+    status: 'success',
+    results: 0,
+    data: [],
+  });
+};
+
+exports.searchFlights = catchAsync(async (req, res, next) => {
+  const requestParams = req.body && req.body.origins ? req.body : req.query;
+  console.log('searchFlights requestParams', requestParams);
+
+  if (!requestParams || !requestParams.origins) {
+    return res.status(200).render('search', {
       status: 'success',
       results: 0,
       data: [],
     });
   }
 
-  const allOriginParams = helper.prepareSeveralOriginAPIParamsFromView(
-    req.query
-  );
+  const allOriginParams =
+    helper.prepareSeveralOriginAPIParamsFromView(requestParams);
 
-  const originCodes = req.query.origins.flyFrom;
-
-  try {
-    let commonItineraries = await destinationsService.buildCommonItineraries(
-      allOriginParams,
-      originCodes
-    );
-    const filters = resultsHelper.getFilters(commonItineraries, req.filter);
-    console.log('searchFlights filters', filters);
-
-    commonItineraries = resultsHelper.applyFilters(
-      commonItineraries,
-      req.filter
-    );
-
-    req.query.origins.flyFromDesc = resultsHelper.fillAirportDescriptions(
-      req.query.origins.flyFrom
-    );
-
-    const navigation = resultsHelper.buildNavigationUrlsFromRequest(
-      req,
-      `/common`,
-      commonItineraries.length === RESULTS_SEARCH_LIMIT
-    );
-
-    res.status(200).render('common', {
-      status: 'success',
-      results: commonItineraries.length,
-      data: commonItineraries,
-      request: req.query,
-      filters,
-      navigation,
-    });
-  } catch (err) {
-    res.status(err.response.status).render('common', {
-      status: 'error',
-      results: 0,
-      error: err.response.data.error,
-    });
-  }
-});
-
-exports.searchFlights = catchAsync(async (req, res, next) => {
-  const allOriginParams = helper.prepareSeveralOriginAPIParamsFromView(
-    req.body
-  );
-
-  const originCodes = req.body.origins.flyFrom;
+  const originCodes = requestParams.origins.flyFrom;
 
   try {
     let commonItineraries = await destinationsService.buildCommonItineraries(
@@ -80,14 +42,14 @@ exports.searchFlights = catchAsync(async (req, res, next) => {
     );
 
     const filters = resultsHelper.getFilters(commonItineraries, req.filter);
-    console.log('searchFlights filters', filters);
+
     commonItineraries = resultsHelper.applyFilters(
       commonItineraries,
       req.filter
     );
 
-    req.body.origins.flyFromDesc = resultsHelper.fillAirportDescriptions(
-      req.body.origins.flyFrom
+    requestParams.origins.flyFromDesc = resultsHelper.fillAirportDescriptions(
+      requestParams.origins.flyFrom
     );
 
     const navigation = resultsHelper.buildNavigationUrlsFromRequest(
@@ -101,7 +63,7 @@ exports.searchFlights = catchAsync(async (req, res, next) => {
       status: 'success',
       results: commonItineraries.length,
       data: commonItineraries,
-      request: req.body,
+      request: requestParams,
       filters,
       navigation,
     });

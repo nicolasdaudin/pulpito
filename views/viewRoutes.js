@@ -6,8 +6,10 @@ const router = express.Router();
 
 router.get('/', viewController.getHome);
 
+router.get('/search', viewController.getSearchPage);
+
 // temp, to integrate PUG from template
-router.get('/common', filterParams, viewController.getCommon);
+router.get('/common', filterParams, viewController.searchFlights);
 
 // TODO: param requests are not 'validated' although they are validated on front-end
 // we use filterParams to add an empty filter object on req parameter.
