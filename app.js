@@ -5,11 +5,18 @@ const rateLimit = require('express-rate-limit');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
-const app = express();
-const axios = require('axios').default;
-const groupBy = require('core-js/actual/array/group-by');
-const AppError = require('./utils/appError');
+const cookieParser = require('cookie-parser');
 
+const app = express();
+const i18n = require('i18n');
+i18n.configure({
+  locales: ['en', 'fr', 'es'],
+  directory: `${__dirname}/locales`,
+  queryParameter: 'lang',
+  cookie: 'lang',
+});
+
+const AppError = require('./utils/appError');
 const destinationsRouter = require('./destinations/destinationsRoutes');
 const userRouter = require('./user/userRoutes');
 const airportRouter = require('./airports/airportRoutes');
@@ -60,10 +67,8 @@ app.use(
 );
 // whitelist is an array of parameter names to allow several occurrences of that field in the query parameters.
 
-// app.use((req, res, next) => {
-//   console.log(req.headers);
-//   next();
-// });
+app.use(cookieParser()); // add cookie parser middleware
+app.use(i18n.init);
 
 // serving static files
 app.use(express.static(`${__dirname}/public`));

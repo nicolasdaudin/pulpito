@@ -12,7 +12,7 @@ header.main_header_arae
             li
               a(href='/') Accueil
             li
-              a(href='/search') Rechercher une destination
+              a(href='/search')=`${__('Search a destination')}`
             li
               a(href='#') Login
             li
@@ -22,16 +22,11 @@ header.main_header_arae
                 button.dropdown-toggle(type='button' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false')
                   span.lang-name
                 .dropdown-menu.language-dropdown-menu
-                  a.dropdown-item(href='#') English
-                  a.dropdown-item(href='#') Spanish
-                  a.dropdown-item(href='#') French
-            li
-              .dropdown.language-option
-                button.dropdown-toggle(type='button' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false')
-                  span.lang-name
-                .dropdown-menu.language-dropdown-menu
-                  a.dropdown-item(href='#') USD
-                  a.dropdown-item(href='#') EUR
+                  a.dropdown-item(href='/?lang=en-us') English ($)
+                  a.dropdown-item(href='/?lang=en-gb') English (€)
+                  a.dropdown-item(href='/?lang=es') Spanish (€)
+                  a.dropdown-item(href='/?lang=fr') French (€)
+            
   //  Navbar Bar 
   .navbar-area
     .main-responsive-nav
