@@ -1,6 +1,30 @@
 {
-	"Search a destination": "Buscar un destino",
-	"English": "English",
-	"Spanish": "Spanish",
-	"French": "French"
+  "Search a destination": "Buscar un destino",
+  "English": "English",
+  "Spanish": "Spanish",
+  "French": "French",
+  "Home": "Inicio",
+  "Destinations": "Destinos",
+  "Meet somewhere": "Encontrarse",
+  "Welcome to Pulpito": "Bienvenido a Pulpito  🦑",
+  "Made with love": "Hecho con ❤️ en 🇪🇸 por un desarrollador 🇫🇷",
+  "Found a bug?": "Encontraste un error? Tienes una sugerencia?",
+  "One way": "Ida",
+  "Return": "Vuelta",
+  "From": "Desde",
+  "Choose a departure airport": "Elige un aeropuerto de origen",
+  "Remove that origin": "Quitar un origen",
+  "Passengers": "Pasajeros",
+  "%s Passenger": {
+    "one": "%s Pasajero",
+    "other": "%s Pasajeros"
+  },
+  "Adults": "Adultos",
+  "12+ years": "12+ años",
+  "Children": "Niños",
+  "2 - 11 years": "2 - 11 años",
+  "Infants": "Bebes",
+  "0 - 2 years": "0 - 2 años",
+  "Add an origin": "Añadir un origen",
+  "Search": "Buscar"
 }

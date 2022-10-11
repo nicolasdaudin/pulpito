@@ -16,7 +16,7 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                         li.nav-item(role='presentation')
                           button.nav-link#roundtrip-tab(data-bs-toggle='tab' data-bs-target='#roundtrip' type='button' role='tab' aria-controls='roundtrip' aria-selected='false') Aller/Retour
                       li.nav-item(role='presentation')
-                        button.nav-link#multi_city-tab(data-bs-toggle='tab' data-bs-target='#multi_city' type='button' role='tab' aria-controls='multi_city' aria-selected='false') Plusieurs origines
+                        button.nav-link#multi_city-tab(data-bs-toggle='tab' data-bs-target='#multi_city' type='button' role='tab' aria-controls='multi_city' aria-selected='false')=`${__('Meet somewhere')}`
               if error
                 .alert.alert-danger.alert-dismissible(role="alert")=error                  
 
@@ -236,11 +236,11 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                                   .form_search_date
                                     .flight_Search_boxed.date_flex_area
                                       .Journey_date
-                                        p Aller
+                                        p=`${__('One way')}`
                                         input(type='date',required,name='departureDate',value=request ? request.departureDate: '')
                                         span TODO? Jeudi
                                       .Journey_date
-                                        p Retour
+                                        p=`${__('Return')}`
                                         input(type='date',required,name='returnDate',value=request ? request.returnDate : '')
                                         span TODO? Samedi                            
                             - var PLACEHOLDER = 'placeholder'
@@ -261,35 +261,35 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                                 if !firstRow
                                   .col-lg-12
                                     .multi_form_remove
-                                      button(type='button' id="remove_multi_city") Enlever ce point de départ
+                                      button(type='button' id="remove_multi_city")=`${__('Remove that origin')}`
                                 .row
                                   .col-lg-6.col-md-6.col-sm-12.col-12
                                     .flight_Search_boxed.autocomplete
-                                      p De
+                                      p=`${__('From')}`
                                       //- input(type='text',required,name='origins[][flyFrom]',value=`${flyFrom}`,maxlength=3)
                                       input(type='text',required,name='origins[][flyFrom]',
-                                        placeholder=flyFrom===PLACEHOLDER?'Choisissez un aéroport de départ...':'',
+                                        placeholder=flyFrom===PLACEHOLDER?__('Choose a departure airport'):'',
                                         value=flyFrom===PLACEHOLDER?'':flyFrom,
                                         maxlength=10
                                       )
                                       span=flyFromDesc[i]
                                   .col-lg-6.col-md-6.col-sm-12.col-12
                                     .flight_Search_boxed.dropdown_passenger_area
-                                      p Passagers
+                                      p=`${__('Passengers')}`
                                       .dropdown
-                                        button.dropdown-toggle.final-count#dropdownMenuButton1(data-toggle='dropdown' type='button' data-bs-toggle='dropdown' aria-expanded='false')=`${Number(adults[i])+Number(children[i])+Number(infants[i])} Passagers`
+                                        button.dropdown-toggle.final-count#dropdownMenuButton1(data-toggle='dropdown' type='button' data-bs-toggle='dropdown' aria-expanded='false')=`${__n('%s Passenger',Number(adults[i])+Number(children[i])+Number(infants[i]))}`
 
                                         .dropdown-menu.dropdown_passenger_info(aria-labelledby='dropdownMenuButton1')
                                           .traveller-calulate-persons
                                             .passengers
-                                              h6 Passagers
+                                              h6=`${__('Passengers')}`
                                               .passengers-types
                                                 .passengers-type
                                                   .text
                                                     input.count.pcount(type='number',readonly,required,name='origins[][adults]',value=adults[i]) 
                                                     .type-label
-                                                      p Adultes
-                                                      span 12+ ans
+                                                      p=`${__('Adults')}`
+                                                      span=`${__('12+ years')}` 
                                                   .button-set
                                                     button.btn-add(type='button')
                                                       i.fas.fa-plus
@@ -299,11 +299,8 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                                                   .text
                                                     input.count.ccount(type='number',readonly,required,name='origins[][children]',value=children[i]) 
                                                     .type-label
-                                                      p.fz14.mb-xs-0.
-
-                                                        Enfants
-
-                                                      span 2 - 11 ans
+                                                      p.fz14.mb-xs-0=`${__('Children')}`
+                                                      span=`${__('2 - 11 years')}` 
                                                   .button-set
                                                     button.btn-add-c(type='button')
                                                       i.fas.fa-plus
@@ -313,11 +310,8 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                                                   .text
                                                     input.count.incount(type='number',readonly,required,name='origins[][infants]',value=infants[i]) 
                                                     .type-label
-                                                      p.fz14.mb-xs-0.
-
-                                                        Bébés
-
-                                                      span 0 - 2 ans
+                                                      p.fz14.mb-xs-0=`${__('Infants')}`
+                                                      span=`${__('0 - 2 years')}` 
                                                   .button-set
                                                     button.btn-add-in(type='button')
                                                       i.fas.fa-plus
@@ -326,6 +320,7 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                           .row
                             .col-lg-12
                               .add_multy_form
-                                button#addMulticityRow(type='button') + Ajouter un point de départ
+                                button#addMulticityRow(type='button') + #{__('Add an origin')}
                           .top_form_search_button
-                            button.btn.btn_theme.btn_md Rechercher
+                            button.btn.btn_theme.btn_md=`${__('Search')}` 
+                            
