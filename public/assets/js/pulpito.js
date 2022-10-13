@@ -176,20 +176,18 @@ $(document).ready(function () {
   const flightSearchResultWrapper = document.querySelector(
     '.flight_search_result_wrapper'
   );
-  if (flightSearchResultWrapper) {
-    flightSearchResultWrapper.addEventListener('click', (e) => {
-      const btnBookAll = e.target.closest('.btn_book_all');
-      if (!btnBookAll) return;
-      openLinks(JSON.parse(btnBookAll.dataset.links));
-    });
-  }
+  flightSearchResultWrapper.addEventListener('click', (e) => {
+    const btnBookAll = e.target.closest('.btn_book_all');
+    if (!btnBookAll) return;
+    openLinks(JSON.parse(btnBookAll.dataset.links));
+  });
 
   // update the URL in the navigation bar with info from the search query (since we can't redirect from pug)
 
   const originInputs = document.querySelectorAll(
     `.multi_city_form input[name='origins[][flyFrom]'`
   );
-  if (originInputs && originInputs[0] && originInputs[0].value) {
+  if (originInputs[0].value) {
     // form has been filled with values
     const searchForm = document
       .querySelector('.multi_city_form')
@@ -283,20 +281,4 @@ $(document).ready(function () {
       window.open(newUrl, '_self');
     });
   }
-
-  // const languageDropdownMenu = document.querySelector(
-  //   '.language-dropdown-menu'
-  // );
-  // if (languageDropdownMenu) {
-  //   languageDropdownMenu.addEventListener('click', (e) => {
-  //     e.preventDefault();
-  //     const languageBtn = e.target.closest('.switch-language');
-  //     if (languageBtn) {
-  //       console.log('click on:', languageBtn.dataset.lang);
-  //       document.cookie = `lang=${languageBtn.dataset.lang}`;
-  //       console.log(document.cookie);
-  //       // window.open('/', '_self');
-  //     }
-  //   });
-  // }
 });

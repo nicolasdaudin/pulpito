@@ -5,10 +5,9 @@ const rateLimit = require('express-rate-limit');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
-const cookieParser = require('cookie-parser');
-
 const app = express();
 const AppError = require('./utils/appError');
+
 const destinationsRouter = require('./destinations/destinationsRoutes');
 const userRouter = require('./user/userRoutes');
 const airportRouter = require('./airports/airportRoutes');

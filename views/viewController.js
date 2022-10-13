@@ -7,10 +7,6 @@ const resultsHelper = require('../utils/resultsHelper');
 const { RESULTS_SEARCH_LIMIT } = require('../config');
 
 exports.getHome = (req, res) => {
-  if (req.query.lang) {
-    const lang = req.query.lang;
-    res.cookie('lang', lang, { maxAge: 900000 });
-  }
   res.status(200).render('home');
 };
 
