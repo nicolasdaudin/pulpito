@@ -8,14 +8,6 @@ const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 
 const app = express();
-const i18n = require('i18n');
-i18n.configure({
-  locales: ['en', 'fr', 'es'],
-  directory: `${__dirname}/locales`,
-  queryParameter: 'lang',
-  cookie: 'lang',
-});
-
 const AppError = require('./utils/appError');
 const destinationsRouter = require('./destinations/destinationsRoutes');
 const userRouter = require('./user/userRoutes');
@@ -66,9 +58,6 @@ app.use(
   })
 );
 // whitelist is an array of parameter names to allow several occurrences of that field in the query parameters.
-
-app.use(cookieParser()); // add cookie parser middleware
-app.use(i18n.init);
 
 // serving static files
 app.use(express.static(`${__dirname}/public`));
