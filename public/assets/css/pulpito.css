@@ -131,3 +131,10 @@ a.btn_navigation {
   font-weight: bold;
   padding: 5px 5px 5px 5px;
 }
+
+#common_banner_custom {
+  background-color: #cccccc;
+  padding: 200px 0 130px 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+}

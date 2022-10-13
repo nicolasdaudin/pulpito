@@ -12,26 +12,8 @@ header.main_header_arae
             li
               a(href='/') Accueil
             li
-              a(href='/search') Rechercher une destination
-            li
-              a(href='#') Login
-            li
-              a(href='#') Sign up
-            li
-              .dropdown.language-option
-                button.dropdown-toggle(type='button' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false')
-                  span.lang-name
-                .dropdown-menu.language-dropdown-menu
-                  a.dropdown-item(href='#') English
-                  a.dropdown-item(href='#') Spanish
-                  a.dropdown-item(href='#') French
-            li
-              .dropdown.language-option
-                button.dropdown-toggle(type='button' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false')
-                  span.lang-name
-                .dropdown-menu.language-dropdown-menu
-                  a.dropdown-item(href='#') USD
-                  a.dropdown-item(href='#') EUR
+              a(href='/search') Rechercher une destination            
+            
   //  Navbar Bar 
   .navbar-area
     .main-responsive-nav
@@ -50,45 +32,15 @@ header.main_header_arae
               li.nav-item
                 a.nav-link(href='/') Chercher un vol
               li.nav-item
-                a.nav-link(href='#').
-
-                  Destinations
-
+                a.nav-link(href='#') Destinations
                 ul.dropdown-menu
                   li.nav-item
-                    a.nav-link(href='#') Les moins chères
-                  li.nav-item
                     a.nav-link(href='#') Se retrouver
-            .others-options.d-flex.align-items-center
-              .option-item
-                a.search-box(href='#')
-                  i.bi.bi-search
-//  search 
-.search-overlay
-  .d-table
-    .d-table-cell
-      .search-overlay-layer
-      .search-overlay-layer
-      .search-overlay-layer
-      .search-overlay-close
-        span.search-overlay-close-line
-        span.search-overlay-close-line
-      .search-overlay-form
-        form
-          input.input-search(type='text' placeholder='Search here...')
-          button(type='button')
-            i.fas.fa-search
+
 //  Common Banner Area 
-section#common_banner
+section#common_banner_custom
   .container
     .row
       .col-lg-12
         .common_bannner_text
-          h2 Flight search result
-          ul
-            li
-              a(href='/') Accueil
-            li
-              span
-                i.fas.fa-circle
-              |  Flight search result
+          h2 Bienvenue sur Pulpito

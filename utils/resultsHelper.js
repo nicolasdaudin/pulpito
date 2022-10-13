@@ -136,7 +136,6 @@ const sort = (itineraries, filterParams) => {
 };
 
 const applyFilters = (itineraries, filterParams) => {
-  console.log('applyfilters - filterParams', filterParams);
   if (!itineraries || !filterParams) return itineraries;
 
   let filtered = filter(itineraries, filterParams);
@@ -175,8 +174,6 @@ const buildNavigationUrlsFromRequest = (req, route, hasNextUrl) => {
 
   const { page, sort, priceFrom, priceTo, maxConnections } = req.filter;
 
-  console.log('buildNavigationUrlsFromRequest - page', page);
-
   const currentPage = page ? +page : 1;
   const sortParam = sort ? `&sort=${sort}` : '';
   const priceFromParam = priceFrom ? `&priceFrom=${priceFrom}` : '';
@@ -189,7 +186,6 @@ const buildNavigationUrlsFromRequest = (req, route, hasNextUrl) => {
   const nextPage = currentPage + 1;
 
   const baseUrl = `${route}?${urlSearchParamsBase.toString()}${priceFromParam}${priceToParam}${maxConnectionsParam}`;
-  console.log('buildNavigationUrlsFromRequest - baseUrl', baseUrl);
 
   const previous =
     previousPage > 0 ? `${baseUrl}&page=${previousPage}${sortParam}` : null;
@@ -205,8 +201,6 @@ const buildNavigationUrlsFromRequest = (req, route, hasNextUrl) => {
     sortByPrice,
     sortByDistance,
   };
-
-  console.log('buildNavigationUrlsFromRequest - navigation', navigation);
 
   return navigation;
 };

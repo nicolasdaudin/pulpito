@@ -6,8 +6,6 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const app = express();
-const axios = require('axios').default;
-const groupBy = require('core-js/actual/array/group-by');
 const AppError = require('./utils/appError');
 
 const destinationsRouter = require('./destinations/destinationsRoutes');
@@ -59,11 +57,6 @@ app.use(
   })
 );
 // whitelist is an array of parameter names to allow several occurrences of that field in the query parameters.
-
-// app.use((req, res, next) => {
-//   console.log(req.headers);
-//   next();
-// });
 
 // serving static files
 app.use(express.static(`${__dirname}/public`));

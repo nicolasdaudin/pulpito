@@ -68,7 +68,6 @@ const getWeekendFlights = async (params) => {
 
 // FIXME: better handle errors
 const getFlights = async (params) => {
-  console.log('getFlights');
   try {
     const response = await axios.get(process.env.KIWI_URL, {
       headers: {
