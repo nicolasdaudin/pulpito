@@ -20,7 +20,7 @@ block content
             .left_side_search_area
               .left_side_search_boxed
                 .left_side_search_heading
-                  h5 Filtrer par prix
+                  h5 Filtrer par prix par personne
                 .filter-price
                   #price-slider(data-min-possible-price=filters ? filters.minPossiblePrice: 0,data-max-possible-price=filters ? filters.maxPossiblePrice: 2000,data-price-from=filters ? (filters.priceFrom ? filters.priceFrom : filters.minPossiblePrice ) : 0,data-price-to=filters ? (filters.priceTo ? filters.priceTo : filters.maxPossiblePrice ) : 2000)
                 button.apply.apply_search_filters(type='button') Appliquer
@@ -59,10 +59,10 @@ block content
                         a.btn_navigation.btn_next(type='button' href=`${navigation.next}`) Suivant >
                     .sort_results(data-sort=navigation.sort) Trier par :
                       if (navigation.sort === 'price')
-                        span Prix 
+                        span Prix total
                         a.btn_navigation.btn_sort-by-distance(type='button' href=`${navigation.sortByDistance}`) Distance 
                       if (navigation.sort === 'distance') 
-                        a.btn_navigation.btn_sort-by-price(type='button' href=`${navigation.sortByPrice}`) Prix
+                        a.btn_navigation.btn_sort-by-price(type='button' href=`${navigation.sortByPrice}`) Prix total
                         span Distance
                       
                 .flight_search_result_wrapper
@@ -76,8 +76,8 @@ block content
                             .flight_search_left
                               .flight_search_destination
                                 p Destination:
-                                h3=itinerary.cityTo
-                                h6=itinerary.flyTo
+                                h3=`${itinerary.cityTo} (${itinerary.cityCodeTo})`
+                                h6=itinerary.countryTo
                         .flight_search_right
                           - var links = [];
                           each flight in itinerary.flights 
@@ -88,56 +88,63 @@ block content
                             | Détails 
                             i.fas.fa-chevron-down
                       .flight_policy_refund.collapse(id=`collapseExample${index}`)
+                        .flight_show_down_wrapper_header
+                          .airline-details Depuis
+                          .flight_inner_show_component_container
+                            .flight_inner_show_component Aller
+                            .flight_inner_show_component Retour
+                          .TabPanelInner Prix
                         each flight in itinerary.flights
                           .flight_show_down_wrapper
                             .airline-details
-                              h3=`De: ${flight.cityFrom}`
+                              h3=`${flight.cityFrom}`
                             - var onewayConnections = (flight.route.oneway.connections.length > 0) ? flight.route.oneway.connections : null
                           
-                            .flight_inner_show_component
-                              .flight_det_wrapper
-                                .flight_det
-                                  .code_time
-                                    span.code=flight.flyFrom
-                                    span.time=`${flight.route.oneway.local_departure.split(',')[1].trim()}`
-                                  p.airport=`${flight.cityFrom}`
+                            .flight_inner_show_component_container 
+                              .flight_inner_show_component
+                                .flight_det_wrapper
+                                  .flight_det
+                                    .code_time
+                                      span.code=flight.flyFrom
+                                      span.time=`${flight.route.oneway.local_departure.split(',')[1].trim()}`
+                                    p.airport=`${flight.cityFrom}`
 
-                                  p.date=`${flight.route.oneway.local_departure.split(',')[0].trim()}`
-                              .flight_duration
-                                .arrow_right
-                                if flight.route.oneway.connections.length > 0
-                                  span=flight.route.oneway.connections
-                                p=flight.route.oneway.duration
-                              .flight_det_wrapper
-                                .flight_det
-                                  .code_time
-                                    span.code=flight.flyTo
-                                    span.time=`${flight.route.oneway.local_arrival.split(',')[1].trim()}`
-                                  p.airport=`${flight.cityTo}`
+                                    p.date=`${flight.route.oneway.local_departure.split(',')[0].trim()}`
+                                .flight_duration
+                                  .arrow_right
+                                  if flight.route.oneway.connections.length > 0
+                                    span=flight.route.oneway.connections
+                                  p=flight.route.oneway.duration
+                                .flight_det_wrapper
+                                  .flight_det
+                                    .code_time
+                                      span.code=flight.flyTo
+                                      span.time=`${flight.route.oneway.local_arrival.split(',')[1].trim()}`
+                                    p.airport=`${flight.cityTo}`
 
-                                  p.date=`${flight.route.oneway.local_arrival.split(',')[0].trim()}`
-                            .flight_inner_show_component
-                              .flight_det_wrapper
-                                .flight_det
-                                  .code_time
-                                    span.code=flight.flyTo
-                                    span.time=`${flight.route.return.local_departure.split(',')[1].trim()}`
-                                  p.airport=`${flight.cityTo}`
+                                    p.date=`${flight.route.oneway.local_arrival.split(',')[0].trim()}`
+                              .flight_inner_show_component
+                                .flight_det_wrapper
+                                  .flight_det
+                                    .code_time
+                                      span.code=flight.flyTo
+                                      span.time=`${flight.route.return.local_departure.split(',')[1].trim()}`
+                                    p.airport=`${flight.cityTo}`
 
-                                  p.date=`${flight.route.return.local_departure.split(',')[0].trim()}`
-                              .flight_duration
-                                .arrow_left
-                                if flight.route.return.connections.length > 0
-                                  span=flight.route.return.connections
-                                p=flight.route.return.duration
-                              .flight_det_wrapper
-                                .flight_det
-                                  .code_time
-                                    span.code=flight.flyFrom
-                                    span.time=`${flight.route.return.local_arrival.split(',')[1].trim()}`
-                                  p.airport=`${flight.cityFrom}`
+                                    p.date=`${flight.route.return.local_departure.split(',')[0].trim()}`
+                                .flight_duration
+                                  .arrow_left
+                                  if flight.route.return.connections.length > 0
+                                    span=flight.route.return.connections
+                                  p=flight.route.return.duration
+                                .flight_det_wrapper
+                                  .flight_det
+                                    .code_time
+                                      span.code=flight.flyFrom
+                                      span.time=`${flight.route.return.local_arrival.split(',')[1].trim()}`
+                                    p.airport=`${flight.cityFrom}`
 
-                                  p.date=`${flight.route.return.local_arrival.split(',')[0].trim()}`
+                                    p.date=`${flight.route.return.local_arrival.split(',')[0].trim()}`
                             .TabPanelInner
                               .flight_info_taable
                                 h3=`${flight.fare.adults} € / pers.`

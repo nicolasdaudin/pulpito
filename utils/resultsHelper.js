@@ -24,23 +24,25 @@ const filterByMaxConnections = (itinerary, maxConnections) => {
   return nbConnections <= maxConnections;
 };
 
+// flight.price has the total price for all passengers of that flight
+// we want to compare with the price per adult
 const filterByPriceRange = (itinerary, priceFrom, priceTo) => {
   let minPrice = 20000;
   let maxPrice = 0;
   if (itinerary.flights) {
     // if several origins
     minPrice = itinerary.flights.reduce(
-      (min, flight) => Math.min(min, flight.price),
+      (min, flight) => Math.min(min, flight.fare.adults),
       minPrice
     );
     maxPrice = itinerary.flights.reduce(
-      (max, flight) => Math.max(max, flight.price),
+      (max, flight) => Math.max(max, flight.fare.adults),
       maxPrice
     );
   } else {
     // if one origin
-    minPrice = flight.price;
-    maxPrice = flight.price;
+    minPrice = flight.fare.adults;
+    maxPrice = flight.fare.adults;
   }
 
   return minPrice >= priceFrom && maxPrice <= priceTo;
@@ -53,16 +55,17 @@ const filterByPriceRange = (itinerary, priceFrom, priceTo) => {
  */
 const getFilters = (itineraries, filterParams) => {
   const minPossiblePrice = itineraries.reduce((min, itinerary) => {
-    const tempMin = itinerary.flights.reduce(
-      (min, flight) => Math.min(min, flight.price),
-      20000
-    );
+    const tempMin = itinerary.flights.reduce((min, flight) => {
+      // flight.price has the total price for all passengers of that flight
+      // we want to compare with the price per adult
+      return Math.min(min, flight.fare.adults);
+    }, 20000);
     return Math.min(tempMin, min);
   }, 20000);
 
   const maxPossiblePrice = itineraries.reduce((max, itinerary) => {
     const tempMax = itinerary.flights.reduce(
-      (max, flight) => Math.max(max, flight.price),
+      (max, flight) => Math.max(max, flight.fare.adults),
       0
     );
     return Math.max(tempMax, max);

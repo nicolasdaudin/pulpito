@@ -33,6 +33,12 @@
   font-weight: 500;
 }
 
+@media (min-width: 1400px) {
+  .airline-details h3 {
+    width: 130px;
+  }
+}
+
 .TabPanelInner p {
   margin-bottom: 0px;
   font-size: 12px;
@@ -52,7 +58,7 @@
   align-items: center;
 }
 
-@media (max-width: 1199px) {
+@media (max-width: 1399px) {
   .flight_show_down_wrapper {
     display: inherit;
   }
@@ -137,4 +143,39 @@ a.btn_navigation {
   padding: 200px 0 130px 0;
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+.flight_inner_show_component_container {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+}
+
+@media (max-width: 770px) {
+  .flight_inner_show_component_container {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    flex-direction: column;
+  }
+}
+.flight_show_down_wrapper_header {
+  display: flex;
+  border-bottom: 1px solid #cdcdcd;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  align-items: center;
+  justify-content: space-around;
+}
+.flight_show_down_wrapper_header .airline-details {
+  width: 130px;
+}
+.flight_show_down_wrapper_header .flight_inner_show_component {
+  width: 325px;
+}
+
+@media (max-width: 1399px) {
+  .flight_show_down_wrapper_header {
+    display: none;
+  }
 }

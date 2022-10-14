@@ -254,7 +254,8 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                               - adults = request.origins.adults 
                               - children = request.origins.children 
                               - infants = request.origins.infants
-                              - flyFromDesc = request.origins.flyFromDesc
+                              if request.origins.flyFromDesc
+                                - flyFromDesc = request.origins.flyFromDesc
                             each flyFrom, i in flyFroms
                               .multi_city_form(data-origins-index=`${i}`)
                                 - var firstRow = (i === 0)

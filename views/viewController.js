@@ -18,7 +18,7 @@ exports.getSearchPage = (req, res) => {
   });
 };
 
-exports.searchFlights = catchAsync(async (req, res, next) => {
+exports.searchFlights = catchAsyncKiwi(async (req, res, next) => {
   const requestParams = req.body && req.body.origins ? req.body : req.query;
   console.log('searchFlights requestParams', requestParams);
 
@@ -73,6 +73,7 @@ exports.searchFlights = catchAsync(async (req, res, next) => {
       status: 'error',
       results: 0,
       error: err.response?.data.error ?? err.message,
+      request: requestParams,
     });
   }
 });
