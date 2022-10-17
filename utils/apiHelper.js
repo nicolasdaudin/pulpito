@@ -16,7 +16,7 @@ const isCommonDestination = (destination, origins) => {
 };
 
 // Prepare an object with all the flights corresponding to that destination, and compute some values like total duration, total price...
-const prepareItineraryData = (dest, itineraries) => {
+const prepareItineraryData = (dest, itineraries, passengersPerOrigin) => {
   const itinerary = { cityTo: dest };
 
   // corresponding origins to that particular destination, we remove flights that do not go to that destination
@@ -35,10 +35,14 @@ const prepareItineraryData = (dest, itineraries) => {
     0
   );
 
-  // total distance
-  itinerary.distance = itinerary.flights.reduce(
-    (sum, flight) => sum + flight.distance,
-    0
+  // total distance = the sum of the distance for each destination multiplied by the nb of passengers for that destination. It's not the same to fly 10 persons from Madrid to London and 1 from Madrid to Bangkok, than 1 from Madrid to London and 10 from Madrid to BKK.
+
+  itinerary.distance = Math.trunc(
+    itinerary.flights.reduce(
+      (sum, flight) =>
+        sum + passengersPerOrigin.get(flight.flyFrom) * flight.distance,
+      0
+    )
   );
 
   // total duration departure
@@ -57,6 +61,7 @@ const prepareItineraryData = (dest, itineraries) => {
 };
 
 /**
+ * TODO: merge with prepareItineraryData
  * Remove unnecessary info from API payload
  * @param {*} itinerary
  * @returns
@@ -162,8 +167,15 @@ const extractConnections = (flights) => {
   return connections;
 };
 
-const formatTime = (d) =>
-  DateTime.fromISO(d).toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY);
+const formatTime = (d) => {
+  // time received from Kiwi are supposed to ISO format local or ISO format UTC but they all end up 'Z' - 2022-10-24T21:10:00.000Z - like if it was London time, but it's not. To display a local time (which is what we want), we need to remove the Z part.
+  const dWithoutZ = d.split('Z')[0];
+  const result = DateTime.fromISO(dWithoutZ).toLocaleString(
+    DateTime.DATETIME_MED_WITH_WEEKDAY
+  );
+  // console.log('formatTime', d, result);
+  return result;
+};
 
 const prepareAxiosParams = (params) => {
   var urlSearchParams = new URLSearchParams();

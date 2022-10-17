@@ -60,10 +60,10 @@ block content
                     .sort_results(data-sort=navigation.sort) Trier par :
                       if (navigation.sort === 'price')
                         span Prix total
-                        a.btn_navigation.btn_sort-by-distance(type='button' href=`${navigation.sortByDistance}`) Distance 
+                        a.btn_navigation.btn_sort-by-distance(type='button' href=`${navigation.sortByDistance}`) Distance totale
                       if (navigation.sort === 'distance') 
                         a.btn_navigation.btn_sort-by-price(type='button' href=`${navigation.sortByPrice}`) Prix total
-                        span Distance
+                        span Distance totale
                       
                 .flight_search_result_wrapper
                   each itinerary,i in data  
@@ -82,7 +82,9 @@ block content
                           - var links = [];
                           each flight in itinerary.flights 
                             - links.push(flight.deep_link)
-                          h2=`${itinerary.price} €`                          
+                          .numbers 
+                            h2=`${itinerary.price} €`
+                            h4=`(${itinerary.distance} km)`                       
                           a.btn.btn_theme.btn_sm.btn_book_all(data-links=links) Réserver tous les vols ↗️
                           h6(data-bs-toggle='collapse' data-bs-target=`#collapseExample${index}` aria-expanded='false' aria-controls=`#collapseExample${index}`)
                             | Détails 
@@ -148,9 +150,22 @@ block content
                             .TabPanelInner
                               .flight_info_taable
                                 h3=`${flight.fare.adults} € / pers.`
-                                p=`(${flight.price} € au total)`
-                                a.btn.btn_theme.btn_sm.btn_book(target='_blank',href=`${flight.deep_link}`) Réserver ce vol ↗️
-                  
+                                p=`(${flight.distance} km / pers.)`
+                                a.btn.btn_theme.btn_sm.btn_book(target='_blank',href=`${flight.deep_link}`)=`Réserver ce vol (${flight.price} €) ↗️`
+                if (navigation)
+                  .filter_results                    
+                    .pagination_results 
+                      if (navigation.previous)
+                        a.btn_navigation.btn_previous(type='button' href=`${navigation.previous}`) < Précédent
+                      if (navigation.next)
+                        a.btn_navigation.btn_next(type='button' href=`${navigation.next}`) Suivant >
+                    .sort_results(data-sort=navigation.sort) Trier par :
+                      if (navigation.sort === 'price')
+                        span Prix total
+                        a.btn_navigation.btn_sort-by-distance(type='button' href=`${navigation.sortByDistance}`) Distance totale
+                      if (navigation.sort === 'distance') 
+                        a.btn_navigation.btn_sort-by-price(type='button' href=`${navigation.sortByPrice}`) Prix total
+                        span Distance totale
 
 
 

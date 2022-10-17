@@ -44,8 +44,16 @@ const buildCommonItineraries = async (allOriginsParams, origins) => {
   // For each destination, have an array with the flights, total price and total distance and total duration
   // (preparing for display)
   // and sort by price
+
+  const passengersPerOrigin = new Map(
+    allOriginsParams.map((oneOriginParam) => [
+      oneOriginParam.origin,
+      oneOriginParam.adults + oneOriginParam.children + oneOriginParam.infants,
+    ])
+  );
+
   const commonItineraries = filteredDestinationCities.map((dest) =>
-    helper.prepareItineraryData(dest, itineraries)
+    helper.prepareItineraryData(dest, itineraries, passengersPerOrigin)
   );
 
   return commonItineraries;

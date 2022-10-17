@@ -179,3 +179,14 @@ a.btn_navigation {
     display: none;
   }
 }
+
+.flight_search_right .numbers {
+  display: flex;
+  align-items: center;
+}
+
+.flight_search_right h4 {
+  padding-top: 10px;
+  padding-left: 10px;
+  color: var(--paragraph-color);
+}
