@@ -45,7 +45,10 @@ const prepareItineraryData = (dest, itineraries, passengersPerOrigin) => {
   itinerary.distance = Math.trunc(
     itinerary.flights.reduce(
       (sum, flight) =>
-        sum + passengersPerOrigin.get(flight.flyFrom) * flight.distance,
+        sum +
+        (passengersPerOrigin.get(flight.flyFrom) ??
+          passengersPerOrigin.get(flight.cityCodeFrom)) *
+          flight.distance,
       0
     )
   );
