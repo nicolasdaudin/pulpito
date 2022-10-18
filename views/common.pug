@@ -70,7 +70,7 @@ block content
                     - var index = i + 1 
                     //- .flight_search_item_wrappper(data-bs-toggle='collapse' data-bs-target=`#collapseExample${index}` aria-expanded='false' aria-controls=`#collapseExample${index}`)
                     .flight_search_item_wrappper
-                      .flight_search_items
+                      .flight_search_items(data-bs-toggle='collapse' data-bs-target=`#collapseExample${index}` aria-expanded='false' aria-controls=`#collapseExample${index}`)
                         .multi_city_flight_lists
                           .flight_multis_area_wrapper
                             .flight_search_left
@@ -86,7 +86,7 @@ block content
                             h2=`${itinerary.price} €`
                             h4=`(${itinerary.distance} km)`                       
                           a.btn.btn_theme.btn_sm.btn_book_all(data-links=links) Réserver tous les vols ↗️
-                          h6(data-bs-toggle='collapse' data-bs-target=`#collapseExample${index}` aria-expanded='false' aria-controls=`#collapseExample${index}`)
+                          h6
                             | Détails 
                             i.fas.fa-chevron-down
                       .flight_policy_refund.collapse(id=`collapseExample${index}`)

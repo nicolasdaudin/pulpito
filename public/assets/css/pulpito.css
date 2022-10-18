@@ -190,3 +190,7 @@ a.btn_navigation {
   padding-left: 10px;
   color: var(--paragraph-color);
 }
+
+.flight_search_items {
+  cursor: pointer;
+}
