@@ -21,12 +21,13 @@ const getCheapestDestinations = catchAsyncKiwi(async (req, res, next) => {
   const response = await flightService.getFlights(params);
   // console.log('response.data.data', response.data.data);
   let itineraries = response.data.data.map(helper.cleanItineraryData);
-
+  const totalResults = itineraries.length;
   itineraries = resultsHelper.applyFilters(itineraries, req.filter);
 
   res.status(200).json({
     status: 'success',
-    results: itineraries.length, //response.data.data.length,
+    totalResults,
+    shownResults: itineraries.length,
     data: itineraries, //itineraries,
   });
 });
@@ -53,6 +54,7 @@ const getCommonDestinations = catchAsyncKiwi(async (req, res, next) => {
     allOriginsParams,
     origins
   );
+  const totalResults = commonItineraries.length;
 
   // console.log('buildComm... filterParams', filterParams);
   // console.log('buildComm... commonItineraries', commonItineraries.length);
@@ -62,7 +64,8 @@ const getCommonDestinations = catchAsyncKiwi(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    results: commonItineraries.length,
+    totalResults,
+    shownResults: commonItineraries.length,
     data: commonItineraries,
   });
 });
@@ -74,12 +77,14 @@ const getCheapestWeekend = catchAsyncKiwi(async (req, res, next) => {
   // console.log('request.params', response.request.path);
   // console.log('response.data.data', response.data.data);
   let itineraries = response.data.data.map(helper.cleanItineraryData);
+  const totalResults = itineraries.length;
 
   itineraries = resultsHelper.applyFilters(itineraries, req.filter);
 
   res.status(200).json({
     status: 'success',
-    results: itineraries.length, //response.data.data.length,
+    totalResults,
+    shownResults: itineraries.length,
     data: itineraries, //flights,
   });
 });

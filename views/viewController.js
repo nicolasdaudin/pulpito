@@ -13,7 +13,8 @@ exports.getHome = (req, res) => {
 exports.getSearchPage = (req, res) => {
   res.status(200).render('search', {
     status: 'success',
-    results: 0,
+    totalResults: 0,
+    shownResults: 0,
     data: [],
   });
 };
@@ -25,7 +26,8 @@ exports.searchFlights = catchAsyncKiwi(async (req, res, next) => {
   if (!requestParams || !requestParams.origins) {
     return res.status(200).render('search', {
       status: 'success',
-      results: 0,
+      totalResults: 0,
+      shownResults: 0,
       data: [],
     });
   }
@@ -40,6 +42,7 @@ exports.searchFlights = catchAsyncKiwi(async (req, res, next) => {
       allOriginParams,
       originCodes
     );
+    const totalResults = commonItineraries.length;
 
     const filters = resultsHelper.getFilters(commonItineraries, req.filter);
 
@@ -47,6 +50,7 @@ exports.searchFlights = catchAsyncKiwi(async (req, res, next) => {
       commonItineraries,
       req.filter
     );
+    console.log('length after applyFilters', commonItineraries.length);
 
     requestParams.origins.flyFromDesc = resultsHelper.fillAirportDescriptions(
       requestParams.origins.flyFrom
@@ -61,7 +65,8 @@ exports.searchFlights = catchAsyncKiwi(async (req, res, next) => {
     // const commonItineraries = [];
     res.status(200).render('common', {
       status: 'success',
-      results: commonItineraries.length,
+      totalResults,
+      shownResults: commonItineraries.length,
       data: commonItineraries,
       request: requestParams,
       filters,
@@ -71,7 +76,8 @@ exports.searchFlights = catchAsyncKiwi(async (req, res, next) => {
     console.error(err);
     res.status(err.response?.status ?? 500).render('common', {
       status: 'error',
-      results: 0,
+      totalResults: 0,
+      shownResults: 0,
       error: err.response?.data.error ?? err.message,
       request: requestParams,
     });
