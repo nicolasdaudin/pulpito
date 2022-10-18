@@ -195,10 +195,10 @@ describe('End to end tests', () => {
       test(
         'should return a list of common destinations',
         async () => {
-          const origins = ['MAD', 'BOD', 'BRU'];
+          const origins = ['MAD', 'LIS'];
           const params = {
             ...dates,
-            origin: origins.join(','), //'MAD,BOD,BRU'
+            origin: origins.join(','), //'MAD,LIS'
           };
           const response = await request(app).get(routePath).query(params);
           expect(response.statusCode).toBe(200);
@@ -222,7 +222,7 @@ describe('End to end tests', () => {
         expect(response.statusCode).toBe(400);
         expect(response.body.status).toBe('fail');
         expect(response.body.message).toMatch('no locations to fly from');
-      });
+      }, 10000);
 
       test('should return a 400 error and a fail status if some parameters are missing', async () => {
         const params = {

@@ -8,10 +8,15 @@ const filterDestinationCities = (destinations, origins) => {
 };
 
 const isCommonDestination = (destination, origins) => {
-  // for each origin ('every'), I want to find it at least once as an origin ('cityCodeFrom') in the list of flights corresponding to this destination ('destinations.get(key)')
+  // for each origin ('every'), I want to find it at least once as an origin ('cityCodeFrom' or 'flyFrom') in the list of flights corresponding to this destination ('destinations.get(key)')
+  // be careful with cityCodeFrom and flyFrom : for metropolitan areas like London NewYork Paris and others, cityCodeFrom is the iata code of the metropolitan area, and flyFrom the actual airport
+  // for example flyFrom=ORY and cityCodeFrom=PAR
+
   return origins.every(
     (origin) =>
-      destination.findIndex((value) => value.cityCodeFrom === origin) > -1
+      destination.findIndex(
+        (value) => value.cityCodeFrom === origin || value.flyFrom === origin
+      ) > -1
   );
 };
 

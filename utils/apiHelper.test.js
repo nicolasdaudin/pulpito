@@ -1,4 +1,4 @@
-const helper = require('./apiHelper');
+const helper = require('./apiHelper.js');
 const apiOneWayAnswer = require('../datasets/fixtures/apiOneWayAnswer.json');
 const apiReturnAnswer = require('../datasets/fixtures/apiReturnAnswer.json');
 
@@ -57,6 +57,7 @@ describe('API Helper', function () {
     const itineraries = [
       {
         cityFrom: 'Madrid',
+        flyFrom: 'MAD',
         countryTo: { name: 'Spain' },
         cityCodeTo: 'IBZ',
         cityTo: 'Ibiza',
@@ -66,6 +67,7 @@ describe('API Helper', function () {
       },
       {
         cityFrom: 'Bordeaux',
+        flyFrom: 'BOD',
         countryTo: { name: 'Spain' },
         cityCodeTo: 'IBZ',
         cityTo: 'Ibiza',
@@ -75,6 +77,7 @@ describe('API Helper', function () {
       },
       {
         cityFrom: 'Brussels',
+        flyFrom: 'BRU',
         countryTo: { name: 'Spain' },
         cityCodeTo: 'IBZ',
         cityTo: 'Ibiza',
@@ -84,6 +87,7 @@ describe('API Helper', function () {
       },
       {
         cityFrom: 'Brussels',
+        flyFrom: 'BRU',
         countryTo: { name: 'Spain' },
         cityCodeTo: 'OPO',
         cityTo: 'Oporto',
@@ -92,15 +96,27 @@ describe('API Helper', function () {
         duration: { departure: 135, return: 135 },
       },
     ];
+    const mapPassengersPerOrigin = new Map();
+    mapPassengersPerOrigin.set('MAD', 1);
+    mapPassengersPerOrigin.set('BRU', 2);
+    mapPassengersPerOrigin.set('BOD', 2);
     test('should exclude a flight that does not go to that destination', () => {
-      const itinerary = helper.prepareItineraryData('Ibiza', itineraries);
+      const itinerary = helper.prepareItineraryData(
+        'Ibiza',
+        itineraries,
+        mapPassengersPerOrigin
+      );
 
       expect(itinerary.countryTo).toBe('Spain');
       expect(itinerary.cityCodeTo).toBe('IBZ');
       expect(itinerary.flights).toHaveLength(3);
     });
     test('should compute all info about a set of flights', () => {
-      const itinerary = helper.prepareItineraryData('Ibiza', itineraries);
+      const itinerary = helper.prepareItineraryData(
+        'Ibiza',
+        itineraries,
+        mapPassengersPerOrigin
+      );
 
       expect(itinerary.price).toBe(78 + 65 + 130);
     });
@@ -143,10 +159,10 @@ describe('API Helper', function () {
 
   describe('isCommonDestination', function () {
     const destination = [
-      { cityCodeFrom: 'MAD' },
-      { cityCodeFrom: 'BOD' },
-      { cityCodeFrom: 'BRU' },
-      { cityCodeFrom: 'OPO' },
+      { cityCodeFrom: 'MAD', flyFrom: 'MAD' },
+      { cityCodeFrom: 'BOD', flyFrom: 'BOD' },
+      { cityCodeFrom: 'BRU', flyFrom: 'BRU' },
+      { cityCodeFrom: 'LON', flyFrom: 'LGW' },
     ];
 
     test('returns true if all the origins are present as origins from the destination flights', () => {
@@ -156,6 +172,14 @@ describe('API Helper', function () {
     test('returns false if at least one origin is not present as origins from the destination flights', () => {
       const origins = ['MAD', 'BOD', 'DUB']; // DUB is not present in that case
       expect(helper.isCommonDestination(destination, origins)).toBe(false);
+    });
+    test('returns true if one of the origin is a metropolitan area like LON but is present in the destination flights', () => {
+      const origins = ['MAD', 'BOD', 'LON'];
+      expect(helper.isCommonDestination(destination, origins)).toBe(true);
+    });
+    test('returns true if one of the origin is an airport like LGW and the corresponding metropolitan area (LON) is present in the  the destination flights', () => {
+      const origins = ['MAD', 'BOD', 'LGW'];
+      expect(helper.isCommonDestination(destination, origins)).toBe(true);
     });
   });
 
