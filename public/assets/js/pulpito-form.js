@@ -135,35 +135,47 @@ const substractBtnHandler = function (e) {
 const initPassengersButtons = (htmlElement) => {
   // adultes
   htmlElement
-    .querySelector('.btn-add')
-    .addEventListener('click', addBtnHandler.bind({ type: '.pcount' }));
+    .querySelectorAll('.btn-add')
+    .forEach((btn) =>
+      btn.addEventListener('click', addBtnHandler.bind({ type: '.pcount' }))
+    );
   htmlElement
-    .querySelector('.btn-subtract')
-    .addEventListener(
-      'click',
-      substractBtnHandler.bind({ type: '.pcount', minValue: 1 })
+    .querySelectorAll('.btn-subtract')
+    .forEach((btn) =>
+      btn.addEventListener(
+        'click',
+        substractBtnHandler.bind({ type: '.pcount', minValue: 1 })
+      )
     );
 
   // enfants
   htmlElement
-    .querySelector('.btn-add-c')
-    .addEventListener('click', addBtnHandler.bind({ type: '.ccount' }));
+    .querySelectorAll('.btn-add-c')
+    .forEach((btn) =>
+      btn.addEventListener('click', addBtnHandler.bind({ type: '.ccount' }))
+    );
   htmlElement
-    .querySelector('.btn-subtract-c')
-    .addEventListener(
-      'click',
-      substractBtnHandler.bind({ type: '.ccount', minValue: 0 })
+    .querySelectorAll('.btn-subtract-c')
+    .forEach((btn) =>
+      btn.addEventListener(
+        'click',
+        substractBtnHandler.bind({ type: '.ccount', minValue: 0 })
+      )
     );
 
   // bébés
   htmlElement
-    .querySelector('.btn-add-in')
-    .addEventListener('click', addBtnHandler.bind({ type: '.incount' }));
+    .querySelectorAll('.btn-add-in')
+    .forEach((btn) =>
+      btn.addEventListener('click', addBtnHandler.bind({ type: '.incount' }))
+    );
   htmlElement
-    .querySelector('.btn-subtract-in')
-    .addEventListener(
-      'click',
-      substractBtnHandler.bind({ type: '.incount', minValue: 0 })
+    .querySelectorAll('.btn-subtract-in')
+    .forEach((btn) =>
+      btn.addEventListener(
+        'click',
+        substractBtnHandler.bind({ type: '.incount', minValue: 0 })
+      )
     );
 };
 // first call on load
