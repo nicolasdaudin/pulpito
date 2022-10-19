@@ -194,3 +194,12 @@ a.btn_navigation {
 .flight_search_items {
   cursor: pointer;
 }
+
+@media (max-width: 425px) {
+  .dropdown_passenger_area .dropdown-menu.show {
+    transform: none !important;
+  }
+  .dropdown_passenger_area .dropdown-menu {
+    min-width: 250px;
+  }
+}
