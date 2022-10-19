@@ -203,3 +203,34 @@ a.btn_navigation {
     min-width: 250px;
   }
 }
+
+.tour_search_type {
+  padding-bottom: 20px;
+}
+
+.filter-price {
+  padding-bottom: 64px;
+}
+
+.tour_search_type .form-check {
+  padding-top: 7px;
+}
+
+.flight_search_right {
+  background: #e2fbd3;
+}
+
+.flight_Search_boxed {
+  background: #e2fbd3;
+}
+
+:root {
+  --main-color: #4ab628;
+}
+
+.description {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--paragraph-color);
+}
