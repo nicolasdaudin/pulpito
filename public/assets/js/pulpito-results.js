@@ -1,71 +1,38 @@
-// handle click on "Book all flights" button on search results - to open at once all the booking links
+const flightSearchResultWrapper = document.querySelector(
+  '.flight_search_result_wrapper'
+);
+const btnApplySearchFilters = document.querySelector('.apply_search_filters');
+const btnRadioMaxConnections = document.querySelector(
+  '.btn_radio_max_connections'
+);
+const priceSlider = document.querySelector('#price-slider-flights');
+
+/**
+ * handle click on "Book all flights" button on search results - to open at once all the booking links
+ * @param {*} links
+ */
 const openLinks = (links) => {
   links.forEach((link) => {
     window.open(link, '_blank');
   });
 };
 
-const flightSearchResultWrapper = document.querySelector(
-  '.flight_search_result_wrapper'
-);
-
-flightSearchResultWrapper.addEventListener('click', (e) => {
+/**
+ * Handler for click on open links
+ * @param {*} e
+ * @returns
+ */
+const openLinksHandler = (e) => {
   const btnBookAll = e.target.closest('.btn_book_all');
   if (!btnBookAll) return;
   openLinks(JSON.parse(btnBookAll.dataset.links));
-});
+};
 
-// update the URL in the navigation bar with info from the search query (since we can't redirect from pug)
-
-const originInputs = document.querySelectorAll(
-  `.multi_city_form input[name='origins[][flyFrom]'`
-);
-if (originInputs[0].value) {
-  // form has been filled with values
-  const searchForm = document.querySelector('.multi_city_form').closest('form');
-
-  const formData = new FormData(searchForm);
-  const urlQueryParamsFromFormData = new URLSearchParams(formData);
-
-  const newUrl = '/common?' + urlQueryParamsFromFormData.toString();
-
-  window.history.replaceState({}, document.title, newUrl);
-}
-
-// update price ranger filters on document load
-const priceSlider = document.querySelector('#price-slider-flights');
-
-// getting options from datasets-
-const { minPossiblePrice, maxPossiblePrice, priceFrom, priceTo } =
-  priceSlider.dataset;
-
-// remove the slider created by the template, not sure how it works or how to access it.
-// and we don't want to modify the template...
-if (priceSlider.noUiSlider) priceSlider.noUiSlider.destroy();
-noUiSlider.create(priceSlider, {
-  start: [+priceFrom, +priceTo],
-  connect: true,
-  step: 25,
-  margin: 50,
-  range: {
-    min: +minPossiblePrice,
-    max: +maxPossiblePrice,
-  },
-  tooltips: true,
-  format: wNumb({
-    decimals: 0,
-    suffix: ' €',
-  }),
-});
-
-const btnRadioMaxConnections = document.querySelector(
-  '.btn_radio_max_connections'
-);
-
-// handle click on 'Apply' for search filters
-const btnApplySearchFilters = document.querySelector('.apply_search_filters');
-
-btnApplySearchFilters.addEventListener('click', (e) => {
+/**
+ * Handler when click on "apply" for filters
+ * @param {} e
+ */
+const applySearchFiltersHandler = (e) => {
   let urlParams = [];
 
   // document.querySelector('.preloader').style.display = 'block';
@@ -94,4 +61,61 @@ btnApplySearchFilters.addEventListener('click', (e) => {
 
   // open location
   window.open(newUrl, '_self');
-});
+};
+
+/**
+ *  update price ranger filters on document load
+ */
+const updatePriceSlider = () => {
+  // getting options from datasets-
+  const { minPossiblePrice, maxPossiblePrice, priceFrom, priceTo } =
+    priceSlider.dataset;
+
+  // remove the slider created by the template, not sure how it works or how to access it.
+  // and we don't want to modify the template...
+  if (priceSlider.noUiSlider) priceSlider.noUiSlider.destroy();
+  noUiSlider.create(priceSlider, {
+    start: [+priceFrom, +priceTo],
+    connect: true,
+    step: 25,
+    margin: 50,
+    range: {
+      min: +minPossiblePrice,
+      max: +maxPossiblePrice,
+    },
+    tooltips: true,
+    format: wNumb({
+      decimals: 0,
+      suffix: ' €',
+    }),
+  });
+};
+
+/**
+ * update on page load the URL in the navigation bar with info from the search query (since we can't redirect from pug)
+ * @param {*} e
+ */
+const updateNavigationBarUrl = () => {
+  const originInputs = document.querySelectorAll(
+    `.multi_city_form input[name='origins[][flyFrom]'`
+  );
+  if (originInputs[0].value) {
+    // form has been filled with values
+    const searchForm = document
+      .querySelector('.multi_city_form')
+      .closest('form');
+
+    const formData = new FormData(searchForm);
+    const urlQueryParamsFromFormData = new URLSearchParams(formData);
+
+    const newUrl = '/common?' + urlQueryParamsFromFormData.toString();
+
+    window.history.replaceState({}, document.title, newUrl);
+  }
+};
+
+flightSearchResultWrapper.addEventListener('click', openLinksHandler);
+btnApplySearchFilters.addEventListener('click', applySearchFiltersHandler);
+
+updateNavigationBarUrl();
+updatePriceSlider();
