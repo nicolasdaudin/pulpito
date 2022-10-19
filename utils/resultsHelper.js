@@ -94,7 +94,6 @@ const filter = (itineraries, filterParams) => {
 
   // filter by max number of connections allowed on each individual flight
   if (filterParams.maxConnections) {
-    console.log(result.length);
     result = result.filter((itinerary) => {
       const filtered = filterByMaxConnections(
         itinerary,
@@ -102,7 +101,6 @@ const filter = (itineraries, filterParams) => {
       );
       return filtered;
     });
-    console.log(result.length);
   }
 
   // filter by price range

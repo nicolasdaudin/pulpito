@@ -89,7 +89,6 @@ describe('End to end tests', () => {
           password: fakePassword,
           passwordConfirm: fakePassword,
         };
-        //console.log(fakeUser);
         newUser = await User.create(fakeUser);
       });
       afterEach(async () => {
@@ -153,7 +152,7 @@ describe('End to end tests', () => {
           };
           const response = await request(app).get(routePath).query(params);
           expect(response.statusCode).toBe(200);
-          expect(response.body.results).toBeGreaterThan(0);
+          expect(response.body.totalResults).toBeGreaterThan(0);
           expect(response.body.data[0].flyFrom).toBe('MAD');
         },
         JEST_TIMEOUT
@@ -202,7 +201,7 @@ describe('End to end tests', () => {
           };
           const response = await request(app).get(routePath).query(params);
           expect(response.statusCode).toBe(200);
-          expect(response.body.results).toBeGreaterThan(0);
+          expect(response.body.totalResults).toBeGreaterThan(0);
           expect(
             response.body.data[0].flights.every((flight) =>
               origins.includes(flight.cityCodeFrom)
@@ -275,7 +274,7 @@ describe('End to end tests', () => {
         const response = await request(app).get(routePath).query(params);
         expect(response.statusCode).toBe(200);
         expect(response.body.status).toBe('success');
-        expect(response.body.results).toEqual(0);
+        expect(response.body.totalResults).toEqual(0);
       });
     });
 
@@ -300,7 +299,7 @@ describe('End to end tests', () => {
         async () => {
           const response = await request(app).get(routePath).query(params);
           expect(response.statusCode).toBe(200);
-          expect(response.body.results).toBeGreaterThan(0);
+          expect(response.body.totalResults).toBeGreaterThan(0);
           expect(response.body.data[0].flyFrom).toBe('MAD');
         },
         JEST_TIMEOUT
@@ -313,7 +312,7 @@ describe('End to end tests', () => {
             .get(routePath)
             .query({ origin: 'MAD' });
           expect(response.statusCode).toBe(200);
-          expect(response.body.results).toBeGreaterThan(0);
+          expect(response.body.totalResults).toBeGreaterThan(0);
           expect(response.body.data[0].flyFrom).toBe('MAD');
         },
         JEST_TIMEOUT

@@ -181,7 +181,6 @@ const formatTime = (d) => {
   const result = DateTime.fromISO(dWithoutZ).toLocaleString(
     DateTime.DATETIME_MED_WITH_WEEKDAY
   );
-  // console.log('formatTime', d, result);
   return result;
 };
 
@@ -189,7 +188,6 @@ const prepareAxiosParams = (params) => {
   var urlSearchParams = new URLSearchParams();
 
   for (param in params) {
-    // console.log('prepareAxiosParams', param, params[param]);
     if (Array.isArray(params[param])) {
       for (key in params[param]) {
         urlSearchParams.append(param, params[param][key]);

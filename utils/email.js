@@ -10,7 +10,6 @@ const transport = nodemailer.createTransport({
 });
 
 const sendPasswordResetTokenEmail = async (req, email) => {
-  // console.log('calling sendPasswordResetTokenEmail');
   // try with mailtrap.io
   const resetURL = `${req.protocol}://${req.get(
     'host'

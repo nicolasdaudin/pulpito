@@ -114,8 +114,6 @@ userSchema.methods.createPasswordResetToken = function () {
   // expiration after 10 minutes
   this.passwordResetExpiresAt = Date.now() + 10 * 60 * 1000;
 
-  // console.log({ resetToken }, this.passwordResetToken);
-
   // we send the non encrypted version to email.
   return resetToken;
 };

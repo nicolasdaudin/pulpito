@@ -94,7 +94,6 @@ function addCounter(selector, index) {
   );
   const passengerSelector = passengersTypes.querySelector(selector);
   let value = +passengerSelector.value;
-  //   console.log('currentPassengerNb', value);
   value++;
   passengerSelector.value = value;
 
@@ -207,13 +206,7 @@ $(document).ready(function () {
     // getting options from datasets-
     const { minPossiblePrice, maxPossiblePrice, priceFrom, priceTo } =
       priceSlider.dataset;
-    console.log(
-      'update price slider',
-      minPossiblePrice,
-      maxPossiblePrice,
-      priceFrom,
-      priceTo
-    );
+
     // remove the slider created by the template, not sure how it works or how to access it.
     // and we don't want to modify the template...
 
@@ -258,7 +251,6 @@ $(document).ready(function () {
           btnRadioMaxConnections.querySelector(
             'input[name="maxConnections"]:checked'
           );
-        console.log(btnRadioMaxConnectionsChecked.value);
         urlParams.push(
           `&maxConnections=${btnRadioMaxConnectionsChecked.value}`
         );
@@ -272,10 +264,7 @@ $(document).ready(function () {
 
       // get current url and append these two new params
       const currentUrl = window.location.href;
-      console.log('current url', currentUrl);
-
       const newUrl = `${currentUrl}${urlParams.join('')}`;
-      console.log('gonna open this url:', newUrl);
 
       // open location
       window.open(newUrl, '_self');

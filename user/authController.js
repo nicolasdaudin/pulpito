@@ -129,11 +129,9 @@ const protect = catchAsync(async (req, res, next) => {
 // 3 - we send back this token with a new password
 const forgotPassword = catchAsync(async (req, res, next) => {
   // 1) Get user based on POSTed email
-  // console.log(req);
 
   const user = await User.findOne({ email: req.body.email });
 
-  // console.log('user found', user);
   if (!user) {
     return next(new AppError('There is no user with this email address.', 404));
   }
@@ -220,7 +218,6 @@ const updateMyPassword = catchAsync(async (req, res, next) => {
   }
 
   // 2) Check if POSTed current password is correct
-  // console.log(user.password);
   if (!(await user.isCorrectPassword(current, user.password))) {
     return next(new AppError('Your current password is wrong.', 401));
   }

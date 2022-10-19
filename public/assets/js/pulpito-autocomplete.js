@@ -1,5 +1,4 @@
 function doesItemContainsInput(item, input) {
-  // console.log('doesItemContainsInput', item, input);
   return item.toLowerCase().includes(input.toLowerCase());
 }
 

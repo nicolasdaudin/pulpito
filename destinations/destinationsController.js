@@ -19,7 +19,7 @@ const getCheapestDestinations = catchAsyncKiwi(async (req, res, next) => {
   const params = helper.prepareDefaultAPIParams(req.query);
 
   const response = await flightService.getFlights(params);
-  // console.log('response.data.data', response.data.data);
+
   let itineraries = response.data.data.map(helper.cleanItineraryData);
   const totalResults = itineraries.length;
   itineraries = resultsHelper.applyFilters(itineraries, req.filter);
@@ -41,9 +41,6 @@ const getCheapestDestinations = catchAsyncKiwi(async (req, res, next) => {
  * @param {*} res
  */
 const getCommonDestinations = catchAsyncKiwi(async (req, res, next) => {
-  console.log('req.query', req.query);
-  console.log('req.filter', req.filter);
-
   const allOriginsParams = helper.prepareSeveralOriginAPIParams(req.query);
 
   // const instance = prepareAxiosRequest();
@@ -56,10 +53,6 @@ const getCommonDestinations = catchAsyncKiwi(async (req, res, next) => {
   );
   const totalResults = commonItineraries.length;
 
-  // console.log('buildComm... filterParams', filterParams);
-  // console.log('buildComm... commonItineraries', commonItineraries.length);
-
-  // console.log('page,limit', page, limit);
   commonItineraries = resultsHelper.applyFilters(commonItineraries, req.filter);
 
   res.status(200).json({
@@ -74,8 +67,7 @@ const getCheapestWeekend = catchAsyncKiwi(async (req, res, next) => {
   const params = helper.prepareDefaultAPIParams(req.query);
 
   const response = await flightService.getWeekendFlights(params);
-  // console.log('request.params', response.request.path);
-  // console.log('response.data.data', response.data.data);
+
   let itineraries = response.data.data.map(helper.cleanItineraryData);
   const totalResults = itineraries.length;
 

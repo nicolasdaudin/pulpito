@@ -19,10 +19,8 @@ const buildCommonItineraries = async (allOriginsParams, origins) => {
 
   // remove unnecessary fields
   // FIXME: this operation takes 500-700 ms to complete, check inside cleanItineraryData
-
-  // console.log(`${allResponses.length} itineraries need to be cleaned`);
   const itineraries = allResponses.map(helper.cleanItineraryData);
-  // console.log('itineraries[0]', itineraries[0]);
+
   // group the array by field item.flyTo and extract all possible destinations
   // Array.groupByToMap is in stage 3 proposal
   // can be switched to lodash.groupBy (https://lodash.com/docs/4.17.15#groupBy)
@@ -36,10 +34,6 @@ const buildCommonItineraries = async (allOriginsParams, origins) => {
     destinations,
     origins
   );
-
-  // console.log(
-  //   `${filteredDestinationCities.length} common destinations found: ${filteredDestinationCities}`
-  // );
 
   // For each destination, have an array with the flights, total price and total distance and total duration
   // (preparing for display)

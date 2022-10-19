@@ -21,7 +21,6 @@ exports.getSearchPage = (req, res) => {
 
 exports.searchFlights = catchAsyncKiwi(async (req, res, next) => {
   const requestParams = req.body && req.body.origins ? req.body : req.query;
-  console.log('searchFlights requestParams', requestParams);
 
   if (!requestParams || !requestParams.origins) {
     return res.status(200).render('search', {
@@ -50,7 +49,6 @@ exports.searchFlights = catchAsyncKiwi(async (req, res, next) => {
       commonItineraries,
       req.filter
     );
-    console.log('length after applyFilters', commonItineraries.length);
 
     requestParams.origins.flyFromDesc = resultsHelper.fillAirportDescriptions(
       requestParams.origins.flyFrom

@@ -15,22 +15,6 @@ exports.getAllUsers = async (req, res) => {
   });
 };
 
-// exports.createUser = async (req, res) => {
-//   const { name, email, role } = req.body;
-
-//   const user = new User({ name, role, email });
-
-//   const newUser = await user.save();
-//   console.log(newUser);
-
-//   res.status(200).json({
-//     status: 'success',
-//     data: {
-//       user: newUser,
-//     },
-//   });
-// };
-
 /**
  * Remove fields from an object
  * @param {*} obj

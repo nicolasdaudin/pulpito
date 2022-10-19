@@ -87,7 +87,6 @@ app.use((err, req, res, next) => {
   });
 
   // TODO: separate error handling in DEV and PROD (in PROD, no need for logs or stack trace, no need to give such detailed info to API Client... see NATOURS)
-  // console.log(err);
 });
 
 const handleJWTError = () =>
