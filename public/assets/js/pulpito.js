@@ -190,7 +190,7 @@ if (originInputs && originInputs[0] && originInputs[0].value) {
 }
 
 // update price ranger filters on document load
-const priceSlider = document.querySelector('#price-slider');
+const priceSlider = document.querySelector('#price-slider-flights');
 if (priceSlider) {
   // getting options from datasets-
   const { minPossiblePrice, maxPossiblePrice, priceFrom, priceTo } =
@@ -198,8 +198,7 @@ if (priceSlider) {
 
   // remove the slider created by the template, not sure how it works or how to access it.
   // and we don't want to modify the template...
-
-  priceSlider.noUiSlider.destroy();
+  if (priceSlider.noUiSlider) priceSlider.noUiSlider.destroy();
   noUiSlider.create(priceSlider, {
     start: [+priceFrom, +priceTo],
     connect: true,
