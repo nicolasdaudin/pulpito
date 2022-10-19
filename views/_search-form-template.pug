@@ -259,7 +259,7 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                                 - flyFromDesc = request.origins.flyFromDesc
                             each flyFrom, i in flyFroms
                               .multi_city_form(data-origins-index=`${i}`)
-                                - var firstRow = (i === 0)
+                                - var firstRow = (i === 0)                                
                                 if !firstRow
                                   .col-lg-12
                                     .multi_form_remove
@@ -267,7 +267,7 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                                 .row
                                   .col-lg-6.col-md-6.col-sm-12.col-12
                                     .flight_Search_boxed.autocomplete
-                                      p De
+                                      p.origin_header=`Ville #${i+1}`
                                       //- input(type='text',required,name='origins[][flyFrom]',value=`${flyFrom}`,maxlength=3)
                                       input(type='text',required,name='origins[][flyFrom]',
                                         placeholder=flyFrom===PLACEHOLDER?'Choisissez un aéroport de départ:':'',
@@ -324,5 +324,5 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                               .add_multy_form
                                 button#addMulticityRow(type='button') + Ajouter un point de départ
                           .top_form_search_button
-                            button.btn.btn_theme.btn_md Rechercher toutes les destinations communes
+                            button.btn.btn_theme.btn_md Rechercher
                             

@@ -1,42 +1,67 @@
 /**
+ * After adding or removing an origin, we 'renumber' the Header text for each origin row
+ */
+const renumberOriginHeaders = () => {
+  const formWrapper = document.querySelector('.multi_city_form_wrapper');
+  // const originForms = formWrapper.querySelector('.multi');
+  const originForms = formWrapper.querySelectorAll('.multi_city_form');
+  originForms.forEach((originForm, i) => {
+    if (originForm.dataset.originsIndex) {
+      // its a city form, not the first multi_city_form (which is actually the date)
+      originForm.querySelector('.origin_header').innerHTML = `Ville #${i}`;
+    }
+  });
+};
+
+/**
  * Click on "Ajouter un point de départ" in the search form, to add a new destination
  */
+const addOriginHandler = () => {
+  // add the new origin
+  if (document.querySelectorAll('.multi_city_form').length === 9) {
+    alert('Max City Limit Reached!!');
+    return;
+  }
+
+  const formWrapper = document.querySelector('.multi_city_form_wrapper');
+  // const originForms = formWrapper.querySelector('.multi');
+  const lastCityForm = formWrapper.querySelector('.multi_city_form:last-child');
+  const newIndex = +lastCityForm.dataset.originsIndex + 1;
+  const newCityForm = lastCityForm.cloneNode(true);
+
+  newCityForm.dataset.originsIndex = newIndex;
+  initPassengersButtons(newCityForm);
+
+  // add autocomplete on that field
+  const originInput = newCityForm.querySelector(
+    `input[name='origins[][flyFrom]'`
+  );
+  autocomplete(originInput);
+
+  formWrapper.appendChild(newCityForm);
+  renumberOriginHeaders();
+};
+
+const removeOriginHandler = (e) => {
+  // remove the html element
+  if (e.target.id === 'remove_multi_city') {
+    const cityToBeRemoved = e.target.parentElement.closest('.multi_city_form');
+    const cityToBeRemovedIndex = +cityToBeRemoved.dataset.originsIndex;
+    cityToBeRemoved.remove();
+
+    // renumerate the "Ville #" for each origins
+    renumberOriginHeaders();
+  }
+};
+
 document
   .querySelector('#addMulticityRow')
-  .addEventListener('click', function () {
-    if (document.querySelectorAll('.multi_city_form').length === 9) {
-      alert('Max City Limit Reached!!');
-      return;
-    }
-
-    const formWrapper = document.querySelector('.multi_city_form_wrapper');
-    // const cityForms = formWrapper.querySelector('.multi');
-    const lastCityForm = formWrapper.querySelector(
-      '.multi_city_form:last-child'
-    );
-    const newIndex = +lastCityForm.dataset.originsIndex + 1;
-    const newCityForm = lastCityForm.cloneNode(true);
-
-    newCityForm.dataset.originsIndex = newIndex;
-    initPassengersButtons(newCityForm);
-
-    // add autocomplete on that field
-    const originInput = newCityForm.querySelector(
-      `input[name='origins[][flyFrom]'`
-    );
-    autocomplete(originInput);
-
-    formWrapper.appendChild(newCityForm);
-  });
+  .addEventListener('click', addOriginHandler);
 
 /**
  * Click on "Supprimer un point de départ" in the search flights form
  */
-document.addEventListener('click', function (e) {
-  if (e.target.id === 'remove_multi_city') {
-    e.target.parentElement.closest('.multi_city_form').remove();
-  }
-});
+document.addEventListener('click', removeOriginHandler);
 
 /**
  * to update the total passengers count in the row identified by index
