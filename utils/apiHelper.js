@@ -107,6 +107,7 @@ const cleanItineraryData = (input) => {
 
   // refactor info about each set of flights
   // FIXME: improve performance, this usually takes 0.6 or 0.8ms to complete (and we need to repeat that operation 600-700 times since there are 600-700 itineraries to be cleaned). Maybe an option is to completely remove that part and not clean-refactor data?
+  // If we remove that part, indeed cleanItineraryData is only 3 to 5 ms instead of 250-300 ms
   const route = {
     oneway: {
       flights: onewayFlights,

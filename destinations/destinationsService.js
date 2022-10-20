@@ -7,19 +7,14 @@ const buildCommonItineraries = async (allOriginsParams, origins) => {
   const searchDestinations = allOriginsParams.map((params) =>
     flightService.getFlights(params)
   );
-
   const responses = await Promise.all(searchDestinations);
 
   // concat data coming from all the GET calls into one 'allResponses' variable
   // for eahc GET call, we concat the value from data.data (contain all he info for each itinerary)
-  const allResponses = responses.reduce(
+  const itineraries = responses.reduce(
     (acc, curr) => acc.concat(curr.data.data),
     []
   );
-
-  // remove unnecessary fields
-  // FIXME: this operation takes 500-700 ms to complete, check inside cleanItineraryData
-  const itineraries = allResponses.map(helper.cleanItineraryData);
 
   // group the array by field item.flyTo and extract all possible destinations
   // Array.groupByToMap is in stage 3 proposal
@@ -35,10 +30,7 @@ const buildCommonItineraries = async (allOriginsParams, origins) => {
     origins
   );
 
-  // For each destination, have an array with the flights, total price and total distance and total duration
-  // (preparing for display)
-  // and sort by price
-
+  // build a map with the total number of passengers per origin
   const passengersPerOrigin = new Map(
     allOriginsParams.map((oneOriginParam) => [
       oneOriginParam.origin,
@@ -46,8 +38,21 @@ const buildCommonItineraries = async (allOriginsParams, origins) => {
     ])
   );
 
+  // only keep itineraries that have a destination in the list of common destinations
+  // if an itinerary goes from Madrid to Dublin but doesn't go from Paris to Dublin, we will not keep Dublin
+  const filteredItineraries = itineraries.filter((itinerary) =>
+    filteredDestinationCities.includes(itinerary.cityTo)
+  );
+
+  // remove unnecessary fields
+  // FIXME: this operation takes now 100-250ms to complete, depending on the number of itineraries to clean
+  const cleanedItineraries = filteredItineraries.map(helper.cleanItineraryData);
+
+  // For each destination, have an array with the flights, total price and total distance and total duration
+  // (preparing for display)
+  // and sort by price
   const commonItineraries = filteredDestinationCities.map((dest) =>
-    helper.prepareItineraryData(dest, itineraries, passengersPerOrigin)
+    helper.prepareItineraryData(dest, cleanedItineraries, passengersPerOrigin)
   );
 
   return commonItineraries;
