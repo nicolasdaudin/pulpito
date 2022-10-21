@@ -56,9 +56,7 @@ const getCommonDestinations = catchAsyncKiwi(async (req, res, next) => {
     origins
   );
   const totalResults = commonItineraries.length;
-  console.time('postBuildCommon API');
   commonItineraries = resultsHelper.applyFilters(commonItineraries, req.filter);
-  console.timeEnd('postBuildCommon API');
   res.status(200).json({
     status: 'success',
     totalResults,

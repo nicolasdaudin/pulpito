@@ -45,7 +45,6 @@ exports.searchFlights = catchAsyncKiwi(async (req, res, next) => {
       allOriginParams,
       originCodes
     );
-    console.time('postBuildCommon UX');
     const totalResults = commonItineraries.length;
 
     const filters = resultsHelper.getFilters(commonItineraries, req.filter);
@@ -64,7 +63,6 @@ exports.searchFlights = catchAsyncKiwi(async (req, res, next) => {
       `/common`,
       commonItineraries.length === RESULTS_SEARCH_LIMIT
     );
-    console.timeEnd('postBuildCommon UX');
 
     // const commonItineraries = [];
     res.status(200).render('common', {
