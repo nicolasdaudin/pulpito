@@ -11,6 +11,7 @@ const buildCommonItineraries = async (allOriginsParams, origins) => {
 
   // concat data coming from all the GET calls into one 'allResponses' variable
   // for eahc GET call, we concat the value from data.data (contain all he info for each itinerary)
+  console.time('postKiwi');
   const itineraries = responses.reduce(
     (acc, curr) => acc.concat(curr.data.data),
     []
@@ -54,7 +55,7 @@ const buildCommonItineraries = async (allOriginsParams, origins) => {
   const commonItineraries = filteredDestinationCities.map((dest) =>
     helper.prepareItineraryData(dest, cleanedItineraries, passengersPerOrigin)
   );
-
+  console.timeEnd('postKiwi');
   return commonItineraries;
 };
 

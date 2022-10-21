@@ -41,6 +41,10 @@ const getCheapestDestinations = catchAsyncKiwi(async (req, res, next) => {
  * @param {*} res
  */
 const getCommonDestinations = catchAsyncKiwi(async (req, res, next) => {
+  console.info(
+    'API - Getting common destinations with these params',
+    req.query
+  );
   const allOriginsParams = helper.prepareSeveralOriginAPIParams(req.query);
 
   // const instance = prepareAxiosRequest();
@@ -52,9 +56,9 @@ const getCommonDestinations = catchAsyncKiwi(async (req, res, next) => {
     origins
   );
   const totalResults = commonItineraries.length;
-
+  console.time('postBuildCommon API');
   commonItineraries = resultsHelper.applyFilters(commonItineraries, req.filter);
-
+  console.timeEnd('postBuildCommon API');
   res.status(200).json({
     status: 'success',
     totalResults,
