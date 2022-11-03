@@ -144,7 +144,7 @@ const forgotPassword = catchAsync(async (req, res, next) => {
 
   // 3) Send it to user's email
   try {
-    await email.sendPasswordResetTokenEmail(req, user.email);
+    await email.sendPasswordResetTokenEmail(req, user.email, resetToken);
 
     res.status(200).json({
       status: 'success',
