@@ -6,11 +6,11 @@ An API and a server-side rendered webapp to help you decide where to meet with y
 
 Pulpito is a side project that helped me learn the basics of Node.JS, Express, PUG, Mongoose, Cache, REST APIs, TDD, Postman, MongoDB, GIT, Heroku,
 
-It has an API (doc available soon here) and a user-facing webapp available at https://pulpito-app.herokuapp.com/
-
 ## Deploy
 
-Pulpito is currently deployed on Heroku.
+Pulpito API is available at https://pulpito-app.herokuapp.com/api/v1/
+
+Pulpito webapp is currently deployed on Heroku at https://pulpito-app.herokuapp.com/
 
 ## Tests
 
