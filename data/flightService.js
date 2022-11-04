@@ -34,9 +34,9 @@ const getWeekendFlights = async (params) => {
     axiosParams = {
       ...axiosParams,
       fly_days: [4, 5, 6],
-      ret_fly_days: [0, 1],
-      nights_in_dst_from: 2,
-      nights_in_dst_to: 3,
+      ret_fly_days: [0, 1, 2],
+      nights_in_dst_from: 3,
+      nights_in_dst_to: 4,
     };
   }
   if (!params.weekendLength || params.weekendLength === 'short') {
@@ -50,12 +50,15 @@ const getWeekendFlights = async (params) => {
   }
 
   try {
-    const response = await axios.get(process.env.KIWI_URL, {
-      headers: {
-        apikey: process.env.KIWI_API_KEY,
-      },
-      params: helper.prepareAxiosParams(axiosParams),
-    });
+    const preparedAxiosParams = helper.prepareAxiosParams(axiosParams);
+    const response = await axios.get(
+      `${process.env.KIWI_URL}?${preparedAxiosParams.toString()}`,
+      {
+        headers: {
+          apikey: process.env.KIWI_API_KEY,
+        },
+      }
+    );
     return response;
   } catch (err) {
     // console.error(err.message);
