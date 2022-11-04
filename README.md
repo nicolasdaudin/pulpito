@@ -12,6 +12,10 @@ Pulpito API is available at https://pulpito-app.herokuapp.com/api/v1/
 
 Pulpito webapp is currently deployed on Heroku at https://pulpito-app.herokuapp.com/
 
+## Documentation
+
+API documentation is available here : https://documenter.getpostman.com/view/18011617/2s8YYCt52e
+
 ## Tests
 
 I tried to write a lot of tests, but did it after discovering about TDD so most of my code was written before adding the tests.
