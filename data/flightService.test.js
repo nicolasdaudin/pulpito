@@ -82,9 +82,9 @@ maybe('Flight Service - Integration with KIWI API', function () {
       expect(prepareSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           fly_days: [4, 5, 6],
-          ret_fly_days: [0, 1],
-          nights_in_dst_from: 2,
-          nights_in_dst_to: 3,
+          ret_fly_days: [0, 1, 2],
+          nights_in_dst_from: 3,
+          nights_in_dst_to: 4,
         })
       );
 
