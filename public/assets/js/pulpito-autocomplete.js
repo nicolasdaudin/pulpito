@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /**
  * Found in the original template and adapted
  * @param {} originInput the html input element to which we want to apply the autocomplete
@@ -7,7 +8,7 @@ function autocomplete(originInput) {
 
   var currentFocus;
   /*execute a function when someone writes in the text field:*/
-  originInput.addEventListener('input', async function (e) {
+  originInput.addEventListener('input', async function () {
     let userInputValue = this.value;
 
     /*close any already open lists of autocompleted values*/
@@ -44,7 +45,7 @@ function autocomplete(originInput) {
           matchingItem.innerHTML = `${airport.municipality} - ${airport.name} (${airport.iata_code}) - ${airport.country}`;
 
           /*execute a function when someone clicks on the item value (DIV element):*/
-          matchingItem.addEventListener('click', function (e) {
+          matchingItem.addEventListener('click', function () {
             //const airportInfo = this.getElementsByTagName('input')[0].dataset;
 
             /*insert the value for the autocomplete text field:*/

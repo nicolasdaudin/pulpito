@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /**
  * After adding or removing an origin, we 'renumber' the Header text for each origin row
  */

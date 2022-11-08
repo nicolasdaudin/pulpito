@@ -1,7 +1,5 @@
 const destinationsService = require('../destinations/destinationsService');
-const { catchAsync, catchAsyncKiwi } = require('../utils/catchAsync');
-const DateTime = require('luxon').DateTime;
-const airportService = require('../airports/airportService');
+const { catchAsyncKiwi } = require('../utils/catchAsync');
 const helper = require('../utils/apiHelper');
 const resultsHelper = require('../utils/resultsHelper');
 const { RESULTS_SEARCH_LIMIT } = require('../config');
@@ -19,7 +17,7 @@ exports.getSearchPage = (req, res) => {
   });
 };
 
-exports.searchFlights = catchAsyncKiwi(async (req, res, next) => {
+exports.searchFlights = catchAsyncKiwi(async (req, res) => {
   const requestParams = req.body && req.body.origins ? req.body : req.query;
 
   if (!requestParams || !requestParams.origins) {

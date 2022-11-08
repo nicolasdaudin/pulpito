@@ -61,7 +61,7 @@ const getWeekendFlights = async (params) => {
     );
     return response;
   } catch (err) {
-    // console.error(err.message);
+    console.error(err.message);
     // console.error(err.response.data.error);
     // console.error(err.response.request.path);
 
@@ -103,7 +103,7 @@ const getFlights = async (params) => {
 
     return response;
   } catch (err) {
-    // console.error(err.message);
+    console.error(err.message);
     // console.error(err.response.data.error);
     // console.error(err.response.request.path);
 
