@@ -8,7 +8,7 @@ window.addEventListener('beforeunload', (e) => {
 });
 
 /**
- * just before finish loading, if there is a list of results, we scroll to it
+ * when loading is finished, if there are flight search results, we scroll to them
  */
 document.addEventListener('DOMContentLoaded', (e) => {
   const resultsArea = document.querySelector('#explore_area');
