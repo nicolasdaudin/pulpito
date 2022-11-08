@@ -53,12 +53,6 @@ function autocomplete(inp) {
             /*insert the value for the autocomplete text field:*/
             inp.value = airportInfo.iataCode;
 
-            // `${
-            //   this.getElementsByTagName('input')[0].dataset.municipality
-            // } (${this.getElementsByTagName('input')[0].dataset.iataCode})`;
-            /*close the list of autocompleted values,
-                (or any other open lists of autocompleted values:*/
-
             /* complete the span part below */
             inp.parentElement.getElementsByTagName(
               'span'
