@@ -224,13 +224,34 @@ a.btn_navigation {
   background: #e2fbd3;
 }
 
-:root {
-  --main-color: #4ab628;
-}
-
 .description {
   font-size: 15px;
   font-weight: 600;
   margin-bottom: 20px;
   color: var(--paragraph-color);
+}
+
+/** Overwriting template colors **/
+:root {
+  --main-color: #409d24;
+}
+
+.common_bannner_text h2 {
+  color: var(--main-color);
+}
+
+.topbar-others-options li a {
+  color: var(--black-color);
+}
+
+.topbar-others-options li a:hover {
+  color: var(--main-color) !important;
+}
+
+.main-navbar .navbar .navbar-nav .nav-item a {
+  color: var(--black-color);
+}
+
+#common_banner_custom {
+  background-color: var(--bg-color);
 }

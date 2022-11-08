@@ -2,6 +2,8 @@
 
 An API and a server-side rendered webapp to help you decide where to meet with your friends.
 
+![Logo Pulpito](/public/assets/img/pulpito3_128.png)
+
 ## WHY ?
 
 Pulpito is a side project that helped me learn the basics of Node.JS, Express, PUG, Mongoose, Cache, REST APIs, TDD, Postman, MongoDB, GIT, Heroku,
