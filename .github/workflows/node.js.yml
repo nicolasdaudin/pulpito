@@ -11,6 +11,7 @@ on:
 
 env:
   KIWI_URL: https://tequila-api.kiwi.com/v2/search
+  KIWI_API_KEY: ${{ secrets.KIWI_API_KEY }}
 
 jobs:
   build:
