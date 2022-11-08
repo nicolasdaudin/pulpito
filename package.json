@@ -7,7 +7,8 @@
     "start": "node server.js",
     "start-dev": "nodemon --ext js,pug,json server.js",
     "debug": "ndb server.js",
-    "test": "jest --verbose --watchAll",
+    "test-watch": "jest --verbose --watchAll",
+    "test": "jest --verbose",
     "cover": "jest --coverage "
   },
   "author": "Nicolas Daudin",
