@@ -9,6 +9,9 @@ on:
   pull_request:
     branches: [ "master" ]
 
+env:
+  KIWI_URL: https://tequila-api.kiwi.com/v2/search
+
 jobs:
   build:
 
