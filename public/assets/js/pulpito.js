@@ -6,3 +6,11 @@ window.addEventListener('beforeunload', (e) => {
   if (!preloader) return;
   preloader.style.display = 'block';
 });
+
+/**
+ * just before finish loading, if there is a list of results, we scroll to it
+ */
+document.addEventListener('DOMContentLoaded', (e) => {
+  const resultsArea = document.querySelector('#explore_area');
+  if (resultsArea) resultsArea.scrollIntoView(true);
+});
