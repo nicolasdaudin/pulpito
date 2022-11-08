@@ -11,6 +11,15 @@ on:
 
 env:
   KIWI_URL: https://tequila-api.kiwi.com/v2/search
+  JWT_EXPIRES_IN: 90d
+  JWT_COOKIE_EXPIRES_IN: 90
+  EMAIL_HOST: smt.mailtrap.io
+  EMAIL_PORT: 2525  
+  DATABASE: ${{ secrets.DATABASE }}
+  DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+  EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+  EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
   KIWI_API_KEY: ${{ secrets.KIWI_API_KEY }}
 
 jobs:
