@@ -32,6 +32,12 @@ const catchKiwiError = (err, next) => {
   }
 };
 
+/**
+ * Helper to add a try-catch to a fonction.
+ * Used for express routes, to encapsulate them with a catch clause (to avoid try-catch duplicated code in controller)
+ * @param {*} fn function to be try-catched
+ * @returns the same function, but now protected by try-catch
+ */
 exports.catchAsync = (fn) => {
   return (req, res, next) => {
     return fn(req, res, next).catch((err) => {
@@ -41,6 +47,12 @@ exports.catchAsync = (fn) => {
   };
 };
 
+/**
+ * Helper to add a try-catch to a function calling Kiwi API.
+ * Used for express routes calling Kiwi API, to encapsulate them with a catch clause (to avoid try-catch duplicated code in controller)
+ * @param {*} fn function to be try-catched
+ * @returns a function protected by try-catch
+ */
 exports.catchAsyncKiwi = (fn) => {
   return (req, res, next) => {
     return fn(req, res, next).catch((err) => catchKiwiError(err, next));

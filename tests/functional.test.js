@@ -3,13 +3,12 @@ const app = require('../app');
 const { faker } = require('@faker-js/faker');
 const User = require('../user/userModel');
 const mongoose = require('mongoose');
-const { extractConnections } = require('../utils/apiHelper');
 const { DateTime } = require('luxon');
 const KIWI_DATE_FORMAT = `dd'/'LL'/'yyyy`;
 
-const JEST_TIMEOUT = 15000;
-
 describe('End to end tests', () => {
+  jest.setTimeout(10000);
+
   beforeAll(async () => {
     const DB = process.env.DATABASE.replace(
       '<PASSWORD>',
@@ -143,20 +142,16 @@ describe('End to end tests', () => {
           .toFormat(KIWI_DATE_FORMAT),
       };
 
-      test(
-        'should return a list of cheapest destinations',
-        async () => {
-          const params = {
-            ...dates,
-            origin: 'MAD',
-          };
-          const response = await request(app).get(routePath).query(params);
-          expect(response.statusCode).toBe(200);
-          expect(response.body.totalResults).toBeGreaterThan(0);
-          expect(response.body.data[0].flyFrom).toBe('MAD');
-        },
-        JEST_TIMEOUT
-      );
+      test('should return a list of cheapest destinations', async () => {
+        const params = {
+          ...dates,
+          origin: 'MAD',
+        };
+        const response = await request(app).get(routePath).query(params);
+        expect(response.statusCode).toBe(200);
+        expect(response.body.totalResults).toBeGreaterThan(0);
+        expect(response.body.data[0].flyFrom).toBe('MAD');
+      });
 
       test('should return a 400 error and a fail status for a non existing origin', async () => {
         const params = {
@@ -191,25 +186,21 @@ describe('End to end tests', () => {
           .toFormat(KIWI_DATE_FORMAT),
       };
 
-      test(
-        'should return a list of common destinations',
-        async () => {
-          const origins = ['MAD', 'LIS'];
-          const params = {
-            ...dates,
-            origin: origins.join(','), //'MAD,LIS'
-          };
-          const response = await request(app).get(routePath).query(params);
-          expect(response.statusCode).toBe(200);
-          expect(response.body.totalResults).toBeGreaterThan(0);
-          expect(
-            response.body.data[0].flights.every((flight) =>
-              origins.includes(flight.cityCodeFrom)
-            )
-          ).toBe(true);
-        },
-        JEST_TIMEOUT
-      );
+      test('should return a list of common destinations', async () => {
+        const origins = ['MAD', 'LIS'];
+        const params = {
+          ...dates,
+          origin: origins.join(','), //'MAD,LIS'
+        };
+        const response = await request(app).get(routePath).query(params);
+        expect(response.statusCode).toBe(200);
+        expect(response.body.totalResults).toBeGreaterThan(0);
+        expect(
+          response.body.data[0].flights.every((flight) =>
+            origins.includes(flight.cityCodeFrom)
+          )
+        ).toBe(true);
+      });
 
       test('should return a 400 error and a fail status for a non existing origin', async () => {
         const origins = ['MAD', 'BOD', 'PXR'];
@@ -221,7 +212,7 @@ describe('End to end tests', () => {
         expect(response.statusCode).toBe(400);
         expect(response.body.status).toBe('fail');
         expect(response.body.message).toMatch('no locations to fly from');
-      }, 10000);
+      });
 
       test('should return a 400 error and a fail status if some parameters are missing', async () => {
         const params = {
@@ -294,29 +285,21 @@ describe('End to end tests', () => {
       test.todo('should only return short weekends');
       test.todo('should only return long weekends');
 
-      test(
-        'should return a list of destinations',
-        async () => {
-          const response = await request(app).get(routePath).query(params);
-          expect(response.statusCode).toBe(200);
-          expect(response.body.totalResults).toBeGreaterThan(0);
-          expect(response.body.data[0].flyFrom).toBe('MAD');
-        },
-        JEST_TIMEOUT
-      );
+      test('should return a list of destinations', async () => {
+        const response = await request(app).get(routePath).query(params);
+        expect(response.statusCode).toBe(200);
+        expect(response.body.totalResults).toBeGreaterThan(0);
+        expect(response.body.data[0].flyFrom).toBe('MAD');
+      });
 
-      test(
-        'should return a list of destinations even when only the origin is specified',
-        async () => {
-          const response = await request(app)
-            .get(routePath)
-            .query({ origin: 'MAD' });
-          expect(response.statusCode).toBe(200);
-          expect(response.body.totalResults).toBeGreaterThan(0);
-          expect(response.body.data[0].flyFrom).toBe('MAD');
-        },
-        JEST_TIMEOUT
-      );
+      test('should return a list of destinations even when only the origin is specified', async () => {
+        const response = await request(app)
+          .get(routePath)
+          .query({ origin: 'MAD' });
+        expect(response.statusCode).toBe(200);
+        expect(response.body.totalResults).toBeGreaterThan(0);
+        expect(response.body.data[0].flyFrom).toBe('MAD');
+      });
 
       xtest('should return a 400 error and a fail status for a non existing origin', async () => {
         const response = await request(app)

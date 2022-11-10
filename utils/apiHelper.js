@@ -1,12 +1,27 @@
 const { Settings, Duration, DateTime } = require('luxon');
 Settings.defaultLocale = 'fr';
 
+/**
+ * Filters destinations according to if they can be reached from all the origins.
+ * Filters destinations that can not be reached from each origin.
+ * Typically, we will have a lot of destinations corresponding to at least one each origin, but not to all of them
+ * This is because for each origin we perform an API call and retrieve many destinations, but we want to keep only the destinations common to all the origins
+ * @param {*} destinations a map of destinations, key is city name (i.e. 'Las Palmas de Gran Caria') and value is an array of the different flights corresponding to that destination.
+ * @param {*} origins an array of the origins from which we are departing (as iata code, i.e. [ 'MAD', 'CDG', 'BRU' ])
+ * @returns an array of destination cities
+ */
 const filterDestinationCities = (destinations, origins) => {
   return Array.from(destinations.keys()).filter((key) =>
     isCommonDestination(destinations.get(key), origins)
   );
 };
 
+/**
+ * Checks if all the origins can be reached from that destination
+ * @param {*} destination the destination
+ * @param {*} origins array of origins (as iata code, i.e. [ 'MAD', 'CDG', 'BRU' ])
+ * @returns true if all the origins can be reached from that destination, false otherwise
+ */
 const isCommonDestination = (destination, origins) => {
   // for each origin ('every'), I want to find it at least once as an origin ('cityCodeFrom' or 'flyFrom') in the list of flights corresponding to this destination ('destinations.get(key)')
   // be careful with cityCodeFrom and flyFrom : for metropolitan areas like London NewYork Paris and others, cityCodeFrom is the iata code of the metropolitan area, and flyFrom the actual airport
@@ -20,7 +35,13 @@ const isCommonDestination = (destination, origins) => {
   );
 };
 
-// Prepare an object with all the flights corresponding to that destination, and compute some values like total duration, total price...
+/**
+ * Prepare an object with all the flights corresponding to that destination, and compute some extra values like total duration, total price...
+ * @param {*} dest the city name of the destination where we are going, i.e. 'Budapest'
+ * @param {*} itineraries the list of all possible itineraries, that we are going to filter for that particular destination
+ * @param {*} passengersPerOrigin a map representing the number of passengers per origin (as iata code), like {"MAD" => 1, "BOD" => 2}
+ * @returns an object for that destination, with aggregated info
+ */
 const prepareItineraryData = (dest, itineraries, passengersPerOrigin) => {
   const itinerary = { cityTo: dest };
 
@@ -70,9 +91,9 @@ const prepareItineraryData = (dest, itineraries, passengersPerOrigin) => {
 
 /**
  * TODO: merge with prepareItineraryData
- * Remove unnecessary info from API payload
- * @param {*} itinerary
- * @returns
+ * Remove unnecessary data from API payload and regroup some other data by oneway and return flights
+ * @param {*} input itinerary to be cleaned. Won't be mutated.
+ * @returns a copy of the itinerary, but cleaned.
  */
 const cleanItineraryData = (input) => {
   const itinerary = Object.assign({}, input);
@@ -128,6 +149,7 @@ const cleanItineraryData = (input) => {
     },
   };
 
+  // if there are return flights
   if (returnFlights && returnFlights.length > 0) {
     route.return = {
       flights: returnFlights,
@@ -169,6 +191,11 @@ const cleanItineraryData = (input) => {
   return itinerary;
 };
 
+/**
+ * Extract connection data for this array of flights if any connection
+ * @param {*} flights array of flights
+ * @returns an array of flight connections
+ */
 const extractConnections = (flights) => {
   const connections = [];
   if (flights.length > 1) connections.push(flights[0].cityTo);
@@ -176,6 +203,11 @@ const extractConnections = (flights) => {
   return connections;
 };
 
+/**
+ * Format time received in API to a correct local time
+ * @param {*} d time received from Kiwi API
+ * @returns correct local time
+ */
 const formatTime = (d) => {
   // time received from Kiwi are supposed to ISO format local or ISO format UTC but they all end up 'Z' - 2022-10-24T21:10:00.000Z - like if it was London time, but it's not. To display a local time (which is what we want), we need to remove the Z part.
   const dWithoutZ = d.split('Z')[0];
@@ -185,6 +217,12 @@ const formatTime = (d) => {
   return result;
 };
 
+/**
+ * Prepare params for Axios. Axios has to receive repeated parameters a particular way, otherwise only the first occurrence is taken into account
+ * For example if we want params like fly_days=1&fly_days=2= ... (which is accepted by Kiwi)
+ * @param {*} params the params to prepare for Axios
+ * @returns a URLSearchParams object representing all the params necesarry for Axios call.
+ */
 const prepareAxiosParams = (params) => {
   var urlSearchParams = new URLSearchParams();
 
@@ -200,6 +238,11 @@ const prepareAxiosParams = (params) => {
   return urlSearchParams;
 };
 
+/**
+ * Add Default params if not present
+ * @param {*} params input params
+ * @returns
+ */
 const prepareDefaultAPIParams = (params) => {
   return {
     ...params,
@@ -212,8 +255,7 @@ const prepareDefaultAPIParams = (params) => {
 /**
  * Prepares params to use with KIWI api. Params come from View controllers
  *
- * TODO: (CLEAN CODE) check if this method return the same kind of objects than prepareDefaultParams above.
- * TODO: unify API params and View Controllers params
+ * TODO: unify API params and View Controllers params. Maybe think about adding this as middleware
  *
  * @param {*} params object with origins being an object with all the info for each origin
  *  {
@@ -226,7 +268,7 @@ const prepareDefaultAPIParams = (params) => {
         infants: [ '0', '0', '0' ]
       }
     }
- * @returns
+ * @returns params preapred for Axios
  */
 const prepareSeveralOriginAPIParamsFromView = (params) => {
   let { departureDate, returnDate, origins } = params;
@@ -252,8 +294,7 @@ const prepareSeveralOriginAPIParamsFromView = (params) => {
 /**
  * Prepares params to use with KIWI api. Params come from API calls.
  * 
- * TODO: (CLEAN CODE) check if this method return the same kind of objects than prepareDefaultParams above.
- * TODO: unify API params and View Controllers params
+ * TODO: unify API params and View Controllers params. Maybe think about adding this as middleware
  * 
  * @param {*} params object with origin being a string of comma-separated iata codes., and adults a string of comma separated number of adults  i.e.
  *  {

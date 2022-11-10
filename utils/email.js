@@ -9,6 +9,12 @@ const transport = nodemailer.createTransport({
   },
 });
 
+/**
+ * Sends the password reset token email
+ * @param {*} req req object from express
+ * @param {*} email the email to send to
+ * @param {*} resetToken the reset token generated
+ */
 const sendPasswordResetTokenEmail = async (req, email, resetToken) => {
   // try with mailtrap.io
   const resetURL = `${req.protocol}://${req.get(
@@ -23,6 +29,11 @@ const sendPasswordResetTokenEmail = async (req, email, resetToken) => {
   });
 };
 
+/**
+ * The actual call to send an email
+ * @param {*} options email options
+ * @returns true if email was successfully sent
+ */
 const sendMail = async (options) => {
   return await transport.sendMail({
     from: `"Pulpito 🐙" <hello@pulpito.com>`,

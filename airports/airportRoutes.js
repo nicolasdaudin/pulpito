@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { search, getAirports } = require('./airportController');
+const { getAirports } = require('./airportController');
 
 const router = express.Router();
 

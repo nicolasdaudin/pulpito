@@ -3,6 +3,12 @@ const { catchAsync } = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const airportService = require('../airports/airportService');
 
+/**
+ *
+ * Get all users
+ * @param {*} req
+ * @param {*} res
+ */
 exports.getAllUsers = async (req, res) => {
   const users = await User.find();
 
@@ -39,6 +45,10 @@ const filterObj = (obj, allowedFields) => {
 //   return false;
 // }
 
+/**
+ * Update a connected user. Only to update name and email.
+ * If other fields are sent, they will NOT be updated.
+ */
 exports.updateMe = catchAsync(async (req, res, next) => {
   // 1) Error if user POSTs password data
   if (req.body.password || req.body.passwordConfirm) {
@@ -69,6 +79,9 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
+/**
+ * Get a connected user's favorite airports
+ */
 exports.getFavAirports = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user.id);
 
@@ -80,6 +93,9 @@ exports.getFavAirports = catchAsync(async (req, res, next) => {
   });
 });
 
+/**
+ * Add a favorite airports to connected user's list of airport
+ */
 exports.addFavAirport = catchAsync(async (req, res, next) => {
   if (!req.body.airport) {
     return next(new AppError('Please specify an airport', 400));
@@ -111,6 +127,9 @@ exports.addFavAirport = catchAsync(async (req, res, next) => {
   });
 });
 
+/**
+ * Remove a favorite airports from connected users
+ */
 exports.removeFavAirport = catchAsync(async (req, res, next) => {
   if (!req.body.airport) {
     return next(new AppError('Please specify an airport', 400));
@@ -142,6 +161,9 @@ exports.removeFavAirport = catchAsync(async (req, res, next) => {
   });
 });
 
+/**
+ * Removes a connected user (actually makes him inactive)
+ */
 exports.deleteMe = catchAsync(async (req, res, next) => {
   // 3) Update user
   const deletedUser = await User.findByIdAndUpdate(req.user.id, {

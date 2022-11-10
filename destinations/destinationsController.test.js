@@ -24,11 +24,7 @@ describe('Destinations Controller', function () {
       beforeEach(() => {
         getFlightsSpy = jest
           .spyOn(flightService, 'getFlights')
-          .mockResolvedValue({
-            data: {
-              data: CHEAPEST_DESTINATION_KIWI_RESULT_FIXTURE,
-            },
-          });
+          .mockResolvedValue(CHEAPEST_DESTINATION_KIWI_RESULT_FIXTURE);
 
         req = {
           query: CHEAPEST_DESTINATION_QUERY_FIXTURE,
@@ -161,26 +157,10 @@ describe('Destinations Controller', function () {
       beforeEach(() => {
         getFlightsSpy = jest
           .spyOn(flightService, 'getFlights')
-          .mockResolvedValue({
-            data: {
-              data: COMMON_DESTINATION_KIWI_RESULT_FIXTURE_MAD,
-            },
-          })
-          .mockResolvedValueOnce({
-            data: {
-              data: COMMON_DESTINATION_KIWI_RESULT_FIXTURE_MAD,
-            },
-          })
-          .mockResolvedValueOnce({
-            data: {
-              data: COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BOD,
-            },
-          })
-          .mockResolvedValueOnce({
-            data: {
-              data: COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BRU,
-            },
-          });
+          .mockResolvedValue(COMMON_DESTINATION_KIWI_RESULT_FIXTURE_MAD)
+          .mockResolvedValueOnce(COMMON_DESTINATION_KIWI_RESULT_FIXTURE_MAD)
+          .mockResolvedValueOnce(COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BOD)
+          .mockResolvedValueOnce(COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BRU);
 
         req = {
           query: COMMON_DESTINATION_QUERY_FIXTURE,
@@ -314,16 +294,8 @@ describe('Destinations Controller', function () {
 
         flightService.getFlights = jest
           .fn()
-          .mockResolvedValueOnce({
-            data: {
-              data: COMMON_DESTINATION_KIWI_RESULT_FIXTURE_MAD,
-            },
-          })
-          .mockResolvedValueOnce({
-            data: {
-              data: COMMON_DESTINATION_KIWI_RESULT_FIXTURE_MRS,
-            },
-          });
+          .mockResolvedValueOnce(COMMON_DESTINATION_KIWI_RESULT_FIXTURE_MAD)
+          .mockResolvedValueOnce(COMMON_DESTINATION_KIWI_RESULT_FIXTURE_MRS);
         await destinationsController.getCommonDestinations(req, res, next);
 
         expect(res.status).toHaveBeenCalledWith(200);
@@ -340,11 +312,7 @@ describe('Destinations Controller', function () {
       beforeEach(() => {
         getFlightsSpy = jest
           .spyOn(flightService, 'getWeekendFlights')
-          .mockResolvedValue({
-            data: {
-              data: CHEAPEST_DESTINATION_KIWI_RESULT_FIXTURE,
-            },
-          });
+          .mockResolvedValue(CHEAPEST_DESTINATION_KIWI_RESULT_FIXTURE);
 
         req = {
           query: CHEAPEST_WEEKEND_QUERY_FIXTURE,
