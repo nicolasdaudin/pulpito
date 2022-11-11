@@ -69,7 +69,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getFavAirports = catchAsync(async (req, res, next) => {
+exports.getFavAirports = catchAsync(async (req, res, _next) => {
   const user = await User.findById(req.user.id);
 
   res.status(200).json({
@@ -142,9 +142,9 @@ exports.removeFavAirport = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteMe = catchAsync(async (req, res, next) => {
+exports.deleteMe = catchAsync(async (req, res, _next) => {
   // 3) Update user
-  const deletedUser = await User.findByIdAndUpdate(req.user.id, {
+  await User.findByIdAndUpdate(req.user.id, {
     active: false,
   });
 

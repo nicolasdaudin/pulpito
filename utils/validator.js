@@ -1,4 +1,4 @@
-const { isAlpha, isDate, isNumeric } = require('validator');
+const { isAlpha, isNumeric } = require('validator');
 
 // const validateParams = (req, res, next) => {};
 

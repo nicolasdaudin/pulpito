@@ -35,7 +35,7 @@ describe('Destinations Controller', function () {
         };
 
         res = {
-          status: jest.fn().mockImplementation(function (arg) {
+          status: jest.fn().mockImplementation(function () {
             return this;
           }),
           json: jest.fn().mockImplementation(function (obj) {
@@ -89,7 +89,7 @@ describe('Destinations Controller', function () {
       let res, next;
       beforeEach(() => {
         res = {
-          status: jest.fn().mockImplementation(function (arg) {
+          status: jest.fn().mockImplementation(function () {
             return this;
           }),
           json: jest.fn().mockImplementation(function (obj) {
@@ -101,7 +101,7 @@ describe('Destinations Controller', function () {
       });
 
       // TODO: is it necessary? before getCheapestDestination, we have a middleware checking for input params
-      test('should return error 400 when no input parameters ', async function () {
+      test('should return error 400 when no input parameters', async function () {
         const req = { query: {} };
 
         await destinationsController.getCheapestDestinations(req, res, next);
@@ -117,7 +117,7 @@ describe('Destinations Controller', function () {
         );
       });
 
-      test('should return error 400 when missing input parameters ', async function () {
+      test('should return error 400 when missing input parameters', async function () {
         const req = { query: { origin: 'CDG' } };
 
         await destinationsController.getCheapestDestinations(req, res, next);
@@ -133,7 +133,7 @@ describe('Destinations Controller', function () {
         );
       });
 
-      test('should return error 400 when unknown origin like PXR ', async function () {
+      test('should return error 400 when unknown origin like PXR', async function () {
         const req = {
           query: CHEAPEST_DESTINATION_QUERY_FIXTURE_NON_EXISTING_ORIGIN,
         };
@@ -187,7 +187,7 @@ describe('Destinations Controller', function () {
         };
 
         res = {
-          status: jest.fn().mockImplementation(function (arg) {
+          status: jest.fn().mockImplementation(function () {
             return this;
           }),
           json: jest.fn().mockImplementation(function (obj) {
@@ -243,7 +243,7 @@ describe('Destinations Controller', function () {
       let res, next;
       beforeEach(() => {
         res = {
-          status: jest.fn().mockImplementation(function (arg) {
+          status: jest.fn().mockImplementation(function () {
             return this;
           }),
           json: jest.fn().mockImplementation(function (obj) {
@@ -254,7 +254,7 @@ describe('Destinations Controller', function () {
         next = jest.fn();
       });
 
-      test('should return error 500 when no input parameters ', async function () {
+      test('should return error 500 when no input parameters', async function () {
         const req = { query: {} };
         await destinationsController.getCommonDestinations(req, res, next);
 
@@ -266,7 +266,7 @@ describe('Destinations Controller', function () {
         );
       });
 
-      test('should return error 400 when parameters are not comma-separated ', async function () {
+      test('should return error 400 when parameters are not comma-separated', async function () {
         const req = {
           query: COMMON_DESTINATION_QUERY_FIXTURE_INCORRECT_ORIGIN_FORMAT,
         };
@@ -281,7 +281,7 @@ describe('Destinations Controller', function () {
         );
       });
 
-      test('should return error 400 when unknown origin like PXR ', async function () {
+      test('should return error 400 when unknown origin like PXR', async function () {
         const req = {
           query: COMMON_DESTINATION_QUERY_FIXTURE_NON_EXISTING_ORIGIN,
         };
@@ -296,7 +296,7 @@ describe('Destinations Controller', function () {
         );
       });
 
-      test('should return error 400 when missing input parameters ', async function () {
+      test('should return error 400 when missing input parameters', async function () {
         const req = { query: { origin: 'MAD,BKK,CDG' } };
         await destinationsController.getCommonDestinations(req, res, next);
 
@@ -351,7 +351,7 @@ describe('Destinations Controller', function () {
         };
 
         res = {
-          status: jest.fn().mockImplementation(function (arg) {
+          status: jest.fn().mockImplementation(function () {
             return this;
           }),
           json: jest.fn().mockImplementation(function (obj) {
@@ -402,7 +402,7 @@ describe('Destinations Controller', function () {
       });
 
       // this is an error case for getFlights, but for getFlightsWeekend we add params nights_in_dst_from and nights_in_dest_to which are enough for Kiwi to perform a search, even though there are no departure dates interval (from->to) and destination.
-      test('should return success when only origin is specified, and no possible departure dates and no destination ', async function () {
+      test('should return success when only origin is specified, and no possible departure dates and no destination', async function () {
         const req = { query: { origin: 'CDG' } };
 
         await destinationsController.getCheapestWeekend(req, res, next);
@@ -425,7 +425,7 @@ describe('Destinations Controller', function () {
       let res, next;
       beforeEach(() => {
         res = {
-          status: jest.fn().mockImplementation(function (arg) {
+          status: jest.fn().mockImplementation(function () {
             return this;
           }),
           json: jest.fn().mockImplementation(function (obj) {
@@ -437,7 +437,7 @@ describe('Destinations Controller', function () {
       });
 
       // TODO: is it necessary? before getCheapestDestination, we have a middleware checking for input params
-      test('should return error 400 when no input parameters ', async function () {
+      test('should return error 400 when no input parameters', async function () {
         const req = { query: {} };
 
         await destinationsController.getCheapestWeekend(req, res, next);
@@ -453,7 +453,7 @@ describe('Destinations Controller', function () {
         );
       });
 
-      test('should return error 400 when unknown origin like PXR ', async function () {
+      test('should return error 400 when unknown origin like PXR', async function () {
         const req = {
           query: CHEAPEST_DESTINATION_QUERY_FIXTURE_NON_EXISTING_ORIGIN,
         };

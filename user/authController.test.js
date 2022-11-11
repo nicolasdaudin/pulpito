@@ -8,6 +8,8 @@ const email = require('../utils/email');
 const jwt = require('jsonwebtoken');
 
 describe('AuthController', () => {
+  jest.setTimeout(10000);
+
   beforeAll(async () => {
     const DB = process.env.DATABASE.replace(
       '<PASSWORD>',
@@ -25,7 +27,7 @@ describe('AuthController', () => {
   let req, res, next;
   beforeEach(() => {
     res = {
-      status: jest.fn().mockImplementation(function (arg) {
+      status: jest.fn().mockImplementation(function () {
         // console.log('calling res.status');
         return this;
       }),
@@ -57,7 +59,7 @@ describe('AuthController', () => {
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             statusCode: 404,
-            message: expect.stringContaining('no user'),
+            message: expect.stringContaining('no active user'),
           })
         );
       });
@@ -74,7 +76,7 @@ describe('AuthController', () => {
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             statusCode: 404,
-            message: expect.stringContaining('no user'),
+            message: expect.stringContaining('no active user'),
           })
         );
       });
@@ -185,19 +187,11 @@ describe('AuthController', () => {
             password: faker.internet.password(),
           };
           const fakeStatusCode = faker.internet.httpStatusCode();
-          const res = {
-            status: jest.fn().mockImplementation(function (arg) {
-              //console.log('calling res.status');
-              return this;
-            }),
-            json: jest.fn().mockImplementation(function (obj) {
-              //console.log('calling res.json');
-              this.data = obj.data;
-              this.message = obj.message;
-            }),
-            cookie: jest.fn(),
-            data: null,
-          };
+
+          res.cookie = jest.fn().mockImplementation(function () {
+            // console.log('calling res.status');
+            return this;
+          });
 
           authController.createSendToken(fakeUser, fakeStatusCode, res);
 
@@ -212,7 +206,7 @@ describe('AuthController', () => {
 
     describe('signup', () => {
       describe('success case', () => {
-        test.skip('should create a user when given correct info', async () => {
+        test('should create a user when given correct info', async () => {
           // checking numbers of users in DB
           const usersLengthBeforeCreate = (await User.find()).length;
 
@@ -226,21 +220,21 @@ describe('AuthController', () => {
             password: fakePassword,
             passwordConfirm: fakePassword,
           };
-          ////console.log(fakeUser);
-          let newUser;
+          console.log(fakeUser);
+          req = { body: fakeUser };
 
-          // to finished
-          // newUser = await User.create(fakeUser)
-          // but that's not what we want to test
-          newUser = await authController.signup();
+          await authController.signup(req, res, next);
 
           const usersLengthAfterCreate = (await User.find()).length;
 
           expect(usersLengthAfterCreate).toBe(usersLengthBeforeCreate + 1);
 
-          await User.deleteOne({ id: newUser.id });
+          const createdUser = await User.findOne({ email: fakeUser.email });
+
+          await User.deleteOne({ email: createdUser.email });
         });
       });
+
       describe('error cases', () => {
         test.todo('should return error if user already exists');
         test.todo(

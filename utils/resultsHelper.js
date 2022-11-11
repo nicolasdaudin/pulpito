@@ -1,6 +1,5 @@
 const { RESULTS_SEARCH_LIMIT, DEFAULT_SORT_FIELD } = require('../config');
 const airportService = require('../airports/airportService');
-const { filterParams } = require('../common/validatorService');
 
 const filterByMaxConnections = (itinerary, maxConnections) => {
   let nbConnections = 0;
@@ -17,8 +16,8 @@ const filterByMaxConnections = (itinerary, maxConnections) => {
     );
   } else {
     nbConnections = Math.max(
-      flight.route.oneway.connections.length,
-      flight.route.return.connections.length
+      itinerary.route.oneway.connections.length,
+      itinerary.route.return.connections.length
     );
   }
   return nbConnections <= maxConnections;
@@ -41,11 +40,13 @@ const filterByPriceRange = (itinerary, priceFrom, priceTo) => {
     );
   } else {
     // if one origin
-    minPrice = flight.fare.adults;
-    maxPrice = flight.fare.adults;
+    minPrice = itinerary.fare.adults;
+    maxPrice = itinerary.fare.adults;
   }
 
-  return minPrice >= priceFrom && maxPrice <= priceTo;
+  return (
+    (!priceFrom || minPrice >= priceFrom) && (!priceTo || maxPrice <= priceTo)
+  );
 };
 
 /**

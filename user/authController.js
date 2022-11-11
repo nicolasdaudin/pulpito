@@ -37,7 +37,7 @@ const createSendToken = (user, statusCode, res) => {
 };
 // sort of createUser but in the context of AUTH it's a signup.
 // it's a signup = we create the user and log in, that's why we send back the token
-const signup = catchAsync(async (req, res, next) => {
+const signup = catchAsync(async (req, res, _next) => {
   // we could have done User.create(req.body) but we would allow API users to register themselves as 'admin' just by putting role=admin in the body. Doing this manually field by field prevents people to register as admin.
   const newUser = await User.create({
     name: req.body.name,

@@ -188,9 +188,9 @@ const formatTime = (d) => {
 const prepareAxiosParams = (params) => {
   var urlSearchParams = new URLSearchParams();
 
-  for (param in params) {
+  for (let param in params) {
     if (Array.isArray(params[param])) {
-      for (key in params[param]) {
+      for (let key in params[param]) {
         urlSearchParams.append(param, params[param][key]);
       }
     } else {

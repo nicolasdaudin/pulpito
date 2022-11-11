@@ -1,5 +1,4 @@
 const airportService = require('./airportService');
-const assert = require('assert').strict;
 
 describe('AirportService', function () {
   describe('searchByString', function () {

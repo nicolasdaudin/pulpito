@@ -3,7 +3,6 @@ const app = require('../app');
 const { faker } = require('@faker-js/faker');
 const User = require('../user/userModel');
 const mongoose = require('mongoose');
-const { extractConnections } = require('../utils/apiHelper');
 const { DateTime } = require('luxon');
 const KIWI_DATE_FORMAT = `dd'/'LL'/'yyyy`;
 
@@ -233,7 +232,7 @@ describe('End to end tests', () => {
         expect(response.body.message).toMatch('Please provide missing');
       });
 
-      test('should return a 400 error and a fail status if origin is not in the format MAD,BRU,BOD ', async () => {
+      test('should return a 400 error and a fail status if origin is not in the format MAD,BRU,BOD', async () => {
         const params = {
           ...dates,
           origin: 'MAD-BOD-BRU',
@@ -244,7 +243,7 @@ describe('End to end tests', () => {
         expect(response.body.message).toMatch('expected type');
       });
 
-      test('should return a 400 error and a fail status if dates are not in the correct format ', async () => {
+      test('should return a 400 error and a fail status if dates are not in the correct format', async () => {
         const dates = {
           departureDate: DateTime.now()
             .plus({ weeks: 1 })
@@ -318,7 +317,7 @@ describe('End to end tests', () => {
         JEST_TIMEOUT
       );
 
-      xtest('should return a 400 error and a fail status for a non existing origin', async () => {
+      test('should return a 400 error and a fail status for a non existing origin', async () => {
         const response = await request(app)
           .get(routePath)
           .query({
@@ -329,8 +328,8 @@ describe('End to end tests', () => {
         expect(response.body.status).toBe('fail');
         expect(response.body.message).toMatch('no locations to fly from');
       });
-      xtest('should return a 400 error and a fail status if some parameters are missing', async () => {
-        const { departureDateFrom, departureDateTo, ...others } = params;
+      test('should return a 400 error and a fail status if some parameters are missing', async () => {
+        const { departureDateFrom, departureDateTo } = params;
 
         const response = await request(app)
           .get(routePath)
@@ -340,14 +339,14 @@ describe('End to end tests', () => {
         expect(response.body.message).toMatch('must be specified');
       });
 
-      xtest('should return a 400 error and a fail status if dates are not in the correct format ', async () => {
+      test('should return a 400 error and a fail status if dates are not in the correct format', async () => {
         const dates = {
           departureDateFrom: DateTime.now()
             .plus({ months: 1 })
-            .toFormat(`LL'/'dd'/'yyyy`), // month/day/year format
+            .toFormat(`LLddyyyy`), // monthdayyear format
           departureDateTo: DateTime.now()
             .plus({ months: 4 })
-            .toFormat(`LL'/'dd'/'yyyy`),
+            .toFormat(`LLddyyyy`),
         };
 
         const response = await request(app)

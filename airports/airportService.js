@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const countries = require('./countryService');
 const airportCodes = require('../datasets/airport-codes.json');
 const utils = require('../utils/utils');

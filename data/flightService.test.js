@@ -29,31 +29,48 @@ maybe('Flight Service - Integration with KIWI API', function () {
     });
 
     test('should throw a 400 error when empty params for KIWI service', async function () {
-      try {
-        await flightService.getFlights({});
-      } catch (e) {
-        expect(e.message).toMatch(/400/);
-      }
+      // try {
+      //   await flightService.getFlights({});
+      // } catch (e) {
+      //   expect(e.message).toMatch(/400/);
+      // }
+      expect.assertions(1);
+      await expect(flightService.getFlights({})).rejects.toMatchObject({
+        message: expect.stringMatching(/400/),
+      });
     });
 
     test('should throw a 400 error when missing params for KIWI service', async function () {
       const { fly_from } = FLIGHT_API_PARAMS_FIXTURE;
 
-      try {
-        await flightService.getFlights({ fly_from });
-      } catch (e) {
-        expect(e.message).toMatch(/400/);
-      }
+      // try {
+      //   await flightService.getFlights({ fly_from });
+      // } catch (e) {
+      //   expect(e.message).toMatch(/400/);
+      // }
+
+      expect.assertions(1);
+      await expect(
+        flightService.getFlights({ fly_from })
+      ).rejects.toMatchObject({
+        message: expect.stringMatching(/400/),
+      });
     });
 
     test('should throw a 422 error when non-existing origin for KIWI service', async function () {
-      try {
-        await flightService.getFlights(
-          FLIGHT_API_PARAMS_FIXTURE_NON_EXISTING_ORIGIN
-        );
-      } catch (e) {
-        expect(e.message).toMatch(/422/);
-      }
+      // try {
+      //   await flightService.getFlights(
+      //     FLIGHT_API_PARAMS_FIXTURE_NON_EXISTING_ORIGIN
+      //   );
+      // } catch (e) {
+      //   expect(e.message).toMatch(/422/);
+      // }
+      expect.assertions(1);
+      await expect(
+        flightService.getFlights(FLIGHT_API_PARAMS_FIXTURE_NON_EXISTING_ORIGIN)
+      ).rejects.toMatchObject({
+        message: expect.stringMatching(/422/),
+      });
     });
   });
 
@@ -82,9 +99,9 @@ maybe('Flight Service - Integration with KIWI API', function () {
       expect(prepareSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           fly_days: [4, 5, 6],
-          ret_fly_days: [0, 1],
-          nights_in_dst_from: 2,
-          nights_in_dst_to: 3,
+          ret_fly_days: [0, 1, 2],
+          nights_in_dst_from: 3,
+          nights_in_dst_to: 4,
         })
       );
 
@@ -114,31 +131,46 @@ maybe('Flight Service - Integration with KIWI API', function () {
     });
 
     test('should throw a 400 error when empty params for KIWI service', async function () {
-      try {
-        await flightService.getWeekendFlights({});
-      } catch (e) {
-        expect(e.message).toMatch(/400/);
-      }
+      // try {
+      //   await flightService.getWeekendFlights({});
+      // } catch (e) {
+      //   expect(e.message).toMatch(/400/);
+      // }
+      await expect(flightService.getWeekendFlights({})).rejects.toMatchObject({
+        message: expect.stringMatching(/400/),
+      });
     });
 
     test('should throw a 400 error when missing params for KIWI service', async function () {
       const { fly_from } = FLIGHT_API_PARAMS_FIXTURE_WEEKEND;
 
-      try {
-        await flightService.getWeekendFlights({ fly_from });
-      } catch (e) {
-        expect(e.message).toMatch(/400/);
-      }
+      // try {
+      //   await flightService.getWeekendFlights({ fly_from });
+      // } catch (e) {
+      //   expect(e.message).toMatch(/400/);
+      // }
+      await expect(
+        flightService.getWeekendFlights({ fly_from })
+      ).rejects.toMatchObject({
+        message: expect.stringMatching(/400/),
+      });
     });
 
     test('should throw a 422 error when non-existing origin for KIWI service', async function () {
-      try {
-        await flightService.getWeekendFlights(
+      // try {
+      //   await flightService.getWeekendFlights(
+      //     FLIGHT_API_PARAMS_FIXTURE_WEEKEND_NON_EXISTING_ORIGIN
+      //   );
+      // } catch (e) {
+      //   expect(e.message).toMatch(/422/);
+      // }
+      await expect(
+        flightService.getWeekendFlights(
           FLIGHT_API_PARAMS_FIXTURE_WEEKEND_NON_EXISTING_ORIGIN
-        );
-      } catch (e) {
-        expect(e.message).toMatch(/422/);
-      }
+        )
+      ).rejects.toMatchObject({
+        message: expect.stringMatching(/422/),
+      });
     });
   });
 });
