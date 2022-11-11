@@ -8,6 +8,7 @@ const {
 const {
   validateRequestParamsOneOrigin,
   validateRequestParamsManyOrigins,
+  validateRequestParamsWeekend,
   filterParams,
 } = require('../common/validatorService');
 
@@ -22,5 +23,7 @@ router
   .get(filterParams, validateRequestParamsManyOrigins, getCommonDestinations);
 
 // TODO: params validation is missing
-router.route('/cheapestWeekend').get(filterParams, getCheapestWeekend);
+router
+  .route('/cheapestWeekend')
+  .get(filterParams, validateRequestParamsWeekend, getCheapestWeekend);
 module.exports = router;
