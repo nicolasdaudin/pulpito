@@ -11,4 +11,8 @@ describe('Utils module', function () {
       expect(reencoded).toBe('Malaga');
     });
   });
+
+  describe('filterObj', () => {
+    test.todo('should return a new object with only the allowed fields');
+  });
 });

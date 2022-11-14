@@ -2,7 +2,13 @@ const User = require('./userModel');
 const { catchAsync } = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const airportService = require('../airports/airportService');
+const utils = require('../utils/utils');
 
+/**
+ * Get all users
+ * @param {*} req
+ * @param {*} res
+ */
 exports.getAllUsers = async (req, res) => {
   const users = await User.find();
 
@@ -16,29 +22,8 @@ exports.getAllUsers = async (req, res) => {
 };
 
 /**
- * Remove fields from an object
- * @param {*} obj
- * @param  {...any} allowedFields
+ * Updates currently logged in user
  */
-const filterObj = (obj, allowedFields) => {
-  const newObj = {};
-  Object.keys(obj).forEach((el) => {
-    if (allowedFields.includes(el)) {
-      newObj[el] = obj[el];
-    }
-  });
-  return newObj;
-};
-
-// const areFieldsInBody(obj, allowedFields) => {
-//   Object.keys(obj).forEach((el)) => {
-//     if (allowedFields.includes(el)) {
-//       return true;
-//     }
-//   }
-//   return false;
-// }
-
 exports.updateMe = catchAsync(async (req, res, next) => {
   // 1) Error if user POSTs password data
   if (req.body.password || req.body.passwordConfirm) {
@@ -53,7 +38,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   const allowedFields = ['name', 'email'];
 
   // 2) Filter out unwanted fields names that are not allowed to be updated, to avoid users to set themselves as admin, for example
-  const filteredBody = filterObj(req.body, allowedFields);
+  const filteredBody = utils.filterObj(req.body, allowedFields);
 
   // 3) Update user
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
@@ -69,6 +54,24 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
+/**
+ * Deletes currently logged-in user
+ */
+exports.deleteMe = catchAsync(async (req, res, _next) => {
+  // 3) Update user
+  await User.findByIdAndUpdate(req.user.id, {
+    active: false,
+  });
+
+  res.status(204).json({
+    status: 'success',
+    data: null,
+  });
+});
+
+/**
+ * Get favorite airports for the currently logged-in user
+ */
 exports.getFavAirports = catchAsync(async (req, res, _next) => {
   const user = await User.findById(req.user.id);
 
@@ -80,6 +83,9 @@ exports.getFavAirports = catchAsync(async (req, res, _next) => {
   });
 });
 
+/**
+ * Add a favorite airport to the list of favorite airports for that user
+ */
 exports.addFavAirport = catchAsync(async (req, res, next) => {
   if (!req.body.airport) {
     return next(new AppError('Please specify an airport', 400));
@@ -111,6 +117,9 @@ exports.addFavAirport = catchAsync(async (req, res, next) => {
   });
 });
 
+/**
+ * Remove a favorite airport from the list of favorite airports for that user
+ */
 exports.removeFavAirport = catchAsync(async (req, res, next) => {
   if (!req.body.airport) {
     return next(new AppError('Please specify an airport', 400));
@@ -139,17 +148,5 @@ exports.removeFavAirport = catchAsync(async (req, res, next) => {
     data: {
       favAirports: updatedUser.favAirports,
     },
-  });
-});
-
-exports.deleteMe = catchAsync(async (req, res, _next) => {
-  // 3) Update user
-  await User.findByIdAndUpdate(req.user.id, {
-    active: false,
-  });
-
-  res.status(204).json({
-    status: 'success',
-    data: null,
   });
 });
