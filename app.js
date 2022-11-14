@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === 'development') {
   // adding 'GET' log messages
   app.use(
     morgan('dev', {
-      skip: (req, res) => req.originalUrl.includes('/assets/'),
+      skip: (req, _res) => req.originalUrl.includes('/assets/'),
     })
   );
 }
@@ -72,7 +72,7 @@ app.all('*', (req, res, next) => {
 });
 
 // global error handler
-app.use((err, req, res, next) => {
+app.use((err, _req, res, _next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 

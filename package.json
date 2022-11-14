@@ -38,6 +38,8 @@
   "devDependencies": {
     "@faker-js/faker": "^7.2.0",
     "@types/jest": "^28.1.1",
+    "eslint": "^8.27.0",
+    "eslint-plugin-jest": "^27.1.4",
     "jest": "^28.1.0",
     "supertest": "^6.2.4"
   }

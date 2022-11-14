@@ -1,7 +1,7 @@
 const validator = require('./validator');
 const { isAlpha, isDate, isNumeric } = require('validator');
 
-describe('validator utils ', () => {
+describe('validator utils', () => {
   describe('isCommaSeparatedAlpha', () => {
     test('should return true when argument is a unique string of letters', function () {
       expect(validator.isCommaSeparatedAlpha('MAD')).toBe(true);
@@ -152,7 +152,7 @@ describe('validator utils ', () => {
       ]);
     });
 
-    test(`should return an array that contains 'alphaNumeric' and 'numericParam' when both parameters have a wrong type `, () => {
+    test(`should return an array that contains 'alphaNumeric' and 'numericParam' when both parameters have a wrong type`, () => {
       const params = {
         alphaParam: 'f4oo',
         numericParam: '4a2',

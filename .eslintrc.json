@@ -1,0 +1,23 @@
+{
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": "eslint:recommended",
+  "overrides": [
+    {
+      "files": ["*.test.js"],
+      "plugins": ["jest"],
+      "extends": ["plugin:jest/recommended"]
+    }
+  ],
+  "parserOptions": {
+    "ecmaVersion": "latest"
+  },
+
+  "rules": {
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]
+  }
+}

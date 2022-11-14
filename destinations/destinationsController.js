@@ -13,7 +13,7 @@ const resultsHelper = require('../utils/resultsHelper');
  * @param {*} req
  * @param {*} res
  */
-const getCheapestDestinations = catchAsyncKiwi(async (req, res, next) => {
+const getCheapestDestinations = catchAsyncKiwi(async (req, res, _next) => {
   const params = helper.prepareDefaultAPIParams(req.query);
 
   const flights = await flightService.getFlights(params);
@@ -38,7 +38,7 @@ const getCheapestDestinations = catchAsyncKiwi(async (req, res, next) => {
  * @param {*} req
  * @param {*} res
  */
-const getCommonDestinations = catchAsyncKiwi(async (req, res, next) => {
+const getCommonDestinations = catchAsyncKiwi(async (req, res, _next) => {
   console.info(
     'API - Getting common destinations with these params',
     req.query
@@ -63,7 +63,7 @@ const getCommonDestinations = catchAsyncKiwi(async (req, res, next) => {
   });
 });
 
-const getCheapestWeekend = catchAsyncKiwi(async (req, res, next) => {
+const getCheapestWeekend = catchAsyncKiwi(async (req, res, _next) => {
   const params = helper.prepareDefaultAPIParams(req.query);
 
   const flights = await flightService.getWeekendFlights(params);

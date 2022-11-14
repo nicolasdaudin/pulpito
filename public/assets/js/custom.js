@@ -1,6 +1,8 @@
+/* eslint-disable no-undef */
 (function ($) {
   'use strict';
 
+  // we removed the sticky navigation bar
   // $(window).on('scroll', function () {
   //     if ($(this).scrollTop() > 10) { $('.navbar-area').addClass("is-sticky"); }
   //     else { $('.navbar-area').removeClass("is-sticky"); }
@@ -18,7 +20,7 @@
     });
   });
 
-  jQuery('.mean-menu').meanmenu({
+  $('.mean-menu').meanmenu({
     meanScreenWidth: '1199',
   });
 
@@ -140,7 +142,7 @@ document.querySelectorAll('.otSc').forEach(function (otpEl) {
 });
 function backSp(backKey) {
   if (backKey.keyCode == 8) {
-    var prev = this.previousElementSibling.focus();
+    this.previousElementSibling.focus();
   }
 }
 

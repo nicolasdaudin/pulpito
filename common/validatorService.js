@@ -12,6 +12,39 @@ const PARAMS_TO_FILTER = [
   { name: 'priceTo' },
 ];
 
+const ONE_CITYCODE_PARAM_MODEL = {
+  required: true,
+  typeCheck: isAlpha,
+  errorMsg: 'only airport or airport area codes, for example LON or JFK', // see https://wikitravel.org/en/Metropolitan_Area_Airport_Codes
+};
+const SEVERAL_CITYCODES_PARAM_MODEL = {
+  required: true,
+  typeCheck: validator.isCommaSeparatedAlpha,
+  errorMsg: `a comma-separated list of IATA airport or airport area codes, for example 'JFK,BRU' (but not 'JFK,BRU,')`,
+};
+const DATE_PARAM_MODEL = {
+  required: true,
+  typeCheck: (str) => isDate(str, { format: 'DD/MM/YYYY' }),
+  errorMsg: `a date of format DD/MM/YYYY, for example 22/06/2022`,
+};
+const ONE_PASSENGER_PARAM_MODEL = {
+  required: false,
+  typeCheck: isNumeric,
+  errorMsg: 'a number, for example 2',
+};
+const SEVERAL_PASSENGERS_PARAM_MODEL = {
+  required: false,
+  typeCheck: validator.isCommaSeparatedNumeric,
+  errorMsg: `a comma-separated list of numbers, for example '2,1' (but not '2,1,')`,
+};
+
+/**
+ * Express Middleware to add a filter object to req object, if any filters present in the query params
+ * Filters are specified in PARAMS_TO_FILTER
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
 const filterParams = (req, res, next) => {
   req.filter = {};
   if (req.query) {
@@ -33,82 +66,83 @@ const filterParams = (req, res, next) => {
   next();
 };
 
-const validateRequestParamsManyOrigins = (req, res, next) => {
-  // FIXME: is this really necessary to be so specific about parameter types? isn't it better to have a good documentation and only send an error msg like "Parameters have wrong type"
+/**
+ * Express middleware to validate request parameters for weekend-type routes, with an open range of dates (origin and  destination are both a 3-letters city code, and are required, and dates are specified with parameters departureDateFrom and departureDateTo, which specify a date to begin to start searching, and a date to end the search, but it's not return dates)
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+const validateRequestParamsWeekend = (req, res, next) => {
   const requestModelParams = [
+    { name: 'origin', ...ONE_CITYCODE_PARAM_MODEL },
     {
-      name: 'origin',
-      required: true,
-      typeCheck: validator.isCommaSeparatedAlpha,
-      errorMsg: `a comma-separated list of IATA airport or airport area codes, for example 'JFK,BRU' (but not 'JFK,BRU,')`,
+      name: 'destination',
+      ...ONE_CITYCODE_PARAM_MODEL,
     },
     {
-      name: 'departureDate',
-      required: true,
-      typeCheck: (str) => isDate(str, { format: 'DD/MM/YYYY' }),
-      errorMsg: `a date of format DD/MM/YYYY, for example 22/06/2022`,
+      name: 'departureDateFrom',
+      ...DATE_PARAM_MODEL,
     },
     {
-      name: 'returnDate',
-      required: true,
-      typeCheck: (str) => isDate(str, { format: 'DD/MM/YYYY' }),
-      errorMsg: `a date of format DD/MM/YYYY, for example 22/06/2022`,
+      name: 'departureDateTo',
+      ...DATE_PARAM_MODEL,
     },
     {
       name: 'adults',
-      required: false,
-      typeCheck: validator.isCommaSeparatedNumeric,
-      errorMsg: `a comma-separated list of numbers, for example '2,1' (but not '2,1,')`,
+      ...ONE_PASSENGER_PARAM_MODEL,
     },
     {
       name: 'children',
-      required: false,
-      typeCheck: validator.isCommaSeparatedNumeric,
-      errorMsg: `a comma-separated list of numbers, for example '2,1' (but not '2,1,')`,
+      ...ONE_PASSENGER_PARAM_MODEL,
     },
     {
       name: 'infants',
-      required: false,
-      typeCheck: validator.isCommaSeparatedNumeric,
-      errorMsg: `a comma-separated list of numbers, for example '2,1' (but not '2,1,')`,
+      ...ONE_PASSENGER_PARAM_MODEL,
     },
   ];
 
-  // check if required parameters are present
-  const missingParams = validator.findMissingParams(
-    requestModelParams,
-    req.query
-  );
-  if (missingParams.length > 0)
-    return next(
-      new AppError(
-        `Please provide missing parameter(s) to process this request: ${missingParams.join(
-          ','
-        )}`,
-        400
-      )
-    );
+  checkMissingParams(requestModelParams, req.query, next);
+  checkWrongTypeParams(requestModelParams, req.query, next);
 
-  // check if the type of parameters are correct
-  const wrongTypeParams = validator.findWrongTypeParams(
-    requestModelParams,
-    req.query
-  );
+  next();
+};
 
-  if (wrongTypeParams.length > 0) {
-    const errorMsg = requestModelParams
-      .filter((param) => wrongTypeParams.includes(param))
-      .map((param) => `'${param.name}' should be ${param.errorMsg}`)
-      .join(', ');
-    return next(
-      new AppError(
-        `Following parameters do not have the expected type: ${errorMsg}`,
-        400
-      )
-    );
-  }
+/**
+ * Express middleware to validate request parameters for many-origins routes with a specified range of dates (origin param is a comma-separated list of 3-letters city codes and dates are specified with parameters departureDate and returnDate)
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+const validateRequestParamsManyOrigins = (req, res, next) => {
+  // FIXME: is this really necessary to be so specific about parameter types? isn't it better to have a good documentation and only send an error msg like "Parameters have wrong type"
+  const requestModelParams = [
+    { name: 'origin', ...SEVERAL_CITYCODES_PARAM_MODEL },
+    {
+      name: 'departureDate',
+      ...DATE_PARAM_MODEL,
+    },
+    {
+      name: 'returnDate',
+      ...DATE_PARAM_MODEL,
+    },
+    {
+      name: 'adults',
+      ...SEVERAL_PASSENGERS_PARAM_MODEL,
+    },
+    {
+      name: 'children',
+      ...SEVERAL_PASSENGERS_PARAM_MODEL,
+    },
+    {
+      name: 'infants',
+      ...SEVERAL_PASSENGERS_PARAM_MODEL,
+    },
+  ];
 
-  const origins = req.query.origin.split(',');
+  checkMissingParams(requestModelParams, req.query, next);
+  checkWrongTypeParams(requestModelParams, req.query, next);
+
+  const origins = req.query.origin?.split(',') || [];
 
   const adults = req.query.adults
     ? req.query.adults.split(',')
@@ -145,70 +179,60 @@ const validateRequestParamsManyOrigins = (req, res, next) => {
   next();
 };
 
+/**
+ * Express middleware to validate request parameters for one-origin routes  with a specified range of dates (origin is just a 3-letters city code and dates are specified with departureDate and returnDate)
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
 const validateRequestParamsOneOrigin = (req, res, next) => {
   // FIXME: is this really necessary to be so specific about parameter types? isn't it better to have a good documentation and only send an error msg like "Parameters have wrong type"
   const requestModelParams = [
     {
       name: 'origin',
-      required: true,
-      typeCheck: isAlpha,
-      errorMsg: 'only airport or airport area codes, for example LON or JFK', // see https://wikitravel.org/en/Metropolitan_Area_Airport_Codes
+      ...ONE_CITYCODE_PARAM_MODEL,
     },
     {
       name: 'departureDate',
-      required: true,
-      typeCheck: (str) => isDate(str, { format: 'DD/MM/YYYY' }),
-      errorMsg: `a date of format DD/MM/YYYY, for example 22/06/2022`,
+      ...DATE_PARAM_MODEL,
     },
     {
       name: 'returnDate',
-      required: true,
-      typeCheck: (str) => isDate(str, { format: 'DD/MM/YYYY' }),
-      errorMsg: `a date of format DD/MM/YYYY, for example 22/06/2022`,
+      ...DATE_PARAM_MODEL,
     },
     {
       name: 'adults',
-      required: false,
-      typeCheck: isNumeric,
-      errorMsg: 'a number, for example 2',
+      ...SEVERAL_PASSENGERS_PARAM_MODEL,
     },
     {
       name: 'children',
-      required: false,
-      typeCheck: isNumeric,
-      errorMsg: 'a number, for example 2',
+      ...SEVERAL_PASSENGERS_PARAM_MODEL,
     },
     {
       name: 'infants',
-      required: false,
-      typeCheck: isNumeric,
-      errorMsg: 'a number, for example 2',
+      ...SEVERAL_PASSENGERS_PARAM_MODEL,
     },
   ];
 
-  // check if required parameters are present
+  checkMissingParams(requestModelParams, req.query, next);
+  checkWrongTypeParams(requestModelParams, req.query, next);
 
-  const missingParams = validator.findMissingParams(
-    requestModelParams,
-    req.query
-  );
-  if (missingParams.length > 0)
-    return next(
-      new AppError(
-        `Please provide missing parameter(s) to process this request: ${missingParams.join(
-          ','
-        )}`,
-        400
-      )
-    );
+  next();
+};
 
-  const wrongTypeParams = validator.findWrongTypeParams(
-    requestModelParams,
-    req.query
-  );
+/**
+ * Check if there any params with a wrong type
+ * Calls next() if any error
+ * @param {*} modelParams the model
+ * @param {*} query the query parameters
+ * @param {*} next the next call if there is an error
+ * @returns if no wrong type params
+ */
+const checkWrongTypeParams = (modelParams, query, next) => {
+  const wrongTypeParams = validator.findWrongTypeParams(modelParams, query);
   if (wrongTypeParams.length > 0) {
-    const errorMsg = requestModelParams
-      .filter((param) => wrongTypeParams.includes(param))
+    const errorMsg = modelParams
+      .filter((param) => wrongTypeParams.includes(param.name))
       .map((param) => `'${param.name}' should be ${param.errorMsg}`)
       .join(', ');
     return next(
@@ -218,13 +242,33 @@ const validateRequestParamsOneOrigin = (req, res, next) => {
       )
     );
   }
+};
 
-  next();
+/**
+ * Check if there any missing params
+ * Calls next() if any error
+ * @param {*} modelParams the model
+ * @param {*} query the query parameters
+ * @param {*} next the next call if there is an error
+ * @returns if no missing  params
+ */
+const checkMissingParams = (modelParams, query, next) => {
+  const missingParams = validator.findMissingParams(modelParams, query);
+  if (missingParams.length > 0)
+    return next(
+      new AppError(
+        `Please provide missing parameter(s) to process this request: ${missingParams.join(
+          ','
+        )}`,
+        400
+      )
+    );
 };
 
 // TODO: validate request param for cheapest weekend requests
 module.exports = {
   validateRequestParamsManyOrigins,
   validateRequestParamsOneOrigin,
+  validateRequestParamsWeekend,
   filterParams,
 };

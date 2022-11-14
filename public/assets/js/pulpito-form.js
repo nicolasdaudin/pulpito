@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /**
  * After adding or removing an origin, we 'renumber' the Header text for each origin row
  */
@@ -14,7 +15,7 @@ const renumberOriginHeaders = () => {
 };
 
 /**
- * Click on "Ajouter un point de départ" in the search form, to add a new destination
+ * Handler for Click on "Ajouter un point de départ" in the search form, to add a new origin
  */
 const addOriginHandler = () => {
   // add the new origin
@@ -42,11 +43,13 @@ const addOriginHandler = () => {
   renumberOriginHeaders();
 };
 
+/**
+ * Handler for Click on "Supprimer un point de départ" in the search form, to remove one of the origin
+ */
 const removeOriginHandler = (e) => {
   // remove the html element
   if (e.target.id === 'remove_multi_city') {
     const cityToBeRemoved = e.target.parentElement.closest('.multi_city_form');
-    const cityToBeRemovedIndex = +cityToBeRemoved.dataset.originsIndex;
     cityToBeRemoved.remove();
 
     // renumerate the "Ville #" for each origins
@@ -54,6 +57,9 @@ const removeOriginHandler = (e) => {
   }
 };
 
+/**
+ * Click on "ajouter un point de départ" in the search flights from
+ */
 document
   .querySelector('#addMulticityRow')
   .addEventListener('click', addOriginHandler);

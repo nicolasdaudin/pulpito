@@ -8,7 +8,6 @@ const KIWI_DATE_FORMAT = `dd'/'LL'/'yyyy`;
 
 describe('End to end tests', () => {
   jest.setTimeout(10000);
-
   beforeAll(async () => {
     const DB = process.env.DATABASE.replace(
       '<PASSWORD>',
@@ -104,9 +103,11 @@ describe('End to end tests', () => {
         expect(response.body.message).toMatch('duplicate');
       });
 
-      test.todo('Should not sign up an existing user with a wrong token');
-      test.todo('Should not sign up an existing user with a wrong password');
-      test.todo('Should not sign up an existing user with an expired token');
+      test.todo('Should login an existing user with correct credentials');
+
+      test.todo('Should not login an existing user with a wrong token');
+      test.todo('Should not login an existing user with a wrong password');
+      test.todo('Should not login an existing user with an expired token');
       test.todo('Should send remind password email when applicable');
       test.todo('Should allow to reset password');
     });
@@ -224,7 +225,7 @@ describe('End to end tests', () => {
         expect(response.body.message).toMatch('Please provide missing');
       });
 
-      test('should return a 400 error and a fail status if origin is not in the format MAD,BRU,BOD ', async () => {
+      test('should return a 400 error and a fail status if origin is not in the format MAD,BRU,BOD', async () => {
         const params = {
           ...dates,
           origin: 'MAD-BOD-BRU',
@@ -235,7 +236,7 @@ describe('End to end tests', () => {
         expect(response.body.message).toMatch('expected type');
       });
 
-      test('should return a 400 error and a fail status if dates are not in the correct format ', async () => {
+      test('should return a 400 error and a fail status if dates are not in the correct format', async () => {
         const dates = {
           departureDate: DateTime.now()
             .plus({ weeks: 1 })
@@ -292,16 +293,7 @@ describe('End to end tests', () => {
         expect(response.body.data[0].flyFrom).toBe('MAD');
       });
 
-      test('should return a list of destinations even when only the origin is specified', async () => {
-        const response = await request(app)
-          .get(routePath)
-          .query({ origin: 'MAD' });
-        expect(response.statusCode).toBe(200);
-        expect(response.body.totalResults).toBeGreaterThan(0);
-        expect(response.body.data[0].flyFrom).toBe('MAD');
-      });
-
-      xtest('should return a 400 error and a fail status for a non existing origin', async () => {
+      test('should return a 400 error and a fail status for a non existing origin', async () => {
         const response = await request(app)
           .get(routePath)
           .query({
@@ -312,25 +304,27 @@ describe('End to end tests', () => {
         expect(response.body.status).toBe('fail');
         expect(response.body.message).toMatch('no locations to fly from');
       });
-      xtest('should return a 400 error and a fail status if some parameters are missing', async () => {
-        const { departureDateFrom, departureDateTo, ...others } = params;
+      test('should return a 400 error and a fail status if some parameters are missing', async () => {
+        const { departureDateFrom, departureDateTo } = params;
 
         const response = await request(app)
           .get(routePath)
           .query({ departureDateFrom, departureDateTo });
         expect(response.statusCode).toBe(400);
         expect(response.body.status).toBe('fail');
-        expect(response.body.message).toMatch('must be specified');
+        expect(response.body.message).toMatch(
+          /Please provide missing parameter(.*)origin,destination/
+        );
       });
 
-      xtest('should return a 400 error and a fail status if dates are not in the correct format ', async () => {
+      test('should return a 400 error and a fail status if dates are not in the correct format', async () => {
         const dates = {
           departureDateFrom: DateTime.now()
             .plus({ months: 1 })
-            .toFormat(`LL'/'dd'/'yyyy`), // month/day/year format
+            .toFormat(`LLddyyyy`), // monthdayyear format
           departureDateTo: DateTime.now()
             .plus({ months: 4 })
-            .toFormat(`LL'/'dd'/'yyyy`),
+            .toFormat(`LLddyyyy`),
         };
 
         const response = await request(app)
@@ -338,7 +332,9 @@ describe('End to end tests', () => {
           .query({ ...params, ...dates });
         expect(response.statusCode).toBe(400);
         expect(response.body.status).toBe('fail');
-        expect(response.body.message).toMatch('invalid date');
+        expect(response.body.message).toMatch(
+          /do not have the expected type(.*?)departureDateFrom/
+        );
       });
     });
   });

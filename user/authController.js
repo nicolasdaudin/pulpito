@@ -37,7 +37,7 @@ const createSendToken = (user, statusCode, res) => {
 };
 // sort of createUser but in the context of AUTH it's a signup.
 // it's a signup = we create the user and log in, that's why we send back the token
-const signup = catchAsync(async (req, res, next) => {
+const signup = catchAsync(async (req, res, _next) => {
   // we could have done User.create(req.body) but we would allow API users to register themselves as 'admin' just by putting role=admin in the body. Doing this manually field by field prevents people to register as admin.
   const newUser = await User.create({
     name: req.body.name,
@@ -59,12 +59,10 @@ const login = catchAsync(async (req, res, next) => {
   }
 
   // 2) Check if user exists && password is correct
-  const user = await User.findOne({ email, inactive: false }).select(
-    '+password'
-  );
+  const user = await User.findOne({ email }).select('+password');
   if (!user || !(await user.isCorrectPassword(password, user.password))) {
     return next(
-      new AppError('Incorrect email or password, or inactive user', 401)
+      new AppError('Incorrect email or password, or user no longer active', 401)
     );
   }
 

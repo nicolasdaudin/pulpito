@@ -70,6 +70,7 @@ userSchema.pre('save', function (next) {
 });
 
 // any query that starts with 'find'
+// find* queries only retrieves active users (that do not have 'active' as false)
 userSchema.pre(/^find/, function (next) {
   // Query middleware, so 'this' points to query
   // instead of 'active:true' we use that filter, to account for documents that do not have the field 'active' set.

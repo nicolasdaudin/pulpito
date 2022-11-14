@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken');
 
 describe('AuthController', () => {
   jest.setTimeout(10000);
+
   beforeAll(async () => {
     const DB = process.env.DATABASE.replace(
       '<PASSWORD>',
@@ -26,7 +27,7 @@ describe('AuthController', () => {
   let req, res, next;
   beforeEach(() => {
     res = {
-      status: jest.fn().mockImplementation(function (arg) {
+      status: jest.fn().mockImplementation(function () {
         // console.log('calling res.status');
         return this;
       }),
@@ -37,6 +38,10 @@ describe('AuthController', () => {
       }),
       data: null,
       message: null,
+      cookie: jest.fn().mockImplementation(function () {
+        // console.log('calling res.status');
+        return this;
+      }),
     };
 
     next = jest.fn().mockImplementation(function (err) {
@@ -44,43 +49,188 @@ describe('AuthController', () => {
     });
   });
 
-  describe('forgotPassword', function () {
-    describe('error cases', () => {
-      test('should return error 404 when the email is empty in the body', async function () {
-        req = { body: { email: '' } };
+  describe('signToken', function () {
+    test('should sign a token', async () => {
+      const signSpy = jest.spyOn(jwt, 'sign');
+      const fakeId = faker.database.mongodbObjectId();
 
-        await authController.forgotPassword(req, res, next);
+      const token = authController.signToken(fakeId);
 
-        // expect(true).toBe(true);
-        // expect(res.status).toHaveBeenCalledWith(404);
-        expect(next).toHaveBeenCalledWith(expect.any(AppError));
+      expect(signSpy).toHaveBeenCalled();
+      expect(signSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ id: fakeId }),
+        expect.anything(),
+        expect.anything()
+      );
 
-        expect(next).toHaveBeenCalledWith(
-          expect.objectContaining({
-            statusCode: 404,
-            message: expect.stringContaining('no active user'),
-          })
-        );
+      const decoded = await promisify(jwt.verify)(
+        token,
+        process.env.JWT_SECRET
+      );
+      expect(decoded.id).toBe(fakeId);
+    });
+  });
+
+  describe('createSendToken', function () {
+    describe('success case', () => {
+      test('should sign a token, add it to the cookies and prepare the answer', () => {
+        const signSpy = jest.spyOn(jwt, 'sign');
+
+        const fakeUser = {
+          _id: faker.database.mongodbObjectId(),
+          password: faker.internet.password(),
+        };
+        const fakeStatusCode = faker.internet.httpStatusCode();
+
+        authController.createSendToken(fakeUser, fakeStatusCode, res);
+
+        expect(signSpy).toHaveBeenCalled();
+        expect(res.cookie).toHaveBeenCalled();
+        expect(fakeUser.password).toBeUndefined();
+        expect(res.status).toHaveBeenCalledWith(fakeStatusCode);
+        expect(res.data.user._id).toBe(fakeUser._id);
       });
+    });
+  });
 
-      test('should return error 404 when the email can not be found', async function () {
-        req = { body: { email: 'milady@castle.com' } };
+  describe('signup', () => {
+    describe('success case', () => {
+      test('should create a user when given correct info', async () => {
+        // checking numbers of users in DB
+        const usersLengthBeforeCreate = (await User.find()).length;
 
-        await authController.forgotPassword(req, res, next);
+        // creating a fake user in DB
 
-        // expect(true).toBe(true);
-        // expect(res.status).toHaveBeenCalledWith(404);
+        // TODO: we should mock create and findOne inside forgotPassword since it's not acceptable to actually create users in a DB .... or we should have a mock DB ...
+        const fakePassword = faker.internet.password();
+        const fakeUser = {
+          name: faker.name.findName(),
+          email: faker.internet.email(),
+          password: fakePassword,
+          passwordConfirm: fakePassword,
+        };
+        console.log(fakeUser);
+        req = { body: fakeUser };
+
+        await authController.signup(req, res, next);
+
+        const usersLengthAfterCreate = (await User.find()).length;
+
+        expect(usersLengthAfterCreate).toBe(usersLengthBeforeCreate + 1);
+
+        const createdUser = await User.findOne({ email: fakeUser.email });
+
+        await User.deleteOne({ email: createdUser.email });
+      });
+    });
+
+    describe('error cases', () => {
+      test.todo('should return error if user already exists');
+      test.todo('should return errror if password is not correctly confirmed');
+      test.todo('should return error if user information is empty');
+    });
+  });
+
+  describe('login', () => {
+    let newUser, fakeUser;
+    beforeEach(async () => {
+      // creating a fake user in DB
+
+      // TODO: we should mock create and findOne inside forgotPassword since it's not acceptable to actually create users in a DB .... or we should have a mock DB ...
+      const fakePassword = faker.internet.password();
+      fakeUser = {
+        name: faker.name.findName(),
+        email: faker.internet.email(),
+        password: fakePassword,
+        passwordConfirm: fakePassword,
+      };
+      newUser = await User.create(fakeUser);
+    });
+    afterEach(async () => {
+      await User.deleteOne({ id: newUser.id });
+    });
+
+    describe('success case', () => {
+      test('should login the user when given correct login credentials', async function () {
+        req = {
+          body: { email: fakeUser.email, password: fakeUser.password },
+        };
+
+        await authController.login(req, res, next);
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.data.user._id).toEqual(newUser._id);
+      });
+    });
+    describe('error cases', () => {
+      test.todo('should return error if login credentials are missing');
+      test.todo('should return error if login credentials are wrong');
+      test('should return error if user is inactive', async () => {
+        // force the user to inactive
+        await User.findByIdAndUpdate(newUser.id, { $set: { active: false } });
+
+        req = {
+          body: { email: fakeUser.email, password: fakeUser.password },
+        };
+
+        await authController.login(req, res, next);
+
         expect(next).toHaveBeenCalledWith(expect.any(AppError));
 
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
-            statusCode: 404,
-            message: expect.stringContaining('no active user'),
+            statusCode: 401,
+            message: expect.stringContaining('no longer active'),
           })
         );
       });
     });
+  });
 
+  describe('protect', () => {
+    let token, newUser, fakeUser;
+    beforeEach(async () => {
+      // creating a fake user in DB
+
+      // TODO: we should mock create and findOne inside forgotPassword since it's not acceptable to actually create users in a DB .... or we should have a mock DB ...
+      const fakePassword = faker.internet.password();
+      fakeUser = {
+        name: faker.name.findName(),
+        email: faker.internet.email(),
+        password: fakePassword,
+        passwordConfirm: fakePassword,
+      };
+      newUser = await User.create(fakeUser);
+
+      token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRES_IN,
+      });
+
+      req.headers = {
+        authorization: 'Bearer ' + token,
+      };
+    });
+    afterEach(async () => {
+      await User.deleteOne({ id: newUser.id });
+    });
+    describe('success case', () => {
+      test('should grant access to protected route', async function () {
+        await authController.protect(req, res, next);
+
+        expect(req.user.id).toEqual(newUser.id);
+      });
+    });
+    describe('error cases', () => {
+      test.todo('should return error 401 if there was no token');
+      test.todo('should return error if token has expired');
+      test.todo('should return error 401 if user does no longer exist');
+      test.todo(
+        'should return error 401 if user recently changed his password'
+      );
+    });
+  });
+
+  describe('forgotPassword', function () {
     describe('success cases', () => {
       let newUser;
       beforeEach(async () => {
@@ -151,125 +301,41 @@ describe('AuthController', () => {
         );
       });
     });
-  });
 
-  describe('signToken', function () {
-    test('should sign a token', async () => {
-      const signSpy = jest.spyOn(jwt, 'sign');
-      const fakeId = faker.database.mongodbObjectId();
+    describe('error cases', () => {
+      test('should return error 404 when the email is empty in the body', async function () {
+        req = { body: { email: '' } };
 
-      const token = authController.signToken(fakeId);
+        await authController.forgotPassword(req, res, next);
 
-      expect(signSpy).toHaveBeenCalled();
-      expect(signSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ id: fakeId }),
-        expect.anything(),
-        expect.anything()
-      );
+        // expect(true).toBe(true);
+        // expect(res.status).toHaveBeenCalledWith(404);
+        expect(next).toHaveBeenCalledWith(expect.any(AppError));
 
-      const decoded = await promisify(jwt.verify)(
-        token,
-        process.env.JWT_SECRET
-      );
-      expect(decoded.id).toBe(fakeId);
-    });
-  });
-
-  describe('createSendToken', function () {
-    describe('success case', () => {
-      test('should sign a token, add it to the cookies and prepare the answer', () => {
-        const signSpy = jest.spyOn(jwt, 'sign');
-
-        const fakeUser = {
-          _id: faker.database.mongodbObjectId(),
-          password: faker.internet.password(),
-        };
-        const fakeStatusCode = faker.internet.httpStatusCode();
-        const res = {
-          status: jest.fn().mockImplementation(function (arg) {
-            //console.log('calling res.status');
-            return this;
-          }),
-          json: jest.fn().mockImplementation(function (obj) {
-            //console.log('calling res.json');
-            this.data = obj.data;
-            this.message = obj.message;
-          }),
-          cookie: jest.fn(),
-          data: null,
-        };
-
-        authController.createSendToken(fakeUser, fakeStatusCode, res);
-
-        expect(signSpy).toHaveBeenCalled();
-        expect(res.cookie).toHaveBeenCalled();
-        expect(fakeUser.password).toBeUndefined();
-        expect(res.status).toHaveBeenCalledWith(fakeStatusCode);
-        expect(res.data.user._id).toBe(fakeUser._id);
+        expect(next).toHaveBeenCalledWith(
+          expect.objectContaining({
+            statusCode: 404,
+            message: expect.stringContaining('no active user'),
+          })
+        );
       });
-    });
-  });
 
-  describe('signup', () => {
-    describe('success case', () => {
-      test.skip('should create a user when given correct info', async () => {
-        // checking numbers of users in DB
-        const usersLengthBeforeCreate = (await User.find()).length;
+      test('should return error 404 when the email can not be found', async function () {
+        req = { body: { email: 'milady@castle.com' } };
 
-        // creating a fake user in DB
+        await authController.forgotPassword(req, res, next);
 
-        // TODO: we should mock create and findOne inside forgotPassword since it's not acceptable to actually create users in a DB .... or we should have a mock DB ...
-        const fakePassword = faker.internet.password();
-        const fakeUser = {
-          name: faker.name.findName(),
-          email: faker.internet.email(),
-          password: fakePassword,
-          passwordConfirm: fakePassword,
-        };
-        ////console.log(fakeUser);
-        let newUser;
+        // expect(true).toBe(true);
+        // expect(res.status).toHaveBeenCalledWith(404);
+        expect(next).toHaveBeenCalledWith(expect.any(AppError));
 
-        // to finished
-        // newUser = await User.create(fakeUser)
-        // but that's not what we want to test
-        newUser = await authController.signup();
-
-        const usersLengthAfterCreate = (await User.find()).length;
-
-        expect(usersLengthAfterCreate).toBe(usersLengthBeforeCreate + 1);
-
-        await User.deleteOne({ id: newUser.id });
+        expect(next).toHaveBeenCalledWith(
+          expect.objectContaining({
+            statusCode: 404,
+            message: expect.stringContaining('no active user'),
+          })
+        );
       });
-    });
-    describe('error cases', () => {
-      test.todo('should return error if user already exists');
-      test.todo('should return errror if password is not correctly confirmed');
-      test.todo('should return error if user information is empty');
-    });
-  });
-
-  describe('login', () => {
-    describe('success case', () => {
-      test.todo('should login the user when given correct login credentials');
-    });
-    describe('error cases', () => {
-      test.todo('should return error if login credentials are missing');
-      test.todo('should return error if login credentials are wrong');
-      test.todo('should return error if user is inactive');
-    });
-  });
-
-  describe('protect', () => {
-    describe('success case', () => {
-      test.todo('should grant access to protected route');
-    });
-    describe('error cases', () => {
-      test.todo('should return error 401 if there was no token');
-      test.todo('should return error if token has expired');
-      test.todo('should return error 401 if user does no longer exist');
-      test.todo(
-        'should return error 401 if user recently changed his password'
-      );
     });
   });
 

@@ -1,0 +1,10 @@
+node_modules
+dist
+.parcel-cache
+.vscode
+.DS_Store
+.prettierrc
+.env
+dev-data
+coverage
+public/assets/js
