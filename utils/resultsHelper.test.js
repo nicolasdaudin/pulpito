@@ -2,6 +2,24 @@ const helper = require('./resultsHelper.js');
 const { RESULTS_SEARCH_LIMIT } = require('../config');
 
 describe('Results Helper', () => {
+  describe('filterByMaxConnections', () => {
+    test.todo(
+      'should return true when the flights have no more than the maximum allowed number of connections'
+    );
+  });
+
+  describe('filterByPriceRange', () => {
+    test.todo('should return true when the flights are inside the price range');
+  });
+
+  describe('getFilters', () => {
+    test.todo('should returns an object with all the current filters applied');
+  });
+
+  describe('filter', () => {
+    test.todo('should filter as expected');
+  });
+
   describe('paginate', () => {
     const items = [
       'item1',
@@ -111,6 +129,10 @@ describe('Results Helper', () => {
     });
   });
 
+  describe('applyFilters', () => {
+    test.todo('should work');
+  });
+
   describe('getCurrentUrlFromRequest', () => {
     test('return a well-formed URLSearchParams object from req.query', () => {
       const req = {
@@ -152,10 +174,6 @@ describe('Results Helper', () => {
         expect.arrayContaining(['MAD', 'LIS'])
       );
     });
-  });
-
-  describe('applyFilters', () => {
-    test.todo('should work');
   });
 
   describe('fillAirportDescriptions', () => {
