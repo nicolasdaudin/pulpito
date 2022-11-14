@@ -59,12 +59,10 @@ const login = catchAsync(async (req, res, next) => {
   }
 
   // 2) Check if user exists && password is correct
-  const user = await User.findOne({ email, inactive: false }).select(
-    '+password'
-  );
+  const user = await User.findOne({ email }).select('+password');
   if (!user || !(await user.isCorrectPassword(password, user.password))) {
     return next(
-      new AppError('Incorrect email or password, or inactive user', 401)
+      new AppError('Incorrect email or password, or user no longer active', 401)
     );
   }
 
