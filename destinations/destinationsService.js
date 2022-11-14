@@ -7,12 +7,12 @@ const buildCommonItineraries = async (allOriginsParams, origins) => {
   const searchDestinations = allOriginsParams.map((params) =>
     flightService.getFlights(params)
   );
-  const responses = await Promise.all(searchDestinations);
+  const allFlights = await Promise.all(searchDestinations);
 
   // concat data coming from all the GET calls into one 'allResponses' variable
   // for eahc GET call, we concat the value from data.data (contain all he info for each itinerary)
-  const itineraries = responses.reduce(
-    (acc, curr) => acc.concat(curr.data.data),
+  const itineraries = allFlights.reduce(
+    (acc, flights) => acc.concat(flights),
     []
   );
 

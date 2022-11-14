@@ -16,16 +16,11 @@ maybe('Flight Service - Integration with KIWI API', function () {
 
   describe('getFlights', function () {
     test('should receive a correct answer for a basic search query to KIWI service', async function () {
-      const response = await flightService.getFlights(
-        FLIGHT_API_PARAMS_FIXTURE
-      );
+      const flights = await flightService.getFlights(FLIGHT_API_PARAMS_FIXTURE);
 
-      expect(response.data).toHaveProperty('data');
-      expect(Array.isArray(response.data.data)).toBe(true);
-      expect(response.data.data[0]).toHaveProperty('flyFrom');
-      expect(response.data.data[0].flyFrom).toBe(
-        FLIGHT_API_PARAMS_FIXTURE.origin
-      );
+      expect(Array.isArray(flights)).toBe(true);
+      expect(flights[0]).toHaveProperty('flyFrom');
+      expect(flights[0].flyFrom).toBe(FLIGHT_API_PARAMS_FIXTURE.origin);
     });
 
     test('should throw a 400 error when empty params for KIWI service', async function () {
@@ -76,16 +71,13 @@ maybe('Flight Service - Integration with KIWI API', function () {
 
   describe('getWeekendFlights', function () {
     test('should receive a correct answer for a basic search query to KIWI service', async function () {
-      const response = await flightService.getWeekendFlights(
+      const flights = await flightService.getWeekendFlights(
         FLIGHT_API_PARAMS_FIXTURE_WEEKEND
       );
 
-      expect(response.data).toHaveProperty('data');
-      expect(Array.isArray(response.data.data)).toBe(true);
-      expect(response.data.data[0]).toHaveProperty('flyFrom');
-      expect(response.data.data[0].flyFrom).toBe(
-        FLIGHT_API_PARAMS_FIXTURE_WEEKEND.origin
-      );
+      expect(Array.isArray(flights)).toBe(true);
+      expect(flights[0]).toHaveProperty('flyFrom');
+      expect(flights[0].flyFrom).toBe(FLIGHT_API_PARAMS_FIXTURE_WEEKEND.origin);
     });
 
     test('should use particular parameters if weekend length is long', async () => {

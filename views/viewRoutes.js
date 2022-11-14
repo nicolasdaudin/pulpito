@@ -8,10 +8,9 @@ router.get('/', viewController.getHome);
 
 router.get('/search', viewController.getSearchPage);
 
-// temp, to integrate PUG from template
 router.get('/common', filterParams, viewController.searchFlights);
 
-// TODO: param requests are not 'validated' although they are validated on front-end
+// TODO: param requests are not 'validated' here although they are validated on front-end
 // we use filterParams to add an empty filter object on req parameter.
 router.post('/common', filterParams, viewController.searchFlights);
 module.exports = router;

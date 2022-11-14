@@ -117,14 +117,9 @@ const protect = catchAsync(async (req, res, next) => {
   next();
 });
 
-// PASS WORD RESET
-// 1- provide your email address to a forgot password route
-// 2- you receive an email with a link that you can click
-// 3- you input a new password in that page
-// IN OUR CASE
-// 1 - we request a new password
-// 2 - we receive a token in an email
-// 3 - we send back this token with a new password
+/**
+ * Request a token to reset the password. Token is sent by email.
+ */
 const forgotPassword = catchAsync(async (req, res, next) => {
   // 1) Get user based on POSTed email
 
@@ -167,6 +162,9 @@ const forgotPassword = catchAsync(async (req, res, next) => {
   }
 });
 
+/**
+ * Actually resets password using the token received by email
+ */
 const resetPassword = catchAsync(async (req, res, next) => {
   // 1) Get user based on the token
   const token = req.params.token;
@@ -203,6 +201,9 @@ const resetPassword = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
+/**
+ * Update password
+ */
 const updateMyPassword = catchAsync(async (req, res, next) => {
   // 1) get user
   const user = await User.findById(req.user._id).select('+password');

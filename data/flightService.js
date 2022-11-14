@@ -59,7 +59,11 @@ const getWeekendFlights = async (params) => {
         },
       }
     );
-    return response;
+    if (response && response.data) {
+      return response.data.data;
+    } else {
+      return [];
+    }
   } catch (err) {
     console.error(err.message);
     // console.error(err.response.data.error);
@@ -101,7 +105,11 @@ const getFlights = async (params) => {
       },
     });
 
-    return response;
+    if (response && response.data) {
+      return response.data.data;
+    } else {
+      return [];
+    }
   } catch (err) {
     console.error(err.message);
     // console.error(err.response.data.error);

@@ -4,10 +4,20 @@ const helper = require('../utils/apiHelper');
 const resultsHelper = require('../utils/resultsHelper');
 const { RESULTS_SEARCH_LIMIT } = require('../config');
 
+/**
+ * Home route for interface
+ * @param {*} req
+ * @param {*} res
+ */
 exports.getHome = (req, res) => {
   res.status(200).render('home');
 };
 
+/**
+ * Search page route for interface, before filling the form
+ * @param {*} req
+ * @param {*} res
+ */
 exports.getSearchPage = (req, res) => {
   res.status(200).render('search', {
     status: 'success',
@@ -17,7 +27,10 @@ exports.getSearchPage = (req, res) => {
   });
 };
 
-exports.searchFlights = catchAsyncKiwi(async (req, res) => {
+/**
+ * Search page route for interface, with results from the search
+ */
+exports.searchFlights = catchAsyncKiwi(async (req, res, next) => {
   const requestParams = req.body && req.body.origins ? req.body : req.query;
 
   if (!requestParams || !requestParams.origins) {

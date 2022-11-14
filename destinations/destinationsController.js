@@ -16,9 +16,9 @@ const resultsHelper = require('../utils/resultsHelper');
 const getCheapestDestinations = catchAsyncKiwi(async (req, res, _next) => {
   const params = helper.prepareDefaultAPIParams(req.query);
 
-  const response = await flightService.getFlights(params);
+  const flights = await flightService.getFlights(params);
 
-  let itineraries = response.data.data.map(helper.cleanItineraryData);
+  let itineraries = flights.map(helper.cleanItineraryData);
   const totalResults = itineraries.length;
   itineraries = resultsHelper.applyFilters(itineraries, req.filter);
 
@@ -66,9 +66,9 @@ const getCommonDestinations = catchAsyncKiwi(async (req, res, _next) => {
 const getCheapestWeekend = catchAsyncKiwi(async (req, res, _next) => {
   const params = helper.prepareDefaultAPIParams(req.query);
 
-  const response = await flightService.getWeekendFlights(params);
+  const flights = await flightService.getWeekendFlights(params);
 
-  let itineraries = response.data.data.map(helper.cleanItineraryData);
+  let itineraries = flights.map(helper.cleanItineraryData);
   const totalResults = itineraries.length;
 
   itineraries = resultsHelper.applyFilters(itineraries, req.filter);

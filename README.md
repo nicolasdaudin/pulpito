@@ -1,3 +1,5 @@
+[![Node.js Install and Test](https://github.com/nicolasdaudin/pulpito/actions/workflows/node.js.yml/badge.svg?branch=master)](https://github.com/nicolasdaudin/pulpito/actions/workflows/node.js.yml)
+
 # Pulpito
 
 An API and a server-side rendered webapp to help you decide where to meet with your friends.

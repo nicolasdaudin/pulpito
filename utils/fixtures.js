@@ -1,5 +1,10 @@
 const { DateTime } = require('luxon');
 
+/**
+ * Different fixtures used in test files.
+ * TODO: instead of fixtures, have JSON files representing the possible answers
+ */
+
 const KIWI_DATE_FORMAT = `dd'/'LL'/'yyyy`;
 
 const FLIGHT_API_PARAMS_FIXTURE = {
