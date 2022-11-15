@@ -139,7 +139,7 @@ describe('End to end tests', () => {
           .plus({ weeks: 1 })
           .toFormat(KIWI_DATE_FORMAT),
         returnDate: DateTime.now()
-          .plus({ weeks: 1 })
+          .plus({ weeks: 2 })
           .toFormat(KIWI_DATE_FORMAT),
       };
 
@@ -183,7 +183,7 @@ describe('End to end tests', () => {
           .plus({ weeks: 1 })
           .toFormat(KIWI_DATE_FORMAT),
         returnDate: DateTime.now()
-          .plus({ weeks: 1 })
+          .plus({ weeks: 2 })
           .toFormat(KIWI_DATE_FORMAT),
       };
 
@@ -242,7 +242,7 @@ describe('End to end tests', () => {
             .plus({ weeks: 1 })
             .toFormat(`LL'-'dd'-'yyyy`), // month/day/year format
           returnDate: DateTime.now()
-            .plus({ weeks: 1 })
+            .plus({ weeks: 2 })
             .toFormat(`LL'-'dd'-'yyyy`),
         };
         const origins = ['MAD', 'BOD', 'BRU'];

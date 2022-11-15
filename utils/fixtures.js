@@ -10,7 +10,7 @@ const KIWI_DATE_FORMAT = `dd'/'LL'/'yyyy`;
 const FLIGHT_API_PARAMS_FIXTURE = {
   origin: 'CDG',
   departureDate: DateTime.now().plus({ weeks: 1 }).toFormat(KIWI_DATE_FORMAT),
-  returnDate: DateTime.now().plus({ weeks: 1 }).toFormat(KIWI_DATE_FORMAT),
+  returnDate: DateTime.now().plus({ weeks: 2 }).toFormat(KIWI_DATE_FORMAT),
   // returnFrom: DateTime.now().plus({ weeks: 2 }).toFormat(KIWI_DATE_FORMAT),
   // returnTo: DateTime.now().plus({ weeks: 2 }).toFormat(KIWI_DATE_FORMAT),
   // adults: 1,
@@ -19,7 +19,7 @@ const FLIGHT_API_PARAMS_FIXTURE = {
 const FLIGHT_API_PARAMS_FIXTURE_NON_EXISTING_ORIGIN = {
   origin: 'PXR',
   departureDate: DateTime.now().plus({ weeks: 1 }).toFormat(KIWI_DATE_FORMAT),
-  returnDate: DateTime.now().plus({ weeks: 1 }).toFormat(KIWI_DATE_FORMAT),
+  returnDate: DateTime.now().plus({ weeks: 2 }).toFormat(KIWI_DATE_FORMAT),
   // returnFrom: DateTime.now().plus({ weeks: 2 }).toFormat(KIWI_DATE_FORMAT),
   // returnTo: DateTime.now().plus({ weeks: 2 }).toFormat(KIWI_DATE_FORMAT),
   // adults: 1,
