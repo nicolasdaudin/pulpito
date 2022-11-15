@@ -140,7 +140,7 @@ a.btn_navigation {
 
 #common_banner_custom {
   background-color: #cccccc;
-  padding: 200px 0 130px 0;
+  padding: 150px 0 50px 0;
   background-repeat: no-repeat;
   background-size: cover;
 }
@@ -224,11 +224,22 @@ a.btn_navigation {
   background: #e2fbd3;
 }
 
-.description {
+.common_bannner_text .description {
   font-size: 15px;
   font-weight: 600;
-  margin-bottom: 20px;
+  padding-bottom: 10px;
   color: var(--paragraph-color);
+}
+
+@media (min-width: 1200px) {
+  .common_bannner_text .description {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+}
+
+.common_bannner_text .description p:last-child {
+  margin-top: 15px;
 }
 
 /** Overwriting template colors **/
@@ -238,9 +249,10 @@ a.btn_navigation {
 
 .common_bannner_text h2 {
   color: var(--main-color);
+  padding-bottom: 40px;
 }
 
-.topbar-others-options li a {
+.common_banner_text .topbar-others-options li a {
   color: var(--black-color);
 }
 
@@ -252,6 +264,34 @@ a.btn_navigation {
   color: var(--black-color);
 }
 
+@media only screen and (max-width: 1199px) {
+  .navbar-area {
+    background-color: var(--bg-color);
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+}
+
+@media only screen and (max-width: 1199px) {
+  .main-responsive-nav .mean-container a.meanmenu-reveal span {
+    display: block;
+    background-color: var(--main-color);
+    height: 2px;
+    margin-top: -6px;
+    border-radius: 5px;
+    position: relative;
+    top: 8px;
+  }
+}
+
 #common_banner_custom {
   background-color: var(--bg-color);
+}
+
+#theme_search_form_tour {
+  margin-top: 0px;
+}
+
+.theme_search_form_area {
+  padding-top: 80px;
 }

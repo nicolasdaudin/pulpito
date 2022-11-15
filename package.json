@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "start-dev": "nodemon --ext js,pug,json server.js",
+    "start-dev": "nodemon --ext js,pug,json,css server.js",
     "debug": "ndb server.js",
     "test": "jest --verbose --watchAll",
     "test-prod": "jest",
