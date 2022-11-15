@@ -8,7 +8,7 @@ const email = require('../utils/email');
 const jwt = require('jsonwebtoken');
 
 describe('AuthController', () => {
-  jest.setTimeout(10000);
+  jest.setTimeout(15000);
 
   beforeAll(async () => {
     const DB = process.env.DATABASE.replace(

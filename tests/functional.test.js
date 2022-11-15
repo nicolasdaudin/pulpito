@@ -7,7 +7,7 @@ const { DateTime } = require('luxon');
 const KIWI_DATE_FORMAT = `dd'/'LL'/'yyyy`;
 
 describe('End to end tests', () => {
-  jest.setTimeout(10000);
+  jest.setTimeout(15000);
   beforeAll(async () => {
     const DB = process.env.DATABASE.replace(
       '<PASSWORD>',

@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const { faker } = require('@faker-js/faker');
 
 describe('UserController', () => {
-  jest.setTimeout(10000);
+  jest.setTimeout(15000);
 
   beforeAll(async () => {
     const DB = process.env.DATABASE.replace(

@@ -12,7 +12,7 @@ const maybe = process.env.SKIP_ASYNC_TESTS ? describe.skip : describe;
 // 'SKIP_ASYNC_TESTS=true npm test'
 
 maybe('Flight Service - Integration with KIWI API', function () {
-  jest.setTimeout(10000);
+  jest.setTimeout(15000);
 
   describe('getFlights', function () {
     test('should receive a correct answer for a basic search query to KIWI service', async function () {
