@@ -45,9 +45,11 @@ describe('UserController', () => {
     describe('success cases', () => {
       test('should get all users', async () => {
         const allUsers = await User.find();
+        console.log(allUsers);
 
         await userController.getAllUsers(req, res);
 
+        console.log(res.data.users);
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.data.users.length).toBe(allUsers.length);
       });
@@ -84,11 +86,8 @@ describe('UserController', () => {
           user: { id: newUser.id },
         };
 
-        console.log(newUser);
-
         await userController.updateMe(req, res, next);
 
-        console.log(res.data.user);
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.data.user.id).toEqual(newUser.id);
         expect(res.data.user.name).toEqual(UPDATED_PROPERTIES.name);
