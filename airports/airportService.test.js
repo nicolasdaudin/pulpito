@@ -62,4 +62,15 @@ describe('AirportService', function () {
       expect(airport).toBeFalsy();
     });
   });
+
+  describe('fillAirportDescriptions', () => {
+    test('should return an array of descriptions for each airport', () => {
+      const descriptions = airportService.fillAirportDescriptions([
+        'MAD',
+        'CDG',
+      ]);
+      expect(descriptions[0]).toMatch(/Madrid.*Barajas.*MAD/);
+      expect(descriptions[1]).toMatch(/Paris.*Gaulle.*CDG/);
+    });
+  });
 });

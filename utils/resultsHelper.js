@@ -1,5 +1,4 @@
 const { RESULTS_SEARCH_LIMIT, DEFAULT_SORT_FIELD } = require('../config');
-const airportService = require('../airports/airportService');
 
 /**
  * Checks if the flights for that itinerary have more than maxConnections
@@ -45,17 +44,17 @@ const filterByPriceRange = (itinerary, priceFrom, priceTo) => {
   if (itinerary.flights) {
     // if several origins
     minPrice = itinerary.flights.reduce(
-      (min, flight) => Math.min(min, flight.fare.adults),
+      (min, flight) => Math.min(min, flight.price),
       minPrice
     );
     maxPrice = itinerary.flights.reduce(
-      (max, flight) => Math.max(max, flight.fare.adults),
+      (max, flight) => Math.max(max, flight.price),
       maxPrice
     );
   } else {
     // if one origin
-    minPrice = itinerary.fare.adults;
-    maxPrice = itinerary.fare.adults;
+    minPrice = itinerary.price;
+    maxPrice = itinerary.price;
   }
 
   return (
@@ -64,7 +63,8 @@ const filterByPriceRange = (itinerary, priceFrom, priceTo) => {
 };
 
 /**
- * Returns an object with the necessary info to display the results and the search filters, like current sort parameter, min possible itinerary price, max possible price....
+ * Returns an object with the necessary info to display the results and the search filters, like the filtered minimum price (requested by the user in the filterParams), the filtered maximum price (requested by the user in filterParams), the minimum possible itinerary price (out of all the itineraries), the maximum possible price (out of all the itineraries)....
+ * Currently only works for search with several origins (getCommon) since it is the only one implemented in the webapp
  * @param {*} itineraries
  * @param {*} filterParams
  * returns an object representing the filters used. Has the following properties: minPossiblePrice, maxPossiblePrice, priceFrom, priceTo, maxConnections
@@ -74,14 +74,14 @@ const getFilters = (itineraries, filterParams) => {
     const tempMin = itinerary.flights.reduce((min, flight) => {
       // flight.price has the total price for all passengers of that flight
       // we want to compare with the price per adult
-      return Math.min(min, flight.fare.adults);
+      return Math.min(min, flight.price);
     }, 20000);
     return Math.min(tempMin, min);
   }, 20000);
 
   const maxPossiblePrice = itineraries.reduce((max, itinerary) => {
     const tempMax = itinerary.flights.reduce(
-      (max, flight) => Math.max(max, flight.fare.adults),
+      (max, flight) => Math.max(max, flight.price),
       0
     );
     return Math.max(tempMax, max);
@@ -120,7 +120,7 @@ const filter = (itineraries, filterParams) => {
   }
 
   // filter by price range
-  if (filterParams.priceFrom) {
+  if (filterParams.priceFrom || filterParams.priceTo) {
     result = result.filter((itinerary) => {
       const filtered = filterByPriceRange(
         itinerary,
@@ -202,20 +202,6 @@ const getCurrentUrlFromRequest = (req) => {
 };
 
 /**
- * When a user searches for the first time, airport info are retrieved from frontend thanks to a call to /api/vX/airports/?q= ....airportTo avoid calling
- * When the search is answered, the front is rerendered. Part of it is the search form, that we refill with the data used by the user.
- * To avoid to make a new call to /api airports, we just prefill the airport descriptions for the airports chosen by the user.
- * @param {*} iataCodes city iata codes chosen by the user
- * @returns array with the airport descrptions for each iata code
- */
-const fillAirportDescriptions = (iataCodes) => {
-  return iataCodes.map((iataCode) => {
-    const airportInfo = airportService.findByIataCode(iataCode);
-    return `${airportInfo.municipality} - ${airportInfo.name} (${airportInfo.iata_code}) - ${airportInfo.country}`;
-  });
-};
-
-/**
  * Buils the different navigation url for that next request
  * @param {*} req the express req object
  * @param {*} route the current route
@@ -259,12 +245,13 @@ const buildNavigationUrlsFromRequest = (req, route, hasNextUrl) => {
 };
 
 module.exports = {
+  filterByMaxConnections,
+  filterByPriceRange,
   filter,
   paginate,
   sort,
   getCurrentUrlFromRequest,
   applyFilters,
   getFilters,
-  fillAirportDescriptions,
   buildNavigationUrlsFromRequest,
 };

@@ -95,7 +95,7 @@ const filterAirportFields = (airport) => {
  * @param {*} str
  * @returns
  */
-exports.searchByString = (searchStr) => {
+const searchByString = (searchStr) => {
   // first check if 'str' is not empty or null
   if (!searchStr) return [];
 
@@ -147,7 +147,7 @@ exports.searchByString = (searchStr) => {
     .map(reencodeAirport);
 };
 
-exports.findByIataCode = (iataCode) => {
+const findByIataCode = (iataCode) => {
   if (!iataCode) return null;
 
   const airport = airports.find(
@@ -156,4 +156,24 @@ exports.findByIataCode = (iataCode) => {
       airport.iata_code.toLowerCase() === iataCode.toLowerCase()
   );
   return reencodeAirport(airport);
+};
+
+/**
+ * When a user searches for the first time, airport info are retrieved from frontend thanks to a call to /api/vX/airports/?q= ....airportTo avoid calling
+ * When the search is answered, the front is rerendered. Part of it is the search form, that we refill with the data used by the user.
+ * To avoid to make a new call to /api airports, we just prefill the airport descriptions for the airports chosen by the user.
+ * @param {*} iataCodes city iata codes chosen by the user
+ * @returns array with the airport descrptions for each iata code
+ */
+const fillAirportDescriptions = (iataCodes) => {
+  return iataCodes.map((iataCode) => {
+    const airportInfo = findByIataCode(iataCode);
+    return `${airportInfo.municipality} - ${airportInfo.name} (${airportInfo.iata_code}) - ${airportInfo.country}`;
+  });
+};
+
+module.exports = {
+  searchByString,
+  findByIataCode,
+  fillAirportDescriptions,
 };

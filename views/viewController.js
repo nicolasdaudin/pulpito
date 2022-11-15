@@ -2,6 +2,7 @@ const destinationsService = require('../destinations/destinationsService');
 const { catchAsyncKiwi } = require('../utils/catchAsync');
 const helper = require('../utils/apiHelper');
 const resultsHelper = require('../utils/resultsHelper');
+const airportService = require('../airports/airportService');
 const { RESULTS_SEARCH_LIMIT } = require('../config');
 
 /**
@@ -30,7 +31,7 @@ exports.getSearchPage = (req, res) => {
 /**
  * Search page route for interface, with results from the search
  */
-exports.searchFlights = catchAsyncKiwi(async (req, res, next) => {
+exports.searchFlights = catchAsyncKiwi(async (req, res, _next) => {
   const requestParams = req.body && req.body.origins ? req.body : req.query;
 
   if (!requestParams || !requestParams.origins) {
@@ -65,7 +66,7 @@ exports.searchFlights = catchAsyncKiwi(async (req, res, next) => {
       req.filter
     );
 
-    requestParams.origins.flyFromDesc = resultsHelper.fillAirportDescriptions(
+    requestParams.origins.flyFromDesc = airportService.fillAirportDescriptions(
       requestParams.origins.flyFrom
     );
 
