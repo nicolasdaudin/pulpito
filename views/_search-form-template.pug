@@ -16,7 +16,7 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                         li.nav-item(role='presentation')
                           button.nav-link#roundtrip-tab(data-bs-toggle='tab' data-bs-target='#roundtrip' type='button' role='tab' aria-controls='roundtrip' aria-selected='false') Aller/Retour
                       li.nav-item(role='presentation')
-                        button.nav-link#multi_city-tab(data-bs-toggle='tab' data-bs-target='#multi_city' type='button' role='tab' aria-controls='multi_city' aria-selected='false') Se retrouver
+                        button.nav-link#multi_city-tab(data-bs-toggle='tab' data-bs-target='#multi_city' type='button' role='tab' aria-controls='multi_city' aria-selected='false') Trouve une destination commune
               if error
                 .alert.alert-danger.alert-dismissible(role="alert")=error                  
 
@@ -225,7 +225,7 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                               button.btn.btn_theme.btn_md Rechercher
 
                 .tab-pane.fade.show.active#multi_city(role='tabpanel' aria-labelledby='multi_city-tab')
-                  .description Sélectionne toutes les villes depuis lesquelles toi et tes amis souhaitiez voyager ....
+                  //- .description Sélectionne toutes les villes depuis lesquelles toi et tes amis souhaitiez voyager ....
                   .row
                     .col-lg-12
                       .oneway_search_form
@@ -263,14 +263,14 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                                 if !firstRow
                                   .col-lg-12
                                     .multi_form_remove
-                                      button(type='button' id="remove_multi_city") Supprimer ce point de départ
+                                      button(type='button' id="remove_multi_city") Supprime ce point de départ
                                 .row
                                   .col-lg-6.col-md-6.col-sm-12.col-12
                                     .flight_Search_boxed.autocomplete
                                       p.origin_header=`Ville #${i+1}`
                                       //- input(type='text',required,name='origins[][flyFrom]',value=`${flyFrom}`,maxlength=3)
                                       input(type='text',required,name='origins[][flyFrom]',
-                                        placeholder=flyFrom===PLACEHOLDER?'Choisissez un aéroport de départ:':'',
+                                        placeholder=flyFrom===PLACEHOLDER?'Choisis un aéroport de départ:':'',
                                         value=flyFrom===PLACEHOLDER?'':flyFrom,
                                         maxlength=10
                                       )
@@ -322,7 +322,7 @@ section#theme_search_form_tour.fligth_top_search_main_form_wrapper(disabled=true
                           .row
                             .col-lg-12
                               .add_multy_form
-                                button#addMulticityRow(type='button') + Ajouter un point de départ
+                                button#addMulticityRow(type='button') + Ajoute un point de départ
                           .top_form_search_button
-                            button.btn.btn_theme.btn_md Rechercher
+                            button.btn.btn_theme.btn_md Rechercher une destination 🚀💥🍻
                             
