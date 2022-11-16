@@ -36,6 +36,8 @@ npm test
 
 Under the hood, Pulpito uses Tequila API by Kiwi and caches the requests made to Kiwi (for subsequent filters or requests).
 
+Tequila API by Kiwi is available here : https://tequila.kiwi.com/docs/tequila_api/search_api
+
 ## Storage / Cache
 
 Pulpito only caches HTTP requests made to Tequila API via a middleware.
