@@ -13,7 +13,8 @@
     "test-prod": "jest",
     "cover": "jest --coverage ",
     "copy-files": "copyfiles -u 2 src/datasets/* build/datasets/ && copyfiles -u 3 src/datasets/fixtures/* build/datasets/fixtures && copyfiles -u 2 src/views/*.pug build/views/",
-    "copy-files-prod": "mv -i -v src/datasets build/ && rm -v -rf src",
+    "copy-files-prod": "mv -i -v src/datasets build/ && mv -i -v src/views/*.pug build/views/",
+    "delete-files-prod": "rm -v -rf src",
     "postinstall": "tsc && npm run copy-files-prod"
   },
   "author": "Nicolas Daudin",
