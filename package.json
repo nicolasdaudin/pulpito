@@ -5,17 +5,17 @@
   "main": "server.js",
   "scripts": {
     "start": "node build/server.js",
-    "start-dev:build": "tsc && npm run copy-files && tsc -w",
-    "start-dev:run": "nodemon --ext js,pug,json,css build/server.js",
+    "start-dev:build": "tsc && npm run copy-static-files && tsc -w",
+    "start-dev:run": "nodemon --inspect --ext js,pug,json,css build/server.js",
     "start-dev": "concurrently npm:start-dev:*",
     "debug": "ndb build/server.js",
     "test": "jest --verbose --watchAll",
     "test-prod": "jest",
     "cover": "jest --coverage ",
-    "copy-files": "copyfiles -u 2 src/datasets/* build/datasets/ && copyfiles -u 3 src/datasets/fixtures/* build/datasets/fixtures && copyfiles -u 2 src/views/*.pug build/views/",
-    "copy-files-prod": "mv -i -v src/datasets build/ && mv -i -v src/views/*.pug build/views/",
-    "delete-files-prod": "rm -v -rf src",
-    "postinstall": "tsc && npm run copy-files-prod"
+    "copy-static-files": "cp -v -R src/datasets build/ && cp -v src/views/*.pug build/views/",
+    "copy-files-copyfiles": "copyfiles -u 2 src/datasets/* build/datasets/ && copyfiles -u 3 src/datasets/fixtures/* build/datasets/fixtures && copyfiles -u 2 src/views/*.pug build/views/",
+    "copy-static-files-prod": "mv -i -v src/datasets build/ && mv -i -v src/views/*.pug build/views/",
+    "postinstall": "tsc && npm run copy-static-files"
   },
   "author": "Nicolas Daudin",
   "license": "ISC",
