@@ -1,0 +1,14 @@
+{
+  "verbose": true,
+  "setupFiles": ["dotenv/config"],
+  "collectCoverageFrom": [
+    "src/**/*.{js|ts}",
+    "!public/**/*.{js|ts}",
+    "!src/*.{js|ts}",
+    "!coverage/**/*.{js|ts}",
+    "!**/node_modules/**",
+    "!dev-data/**/*.{js|ts}"
+  ],
+  "preset": "ts-jest",
+  "modulePathIgnorePatterns": ["<rootDir>/build/"]
+}

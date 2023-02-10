@@ -70,7 +70,14 @@ describe('End to end tests', () => {
         expect(response.body.data.user.name).toEqual(fakeUser.name);
         expect(response.headers['set-cookie'][0]).toMatch('jwt=');
 
-        await User.deleteOne({ id: response.body.data.user._id });
+        const result = await User.deleteOne({
+          id: response.body.data.user._id,
+        });
+        console.log(
+          `User with email ${fakeUser.email} correctly deleted after test? ${
+            result.deletedCount > 0
+          }`
+        );
       });
     });
 
@@ -90,7 +97,12 @@ describe('End to end tests', () => {
         newUser = await User.create(fakeUser);
       });
       afterEach(async () => {
-        await User.deleteOne({ id: newUser.id });
+        const result = await User.deleteOne({ id: newUser.id });
+        console.log(
+          `User with email ${fakeUser.email} correctly deleted after test? ${
+            result.deletedCount > 0
+          }`
+        );
       });
 
       // FIXME: in case of error, /signup should answer a more meaningful error

@@ -1,4 +1,4 @@
-const helper = require('./apiHelper.js');
+const helper = require('./apiHelper');
 const apiOneWayAnswer = require('../datasets/fixtures/apiOneWayAnswer.json');
 const apiReturnAnswer = require('../datasets/fixtures/apiReturnAnswer.json');
 
