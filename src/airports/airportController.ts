@@ -1,9 +1,9 @@
-const airportService = require('./airportService');
+import { searchByString } from './airportService';
 
-exports.getAirports = (req, res) => {
+export const getAirports = (req, res) => {
   const queryString = req.query.q;
 
-  const airports = airportService.searchByString(queryString);
+  const airports = searchByString(queryString);
 
   res.status(200).json({
     status: 'success',

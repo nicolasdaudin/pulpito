@@ -1,7 +1,17 @@
 /* eslint-disable no-unused-vars */
-const countries = require('./countryService');
-const airportCodes = require('../datasets/airport-codes.json');
+import { countries } from './countryService';
+import fs from 'fs';
+import path from 'path';
+
 const utils = require('../utils/utils');
+
+// import airportCodes from '../datasets/airport-codes.json';
+const airportCodes = JSON.parse(
+  fs.readFileSync(
+    path.join(__dirname, '../datasets/airport-codes.json'),
+    'utf-8'
+  )
+);
 
 const airports = airportCodes
   .filter((airport) =>
@@ -95,7 +105,7 @@ const filterAirportFields = (airport) => {
  * @param {*} str
  * @returns
  */
-const searchByString = (searchStr) => {
+export const searchByString = (searchStr: string) => {
   // first check if 'str' is not empty or null
   if (!searchStr) return [];
 
@@ -147,7 +157,7 @@ const searchByString = (searchStr) => {
     .map(reencodeAirport);
 };
 
-const findByIataCode = (iataCode) => {
+export const findByIataCode = (iataCode: string) => {
   if (!iataCode) return null;
 
   const airport = airports.find(
@@ -165,15 +175,9 @@ const findByIataCode = (iataCode) => {
  * @param {*} iataCodes city iata codes chosen by the user
  * @returns array with the airport descrptions for each iata code
  */
-const fillAirportDescriptions = (iataCodes) => {
+export const fillAirportDescriptions = (iataCodes) => {
   return iataCodes.map((iataCode) => {
     const airportInfo = findByIataCode(iataCode);
     return `${airportInfo.municipality} - ${airportInfo.name} (${airportInfo.iata_code}) - ${airportInfo.country}`;
   });
-};
-
-module.exports = {
-  searchByString,
-  findByIataCode,
-  fillAirportDescriptions,
 };
