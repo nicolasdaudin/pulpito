@@ -12,7 +12,8 @@
     "test": "jest --verbose --watchAll",
     "test-prod": "jest",
     "cover": "jest --coverage ",
-    "copy-files": "copyfiles -u 2 src/datasets/* build/datasets/ && copyfiles -u 3 src/datasets/fixtures/* build/datasets/fixtures && copyfiles -u 2 src/views/*.pug build/views/"
+    "copy-files": "copyfiles -u 2 src/datasets/* build/datasets/ && copyfiles -u 3 src/datasets/fixtures/* build/datasets/fixtures && copyfiles -u 2 src/views/*.pug build/views/",
+    "postinstall": "tsc"
   },
   "author": "Nicolas Daudin",
   "license": "ISC",
