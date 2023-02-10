@@ -43,7 +43,8 @@ const isCommonDestination = (destination, origins) => {
  * @returns an object for that destination, with aggregated info
  */
 const prepareItineraryData = (dest, itineraries, passengersPerOrigin) => {
-  const itinerary = { cityTo: dest };
+  // FIXME: I had to add 'any' otherwise the TypeScript compiler would not allow "sequentially added properties". I need to create a type or an interface
+  const itinerary: any = { cityTo: dest };
 
   // corresponding origins to that particular destination, we remove flights that do not go to that destination
   // itinerary.flights will have one item per origin
@@ -129,7 +130,8 @@ const cleanItineraryData = (input) => {
   // refactor info about each set of flights
   // FIXME: improve performance, this usually takes 0.6 or 0.8ms to complete (and we need to repeat that operation 600-700 times since there are 600-700 itineraries to be cleaned). Maybe an option is to completely remove that part and not clean-refactor data?
   // If we remove that part, indeed cleanItineraryData is only 3 to 5 ms instead of 250-300 ms
-  const route = {
+  // FIXME: create a type or an interface
+  const route: any = {
     oneway: {
       flights: onewayFlights,
       local_departure: formatTime(onewayFlights[0].local_departure),
@@ -329,7 +331,7 @@ const prepareSeveralOriginAPIParams = (params) => {
   });
 };
 
-module.exports = {
+export = {
   cleanItineraryData,
   extractConnections,
   filterDestinationCities,

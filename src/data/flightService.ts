@@ -1,16 +1,18 @@
 const axios = require('axios').default;
-const helper = require('../utils/apiHelper');
+import helper = require('../utils/apiHelper');
 const { setupCache } = require('axios-cache-interceptor');
 
 setupCache(axios, { ttl: 1000 * 60 * 15 }); //15 minutes
 
+// FIXME: added 'any' to allow compiler
 const getWeekendFlights = async (params) => {
   // var flyingDaysParams = new URLSearchParams();
   // flyingDaysParams.append('fly_days', 4);
   // flyingDaysParams.append('fly_days', 5);
   // flyingDaysParams.append('fly_days', 6);
 
-  let axiosParams = {
+  // FIXME: added 'any' to allow compiler, otherwise it fails. Please create a type or interface.
+  let axiosParams: any = {
     max_stopovers: 2,
     partner_market: 'fr',
     lang: 'fr',

@@ -4,12 +4,15 @@
   "description": "API and APP to help organize travels from different places to one destination, and find cheapest weekends to a given destination",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "start-dev": "nodemon --ext js,pug,json,css server.js",
-    "debug": "ndb server.js",
+    "start": "node build/server.js",
+    "start-dev:build": "tsc && npm run copy-files && tsc -w",
+    "start-dev:run": "nodemon --ext js,pug,json,css build/server.js",
+    "start-dev": "concurrently npm:start-dev:*",
+    "debug": "ndb build/server.js",
     "test": "jest --verbose --watchAll",
     "test-prod": "jest",
-    "cover": "jest --coverage "
+    "cover": "jest --coverage ",
+    "copy-files": "copyfiles -u 2 src/datasets/* build/datasets/ && copyfiles -u 3 src/datasets/fixtures/* build/datasets/fixtures && copyfiles -u 2 src/views/*.pug build/views/"
   },
   "author": "Nicolas Daudin",
   "license": "ISC",
@@ -38,9 +41,19 @@
   "devDependencies": {
     "@faker-js/faker": "^7.2.0",
     "@types/jest": "^28.1.1",
-    "eslint": "^8.27.0",
+    "@typescript-eslint/eslint-plugin": "^5.51.0",
+    "@typescript-eslint/parser": "^5.51.0",
+    "@types/node": "^18.13.0",
+    "concurrently": "^7.6.0",
+    "copyfiles": "^2.4.1",
+    "eslint": "^8.33.0",
     "eslint-plugin-jest": "^27.1.4",
     "jest": "^28.1.0",
-    "supertest": "^6.2.4"
+    "nodemon": "^2.0.20",
+    "supertest": "^6.2.4",
+    "typescript": "^4.9.5"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }

@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -38,7 +39,7 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 // VIEW ENGINE
-app.set('views', './views');
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 app.use(express.json({ limit: '10kb' })); // middleware to add body in the request data
@@ -59,7 +60,7 @@ app.use(
 // whitelist is an array of parameter names to allow several occurrences of that field in the query parameters.
 
 // serving static files
-app.use(express.static(`${__dirname}/public`));
+app.use(express.static(`${__dirname}/../public`));
 
 app.use('/', viewRouter);
 app.use('/api/v1/destinations', destinationsRouter);
