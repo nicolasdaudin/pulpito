@@ -120,7 +120,12 @@ describe('AuthController', () => {
 
         const createdUser = await User.findOne({ email: fakeUser.email });
 
-        await User.deleteOne({ email: createdUser.email });
+        const result = await User.deleteOne({ email: createdUser.email });
+        console.log(
+          `User with email ${fakeUser.email} correctly deleted after test? ${
+            result.deletedCount > 0
+          }`
+        );
       });
     });
 
@@ -147,7 +152,12 @@ describe('AuthController', () => {
       newUser = await User.create(fakeUser);
     });
     afterEach(async () => {
-      await User.deleteOne({ id: newUser.id });
+      const result = await User.deleteOne({ id: newUser.id });
+      console.log(
+        `User with email ${fakeUser.email} correctly deleted after test? ${
+          result.deletedCount > 0
+        }`
+      );
     });
 
     describe('success case', () => {

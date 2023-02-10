@@ -49,7 +49,7 @@ const findWrongTypeParams = (model, params) => {
     .map((param) => param.name);
 };
 
-module.exports = {
+export = {
   isCommaSeparatedAlpha,
   isCommaSeparatedNumeric,
   findMissingParams,
