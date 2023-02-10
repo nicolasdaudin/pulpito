@@ -1,6 +1,13 @@
+import { Request, Response } from 'express';
 import { searchByString } from './airportService';
-
-export const getAirports = (req, res) => {
+import { Query } from 'express-serve-static-core';
+interface TypedRequestQuery<T extends Query> extends Request {
+  query: T;
+}
+export const getAirports = (
+  req: TypedRequestQuery<{ q: string }>,
+  res: Response
+) => {
   const queryString = req.query.q;
 
   const airports = searchByString(queryString);
