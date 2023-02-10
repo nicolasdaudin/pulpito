@@ -11,7 +11,7 @@ const AppError = require('./utils/appError');
 
 const destinationsRouter = require('./destinations/destinationsRoutes');
 const userRouter = require('./user/userRoutes');
-const airportRouter = require('./airports/airportRoutes');
+import { router as airportRouter } from './airports/airportRoutes';
 const viewRouter = require('./views/viewRoutes');
 
 // better to use early in the middleware.
