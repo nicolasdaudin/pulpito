@@ -1,9 +1,10 @@
-const request = require('supertest');
-const app = require('../app');
-const { faker } = require('@faker-js/faker');
-const User = require('../user/userModel');
-const mongoose = require('mongoose');
-const { DateTime } = require('luxon');
+import request from 'supertest';
+import app from '../app';
+import { faker } from '@faker-js/faker';
+import User from '../user/userModel';
+import mongoose from 'mongoose';
+import { DateTime } from 'luxon';
+
 const KIWI_DATE_FORMAT = `dd'/'LL'/'yyyy`;
 
 describe('End to end tests', () => {
