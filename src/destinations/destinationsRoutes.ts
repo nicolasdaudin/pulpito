@@ -1,18 +1,18 @@
-const express = require('express');
+import express from 'express';
 
-const {
+import {
   getCheapestDestinations,
   getCommonDestinations,
   getCheapestWeekend,
-} = require('./destinationsController');
-const {
+} from './destinationsController';
+import {
   validateRequestParamsOneOrigin,
   validateRequestParamsManyOrigins,
   validateRequestParamsWeekend,
   filterParams,
-} = require('../common/validatorService');
+} from '../common/validatorService';
 
-const router = express.Router();
+export const router = express.Router();
 
 // router.route('/protect').get(protect, getSpecialProtectedRoute);
 router
@@ -26,4 +26,3 @@ router
 router
   .route('/cheapestWeekend')
   .get(filterParams, validateRequestParamsWeekend, getCheapestWeekend);
-module.exports = router;

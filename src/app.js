@@ -9,9 +9,15 @@ const hpp = require('hpp');
 const app = express();
 const AppError = require('./utils/appError');
 
-const destinationsRouter = require('./destinations/destinationsRoutes');
+// FIXME: to be updated once we go full TS
+// like this:
+// const { router as airportRouter } from './airports/airportRoutes';
+
+const {
+  router: destinationsRouter,
+} = require('./destinations/destinationsRoutes');
 const userRouter = require('./user/userRoutes');
-import { router as airportRouter } from './airports/airportRoutes';
+const { router: airportRouter } = require('./airports/airportRoutes');
 const viewRouter = require('./views/viewRoutes');
 
 // better to use early in the middleware.

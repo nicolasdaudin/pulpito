@@ -1,8 +1,8 @@
-const helper = require('../utils/apiHelper');
-const { catchAsyncKiwi } = require('../utils/catchAsync');
-const flightService = require('../data/flightService');
-const destinationsService = require('./destinationsService');
-const resultsHelper = require('../utils/resultsHelper');
+import helper from '../utils/apiHelper';
+import { catchAsyncKiwi } from '../utils/catchAsync';
+import flightService from '../data/flightService';
+import destinationsService from './destinationsService';
+import resultsHelper from '../utils/resultsHelper';
 
 /**
  * Find cheapest destinations from this origin.
@@ -13,7 +13,7 @@ const resultsHelper = require('../utils/resultsHelper');
  * @param {*} req
  * @param {*} res
  */
-const getCheapestDestinations = catchAsyncKiwi(async (req, res, _next) => {
+export const getCheapestDestinations = catchAsyncKiwi(async (req, res) => {
   const params = helper.prepareDefaultAPIParams(req.query);
 
   const flights = await flightService.getFlights(params);
@@ -38,7 +38,7 @@ const getCheapestDestinations = catchAsyncKiwi(async (req, res, _next) => {
  * @param {*} req
  * @param {*} res
  */
-const getCommonDestinations = catchAsyncKiwi(async (req, res, _next) => {
+export const getCommonDestinations = catchAsyncKiwi(async (req, res) => {
   console.info(
     'API - Getting common destinations with these params',
     req.query
@@ -63,7 +63,7 @@ const getCommonDestinations = catchAsyncKiwi(async (req, res, _next) => {
   });
 });
 
-const getCheapestWeekend = catchAsyncKiwi(async (req, res, _next) => {
+export const getCheapestWeekend = catchAsyncKiwi(async (req, res) => {
   const params = helper.prepareDefaultAPIParams(req.query);
 
   const flights = await flightService.getWeekendFlights(params);
@@ -80,9 +80,3 @@ const getCheapestWeekend = catchAsyncKiwi(async (req, res, _next) => {
     data: itineraries, //flights,
   });
 });
-
-module.exports = {
-  getCheapestDestinations,
-  getCommonDestinations,
-  getCheapestWeekend,
-};

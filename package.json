@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node build/server.js",
     "start-dev:build": "tsc && npm run copy-static-files && tsc -w",
-    "start-dev:run": "nodemon --inspect --ext js,pug,json,css build/server.js",
+    "start-dev:run": "nodemon --inspect --ext ts,js,pug,json,css build/server.js",
     "start-dev": "concurrently npm:start-dev:*",
     "test": "jest --verbose --watchAll",
     "test-prod": "jest",

@@ -1,6 +1,6 @@
-const flightService = require('../data/flightService');
-const groupByToMap = require('core-js-pure/actual/array/group-by-to-map');
-import helper = require('../utils/apiHelper');
+import flightService from '../data/flightService';
+import groupByToMap from 'core-js-pure/actual/array/group-by-to-map';
+import helper from '../utils/apiHelper';
 
 const buildCommonItineraries = async (allOriginsParams, origins) => {
   // create one GET call for each origin
@@ -57,6 +57,6 @@ const buildCommonItineraries = async (allOriginsParams, origins) => {
   return commonItineraries;
 };
 
-module.exports = {
+export = {
   buildCommonItineraries,
 };
