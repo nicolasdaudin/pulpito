@@ -1,12 +1,13 @@
-const flightService = require('./flightService');
-const axios = require('axios').default;
-const helper = require('../utils/apiHelper');
-const {
+import flightService from './flightService';
+import axios from 'axios';
+import helper from '../utils/apiHelper';
+import {
   FLIGHT_API_PARAMS_FIXTURE,
   FLIGHT_API_PARAMS_FIXTURE_NON_EXISTING_ORIGIN,
   FLIGHT_API_PARAMS_FIXTURE_WEEKEND_NON_EXISTING_ORIGIN,
   FLIGHT_API_PARAMS_FIXTURE_WEEKEND,
-} = require('../utils/fixtures');
+} from '../utils/fixtures';
+
 const maybe = process.env.SKIP_ASYNC_TESTS ? describe.skip : describe;
 // skip the async tests using Kiwi real URL, if npm test is called like this :
 // 'SKIP_ASYNC_TESTS=true npm test'

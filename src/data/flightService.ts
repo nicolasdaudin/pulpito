@@ -121,7 +121,7 @@ const getFlights = async (params) => {
   }
 };
 
-module.exports = {
+export = {
   getWeekendFlights,
   getFlights,
 };
