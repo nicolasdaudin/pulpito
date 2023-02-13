@@ -1,10 +1,10 @@
-const { promisify } = require('util');
-const jwt = require('jsonwebtoken');
-const User = require('./userModel');
-const { catchAsync } = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
-const crypto = require('crypto');
-const email = require('../utils/email');
+import { promisify } from 'util';
+import jwt from 'jsonwebtoken';
+import { User } from './userModel';
+import { catchAsync } from '../utils/catchAsync';
+import AppError from '../utils/appError';
+import crypto from 'crypto';
+import email from '../utils/email';
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -14,9 +14,10 @@ const signToken = (id) => {
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
-  const cookieOptions = {
+  // FIXME: added 'any' type to have TS compiler pass. Need to be added.
+  const cookieOptions: any = {
     expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+      Date.now() + +process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
     httpOnly: true, // can not be access or modified in any way by the browser (to avoid cross-site sripting attacks), the browser will store it and send it along with every request}
   };
@@ -37,7 +38,7 @@ const createSendToken = (user, statusCode, res) => {
 };
 // sort of createUser but in the context of AUTH it's a signup.
 // it's a signup = we create the user and log in, that's why we send back the token
-const signup = catchAsync(async (req, res, _next) => {
+const signup = catchAsync(async (req, res) => {
   // we could have done User.create(req.body) but we would allow API users to register themselves as 'admin' just by putting role=admin in the body. Doing this manually field by field prevents people to register as admin.
   const newUser = await User.create({
     name: req.body.name,
@@ -233,7 +234,7 @@ const updateMyPassword = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
-module.exports = {
+export = {
   createSendToken,
   signToken,
   signup,

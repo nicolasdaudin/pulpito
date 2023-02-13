@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
-const crypto = require('crypto');
-const validator = require('validator');
-const bcrypt = require('bcryptjs');
+import mongoose from 'mongoose';
+import crypto from 'crypto';
+import validator from 'validator';
+import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -89,10 +89,12 @@ userSchema.methods.isCorrectPassword = async function (
 
 userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
-    const changedTimestamp = parseInt(
-      this.passwordChangedAt.getTime() / 1000,
-      10
-    );
+    // const changedTimestamp = parseInt(
+    //   this.passwordChangedAt.getTime() / 1000,
+    //   10
+    // );
+    const changedTimestamp = this.passwordChangedAt.getTime() / 1000;
+
     // because some users do not have this property
     return JWTTimestamp < changedTimestamp;
   }
@@ -119,5 +121,4 @@ userSchema.methods.createPasswordResetToken = function () {
   return resetToken;
 };
 
-const User = mongoose.model('User', userSchema);
-module.exports = User;
+export const User = mongoose.model('User', userSchema);

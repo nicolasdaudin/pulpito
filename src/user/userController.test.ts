@@ -1,7 +1,7 @@
-const userController = require('./userController');
-const User = require('./userModel');
-const mongoose = require('mongoose');
-const { faker } = require('@faker-js/faker');
+import userController from './userController';
+import { User } from './userModel';
+import mongoose from 'mongoose';
+import { faker } from '@faker-js/faker';
 
 describe('UserController', () => {
   jest.setTimeout(15000);

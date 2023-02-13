@@ -1,15 +1,15 @@
-const User = require('./userModel');
-const { catchAsync } = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
-const airportService = require('../airports/airportService');
-const utils = require('../utils/utils');
+import { User } from './userModel';
+import { catchAsync } from '../utils/catchAsync';
+import AppError from '../utils/appError';
+import utils from '../utils/utils';
+import { findByIataCode } from '../airports/airportService';
 
 /**
  * Get all users
  * @param {*} req
  * @param {*} res
  */
-exports.getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res) => {
   const users = await User.find();
 
   res.status(200).json({
@@ -24,7 +24,7 @@ exports.getAllUsers = async (req, res) => {
 /**
  * Updates currently logged in user
  */
-exports.updateMe = catchAsync(async (req, res, next) => {
+const updateMe = catchAsync(async (req, res, next) => {
   // 1) Error if user POSTs password data
   if (req.body.password || req.body.passwordConfirm) {
     return next(
@@ -57,7 +57,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 /**
  * Deletes currently logged-in user
  */
-exports.deleteMe = catchAsync(async (req, res, _next) => {
+const deleteMe = catchAsync(async (req, res) => {
   // 3) Update user
   await User.findByIdAndUpdate(req.user.id, {
     active: false,
@@ -72,7 +72,7 @@ exports.deleteMe = catchAsync(async (req, res, _next) => {
 /**
  * Get favorite airports for the currently logged-in user
  */
-exports.getFavAirports = catchAsync(async (req, res, _next) => {
+const getFavAirports = catchAsync(async (req, res) => {
   const user = await User.findById(req.user.id);
 
   res.status(200).json({
@@ -86,11 +86,11 @@ exports.getFavAirports = catchAsync(async (req, res, _next) => {
 /**
  * Add a favorite airport to the list of favorite airports for that user
  */
-exports.addFavAirport = catchAsync(async (req, res, next) => {
+const addFavAirport = catchAsync(async (req, res, next) => {
   if (!req.body.airport) {
     return next(new AppError('Please specify an airport', 400));
   }
-  if (!airportService.findByIataCode(req.body.airport)) {
+  if (!findByIataCode(req.body.airport)) {
     return next(
       new AppError(
         `We haven't found any airport with this IATA code. Please retry with an existing IATA code`,
@@ -120,11 +120,11 @@ exports.addFavAirport = catchAsync(async (req, res, next) => {
 /**
  * Remove a favorite airport from the list of favorite airports for that user
  */
-exports.removeFavAirport = catchAsync(async (req, res, next) => {
+const removeFavAirport = catchAsync(async (req, res, next) => {
   if (!req.body.airport) {
     return next(new AppError('Please specify an airport', 400));
   }
-  if (!airportService.findByIataCode(req.body.airport)) {
+  if (!findByIataCode(req.body.airport)) {
     return next(
       new AppError(
         `We haven't found any airport with this IATA code. Please retry with an existing IATA code`,
@@ -150,3 +150,12 @@ exports.removeFavAirport = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+export = {
+  addFavAirport,
+  deleteMe,
+  getAllUsers,
+  getFavAirports,
+  removeFavAirport,
+  updateMe,
+};

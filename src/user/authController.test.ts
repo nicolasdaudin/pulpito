@@ -1,11 +1,11 @@
-const { promisify } = require('util');
-const authController = require('./authController');
-const AppError = require('../utils/appError');
-const mongoose = require('mongoose');
-const { faker } = require('@faker-js/faker');
-const User = require('../user/userModel');
-const email = require('../utils/email');
-const jwt = require('jsonwebtoken');
+import { promisify } from 'util';
+import authController from './authController';
+import AppError from '../utils/appError';
+import mongoose from 'mongoose';
+import { faker } from '@faker-js/faker';
+import { User } from '../user/userModel';
+import email from '../utils/email';
+import jwt from 'jsonwebtoken';
 
 describe('AuthController', () => {
   jest.setTimeout(15000);
@@ -268,7 +268,7 @@ describe('AuthController', () => {
         // TODO: mocking the nodemailer.createTransport and connecting to mailtrap.io. Right now it's connected to mailtrap.ip because we are in dev, but once in production we will need to connect to a particular mail transport sandbox and not send real email
         const sendPasswordResetTokenEmailSpy = jest
           .spyOn(email, 'sendPasswordResetTokenEmail')
-          .mockImplementation(() => {
+          .mockImplementation(async () => {
             //console.log('not sending an actual email');
           });
 

@@ -1,7 +1,7 @@
 import request from 'supertest';
 import app from '../app';
 import { faker } from '@faker-js/faker';
-import User from '../user/userModel';
+import { User } from '../user/userModel';
 import mongoose from 'mongoose';
 import { DateTime } from 'luxon';
 
