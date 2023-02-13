@@ -3,9 +3,8 @@ import { countries } from './countryService';
 import fs from 'fs';
 import path from 'path';
 
-const utils = require('../utils/utils');
+import utils from '../utils/utils';
 
-// import airportCodes from '../datasets/airport-codes.json';
 const airportCodes = JSON.parse(
   fs.readFileSync(
     path.join(__dirname, '../datasets/airport-codes.json'),
@@ -87,17 +86,8 @@ const airportStartsWithQuerySearch = (airport, str) => {
 };
 
 const filterAirportFields = (airport) => {
-  const {
-    continent,
-    coordinates,
-    elevation_ft,
-    gps_code,
-    ident,
-    iso_region,
-    local_code,
-    ...filteredFields
-  } = airport;
-  return { ...filteredFields };
+  const { iata_code, iso_country, municipality, name, type } = airport;
+  return { iata_code, iso_country, municipality, name, type };
 };
 
 /**

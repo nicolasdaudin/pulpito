@@ -1,4 +1,4 @@
-const { isAlpha, isNumeric } = require('validator');
+import { isAlpha, isNumeric } from 'validator';
 
 // const validateParams = (req, res, next) => {};
 

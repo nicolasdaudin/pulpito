@@ -1,6 +1,6 @@
-const validatorService = require('./validatorService');
-const { RESULTS_SEARCH_LIMIT, DEFAULT_SORT_FIELD } = require('../config');
-const AppError = require('../utils/appError');
+import validatorService from './validatorService';
+import { RESULTS_SEARCH_LIMIT, DEFAULT_SORT_FIELD } from '../config';
+import AppError = require('../utils/appError');
 
 describe('ValidatorService', function () {
   describe('filterParams', function () {

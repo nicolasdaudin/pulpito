@@ -1,6 +1,6 @@
-const axios = require('axios').default;
-import helper = require('../utils/apiHelper');
-const { setupCache } = require('axios-cache-interceptor');
+import axios from 'axios';
+import helper from '../utils/apiHelper';
+import { setupCache } from 'axios-cache-interceptor';
 
 setupCache(axios, { ttl: 1000 * 60 * 15 }); //15 minutes
 
