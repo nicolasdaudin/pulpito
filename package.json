@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node build/server.js",
     "start-dev:build": "tsc && npm run copy-static-files && tsc -w",
-    "start-dev:run": "nodemon --inspect --ext js,pug,json,css build/server.js",
+    "start-dev:run": "nodemon --inspect --ext ts,js,pug,json,css build/server.js",
     "start-dev": "concurrently npm:start-dev:*",
     "test": "jest --verbose --watchAll",
     "test-prod": "jest",
@@ -40,7 +40,8 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^7.2.0",
-    "@types/jest": "^28.1.8",
+    "@types/express": "^4.17.17",
+    "@types/jest": "^29.4.0",
     "@types/node": "^18.13.0",
     "@typescript-eslint/eslint-plugin": "^5.51.0",
     "@typescript-eslint/parser": "^5.51.0",

@@ -1,6 +1,6 @@
-const axios = require('axios').default;
-import helper = require('../utils/apiHelper');
-const { setupCache } = require('axios-cache-interceptor');
+import axios from 'axios';
+import helper from '../utils/apiHelper';
+import { setupCache } from 'axios-cache-interceptor';
 
 setupCache(axios, { ttl: 1000 * 60 * 15 }); //15 minutes
 
@@ -12,6 +12,7 @@ const getWeekendFlights = async (params) => {
   // flyingDaysParams.append('fly_days', 6);
 
   // FIXME: added 'any' to allow compiler, otherwise it fails. Please create a type or interface.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let axiosParams: any = {
     max_stopovers: 2,
     partner_market: 'fr',
@@ -121,7 +122,7 @@ const getFlights = async (params) => {
   }
 };
 
-module.exports = {
+export = {
   getWeekendFlights,
   getFlights,
 };

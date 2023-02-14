@@ -10,5 +10,6 @@
     "!dev-data/**/*.{js|ts}"
   ],
   "preset": "ts-jest",
+  "testEnvironment": "node",
   "modulePathIgnorePatterns": ["<rootDir>/build/"]
 }
