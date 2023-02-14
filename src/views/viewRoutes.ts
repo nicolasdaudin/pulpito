@@ -2,7 +2,7 @@ import express from 'express';
 import validatorService from '../common/validatorService';
 import viewController from './viewController';
 
-const router = express.Router();
+export const router = express.Router();
 
 router.get('/', viewController.getHome);
 
@@ -21,4 +21,3 @@ router.post(
   validatorService.filterParams,
   viewController.searchFlights
 );
-module.exports = router;
