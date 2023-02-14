@@ -6,6 +6,7 @@ import { faker } from '@faker-js/faker';
 import User from '../user/userModel';
 import email from '../utils/email';
 import jwt from 'jsonwebtoken';
+import AppError from '../utils/appError';
 
 describe('AuthController', () => {
   jest.setTimeout(15000);
@@ -199,7 +200,7 @@ describe('AuthController', () => {
         // expect(arg).toBeInstanceOf(AppError);
         // expect(arg).toMatchObject(AppError);
 
-        // expect(next).toHaveBeenCalledWith(expect.any(AppError));
+        expect(next).toHaveBeenCalledWith(expect.any(AppError));
         // This above now fails after migration to TypeScript it fails like this:
         // AuthController > login > error cases > should return error if user is inactive
         // -----
@@ -324,7 +325,7 @@ describe('AuthController', () => {
         expect(newUser.passwordResetToken).toBeUndefined();
 
         // check that response is an error
-        // expect(next).toHaveBeenCalledWith(expect.any(AppError));
+        expect(next).toHaveBeenCalledWith(expect.any(AppError));
 
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -343,7 +344,7 @@ describe('AuthController', () => {
 
         // expect(true).toBe(true);
         // expect(res.status).toHaveBeenCalledWith(404);
-        // expect(next).toHaveBeenCalledWith(expect.any(AppError));
+        expect(next).toHaveBeenCalledWith(expect.any(AppError));
 
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -360,7 +361,7 @@ describe('AuthController', () => {
 
         // expect(true).toBe(true);
         // expect(res.status).toHaveBeenCalledWith(404);
-        // expect(next).toHaveBeenCalledWith(expect.any(AppError));
+        expect(next).toHaveBeenCalledWith(expect.any(AppError));
 
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
