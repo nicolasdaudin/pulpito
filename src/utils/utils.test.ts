@@ -1,4 +1,4 @@
-const utils = require('./utils');
+import utils from './utils';
 
 describe('Utils module', function () {
   describe('recoding utility', function () {

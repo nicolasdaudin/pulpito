@@ -1,5 +1,5 @@
 import userController from './userController';
-import { User } from './userModel';
+import User from './userModel';
 import mongoose from 'mongoose';
 import { faker } from '@faker-js/faker';
 

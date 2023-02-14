@@ -1,4 +1,4 @@
-import { User } from './userModel';
+import User from './userModel';
 import { catchAsync } from '../utils/catchAsync';
 import AppError from '../utils/appError';
 import utils from '../utils/utils';

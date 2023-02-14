@@ -1,6 +1,6 @@
 import { promisify } from 'util';
 import jwt from 'jsonwebtoken';
-import { User } from './userModel';
+import User from './userModel';
 import { catchAsync } from '../utils/catchAsync';
 import AppError from '../utils/appError';
 import crypto from 'crypto';
@@ -15,6 +15,7 @@ const signToken = (id) => {
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
   // FIXME: added 'any' type to have TS compiler pass. Need to be added.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cookieOptions: any = {
     expires: new Date(
       Date.now() + +process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000

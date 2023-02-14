@@ -1,5 +1,5 @@
-const helper = require('./resultsHelper.js');
-const { RESULTS_SEARCH_LIMIT } = require('../config');
+import helper from './resultsHelper';
+import { RESULTS_SEARCH_LIMIT } from '../config';
 
 describe('Results Helper', () => {
   const ZERO_CONNECTIONS = [];

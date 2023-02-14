@@ -12,6 +12,7 @@ const getWeekendFlights = async (params) => {
   // flyingDaysParams.append('fly_days', 6);
 
   // FIXME: added 'any' to allow compiler, otherwise it fails. Please create a type or interface.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let axiosParams: any = {
     max_stopovers: 2,
     partner_market: 'fr',

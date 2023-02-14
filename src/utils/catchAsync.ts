@@ -1,4 +1,4 @@
-const AppError = require('./appError');
+import AppError from './appError';
 
 const handleKiwiError = (err) => {
   if (err.response.status === 422 || err.response.status === 400) {
@@ -38,7 +38,7 @@ const catchKiwiError = (err, next) => {
  * @param {*} fn function to be try-catched
  * @returns the same function, but now protected by try-catch
  */
-exports.catchAsync = (fn) => {
+export const catchAsync = (fn) => {
   return (req, res, next) => {
     return fn(req, res, next).catch((err) => {
       console.error(err);
@@ -53,7 +53,7 @@ exports.catchAsync = (fn) => {
  * @param {*} fn function to be try-catched
  * @returns a function protected by try-catch
  */
-exports.catchAsyncKiwi = (fn) => {
+export const catchAsyncKiwi = (fn) => {
   return (req, res, next) => {
     return fn(req, res, next).catch((err) => catchKiwiError(err, next));
   };

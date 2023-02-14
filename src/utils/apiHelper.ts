@@ -1,4 +1,4 @@
-const { Settings, Duration, DateTime } = require('luxon');
+import { Settings, Duration, DateTime } from 'luxon';
 Settings.defaultLocale = 'fr';
 
 /**
@@ -44,6 +44,7 @@ const isCommonDestination = (destination, origins) => {
  */
 const prepareItineraryData = (dest, itineraries, passengersPerOrigin) => {
   // FIXME: I had to add 'any' otherwise the TypeScript compiler would not allow "sequentially added properties". I need to create a type or an interface
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const itinerary: any = { cityTo: dest };
 
   // corresponding origins to that particular destination, we remove flights that do not go to that destination
@@ -131,6 +132,7 @@ const cleanItineraryData = (input) => {
   // FIXME: improve performance, this usually takes 0.6 or 0.8ms to complete (and we need to repeat that operation 600-700 times since there are 600-700 itineraries to be cleaned). Maybe an option is to completely remove that part and not clean-refactor data?
   // If we remove that part, indeed cleanItineraryData is only 3 to 5 ms instead of 250-300 ms
   // FIXME: create a type or an interface
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const route: any = {
     oneway: {
       flights: onewayFlights,
@@ -226,11 +228,11 @@ const formatTime = (d) => {
  * @returns a URLSearchParams object representing all the params necesarry for Axios call.
  */
 const prepareAxiosParams = (params) => {
-  var urlSearchParams = new URLSearchParams();
+  const urlSearchParams = new URLSearchParams();
 
-  for (let param in params) {
+  for (const param in params) {
     if (Array.isArray(params[param])) {
-      for (let key in params[param]) {
+      for (const key in params[param]) {
         urlSearchParams.append(param, params[param][key]);
       }
     } else {
@@ -273,9 +275,9 @@ const prepareDefaultAPIParams = (params) => {
  * @returns params preapred for Axios
  */
 const prepareSeveralOriginAPIParamsFromView = (params) => {
-  let { departureDate, returnDate, origins } = params;
+  const { departureDate, returnDate, origins } = params;
 
-  let baseParams = {
+  const baseParams = {
     departureDate: DateTime.fromISO(departureDate).toFormat(`dd'/'LL'/'yyyy`),
     returnDate: DateTime.fromISO(returnDate).toFormat(`dd'/'LL'/'yyyy`),
   };

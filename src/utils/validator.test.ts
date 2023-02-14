@@ -1,5 +1,5 @@
-const validator = require('./validator');
-const { isAlpha, isDate, isNumeric } = require('validator');
+import validator from './validator';
+import { isAlpha, isDate, isNumeric } from 'validator';
 
 describe('validator utils', () => {
   describe('isCommaSeparatedAlpha', () => {

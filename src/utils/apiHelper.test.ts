@@ -1,6 +1,6 @@
-const helper = require('./apiHelper');
-const apiOneWayAnswer = require('../datasets/fixtures/apiOneWayAnswer.json');
-const apiReturnAnswer = require('../datasets/fixtures/apiReturnAnswer.json');
+import helper from './apiHelper';
+import apiOneWayAnswer from '../datasets/fixtures/apiOneWayAnswer.json';
+import apiReturnAnswer from '../datasets/fixtures/apiReturnAnswer.json';
 
 describe('API Helper', function () {
   describe('cleanItineraryData', function () {

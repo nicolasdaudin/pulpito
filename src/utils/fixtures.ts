@@ -1,4 +1,4 @@
-const { DateTime } = require('luxon');
+import { DateTime } from 'luxon';
 
 /**
  * Different fixtures used in test files.
@@ -2350,7 +2350,7 @@ const COMMON_DESTINATION_KIWI_RESULT_FIXTURE_MRS = [
   },
 ];
 
-module.exports = {
+export {
   KIWI_DATE_FORMAT,
   FLIGHT_API_PARAMS_FIXTURE,
   FLIGHT_API_PARAMS_FIXTURE_NON_EXISTING_ORIGIN,

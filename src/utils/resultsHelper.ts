@@ -1,4 +1,4 @@
-const { RESULTS_SEARCH_LIMIT, DEFAULT_SORT_FIELD } = require('../config');
+import { RESULTS_SEARCH_LIMIT, DEFAULT_SORT_FIELD } from '../config';
 
 /**
  * Checks if the flights for that itinerary have more than maxConnections
@@ -244,7 +244,7 @@ const buildNavigationUrlsFromRequest = (req, route, hasNextUrl) => {
   return navigation;
 };
 
-module.exports = {
+export = {
   filterByMaxConnections,
   filterByPriceRange,
   filter,

@@ -37,7 +37,7 @@ maybe('Flight Service - Integration with KIWI API', function () {
     });
 
     test('should throw a 400 error when missing params for KIWI service', async function () {
-      const { fly_from } = FLIGHT_API_PARAMS_FIXTURE;
+      const { origin } = FLIGHT_API_PARAMS_FIXTURE;
 
       // try {
       //   await flightService.getFlights({ fly_from });
@@ -46,9 +46,7 @@ maybe('Flight Service - Integration with KIWI API', function () {
       // }
 
       expect.assertions(1);
-      await expect(
-        flightService.getFlights({ fly_from })
-      ).rejects.toMatchObject({
+      await expect(flightService.getFlights({ origin })).rejects.toMatchObject({
         message: expect.stringMatching(/400/),
       });
     });
@@ -135,7 +133,7 @@ maybe('Flight Service - Integration with KIWI API', function () {
     });
 
     test('should throw a 400 error when missing params for KIWI service', async function () {
-      const { fly_from } = FLIGHT_API_PARAMS_FIXTURE_WEEKEND;
+      const fly_from = '';
 
       // try {
       //   await flightService.getWeekendFlights({ fly_from });

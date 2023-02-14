@@ -266,7 +266,7 @@ const checkMissingParams = (modelParams, query, next) => {
 };
 
 // TODO: validate request param for cheapest weekend requests
-export {
+export = {
   validateRequestParamsManyOrigins,
   validateRequestParamsOneOrigin,
   validateRequestParamsWeekend,

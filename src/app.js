@@ -16,7 +16,7 @@ const AppError = require('./utils/appError');
 const {
   router: destinationsRouter,
 } = require('./destinations/destinationsRoutes');
-const userRouter = require('./user/userRoutes');
+const { router: userRouter } = require('./user/userRoutes');
 const { router: airportRouter } = require('./airports/airportRoutes');
 const viewRouter = require('./views/viewRoutes');
 

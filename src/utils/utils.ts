@@ -1,5 +1,5 @@
-const buffer = require('buffer');
-const utf8 = require('utf8');
+import buffer from 'buffer';
+import utf8 from 'utf8';
 
 /**
  * Helper to reencode data from airport json data source
@@ -40,4 +40,4 @@ const filterObj = (obj, allowedFields) => {
   return newObj;
 };
 
-module.exports = { reencodeString, normalizeString, filterObj };
+export = { reencodeString, normalizeString, filterObj };
