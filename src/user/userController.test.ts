@@ -44,13 +44,14 @@ describe('UserController', () => {
   describe('getAllUsers', () => {
     describe('success cases', () => {
       test('should get all users', async () => {
-        const allUsers = await User.find();
-        console.log(allUsers);
+        // console.log(allUsers);
 
         await userController.getAllUsers(req, res);
 
         console.log(res.data.users);
         expect(res.status).toHaveBeenCalledWith(200);
+
+        const allUsers = await User.find();
         expect(res.data.users.length).toBe(allUsers.length);
       });
     });
