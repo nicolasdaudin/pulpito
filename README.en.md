@@ -12,13 +12,11 @@ Pulpito is a side project that helped me learn the basics of Node.JS, Express, P
 
 ## Deploy
 
-Pulpito API is available at https://pulpito-app.herokuapp.com/api/v1/
-
 Pulpito webapp is currently deployed on Heroku at https://pulpito-app.herokuapp.com/
 
-## API Documentation
+## API
 
-API documentation is available here : https://documenter.getpostman.com/view/18011617/2s8YYCt52e
+Pulpito also comes with an API (actually with more features than the webapp), please check API documentation to see the different API routes : https://documenter.getpostman.com/view/18011617/2s8YYCt52e
 
 ## Tests
 
