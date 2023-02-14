@@ -1,16 +1,16 @@
-const destinationsService = require('../destinations/destinationsService');
-const { catchAsyncKiwi } = require('../utils/catchAsync');
-const helper = require('../utils/apiHelper');
-const resultsHelper = require('../utils/resultsHelper');
-const airportService = require('../airports/airportService');
-const { RESULTS_SEARCH_LIMIT } = require('../config');
+import destinationsService from '../destinations/destinationsService';
+import { catchAsyncKiwi } from '../utils/catchAsync';
+import helper from '../utils/apiHelper';
+import resultsHelper from '../utils/resultsHelper';
+import { RESULTS_SEARCH_LIMIT } from '../config';
+import { fillAirportDescriptions } from '../airports/airportService';
 
 /**
  * Home route for interface
  * @param {*} req
  * @param {*} res
  */
-exports.getHome = (req, res) => {
+const getHome = (req, res) => {
   res.status(200).render('home');
 };
 
@@ -19,7 +19,7 @@ exports.getHome = (req, res) => {
  * @param {*} req
  * @param {*} res
  */
-exports.getSearchPage = (req, res) => {
+const getSearchPage = (req, res) => {
   res.status(200).render('search', {
     status: 'success',
     totalResults: 0,
@@ -31,7 +31,7 @@ exports.getSearchPage = (req, res) => {
 /**
  * Search page route for interface, with results from the search
  */
-exports.searchFlights = catchAsyncKiwi(async (req, res, _next) => {
+const searchFlights = catchAsyncKiwi(async (req, res) => {
   const requestParams = req.body && req.body.origins ? req.body : req.query;
 
   if (!requestParams || !requestParams.origins) {
@@ -66,7 +66,7 @@ exports.searchFlights = catchAsyncKiwi(async (req, res, _next) => {
       req.filter
     );
 
-    requestParams.origins.flyFromDesc = airportService.fillAirportDescriptions(
+    requestParams.origins.flyFromDesc = fillAirportDescriptions(
       requestParams.origins.flyFrom
     );
 
@@ -97,3 +97,5 @@ exports.searchFlights = catchAsyncKiwi(async (req, res, _next) => {
     });
   }
 });
+
+export = { getHome, getSearchPage, searchFlights };
