@@ -1,5 +1,6 @@
-const mongoose = require('mongoose');
-require('dotenv').config();
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+dotenv.config();
 
 process.on('uncaughtException', (err) => {
   console.error('Uncaught Exception! 💥 Shutting down ...', err);
@@ -16,7 +17,7 @@ mongoose.connect(DB).then(() => {
 });
 
 // TODO: why is app required after mongoose connect?
-const app = require('./app');
+import app from './app';
 
 const port = process.env.PORT || 3000;
 const server = app.listen(port, () => {

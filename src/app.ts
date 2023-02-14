@@ -1,25 +1,20 @@
-const express = require('express');
-const path = require('path');
-const morgan = require('morgan');
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
-const mongoSanitize = require('express-mongo-sanitize');
-const xss = require('xss-clean');
-const hpp = require('hpp');
+import express from 'express';
+import path from 'path';
+import morgan from 'morgan';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import mongoSanitize from 'express-mongo-sanitize';
+import xss from 'xss-clean';
+import hpp from 'hpp';
+
+import AppError from './utils/appError';
+
+import { router as destinationsRouter } from './destinations/destinationsRoutes';
+import { router as userRouter } from './user/userRoutes';
+import { router as airportRouter } from './airports/airportRoutes';
+import { router as viewRouter } from './views/viewRoutes';
+
 const app = express();
-const AppError = require('./utils/appError');
-
-// FIXME: to be updated once we go full TS
-// like this:
-// const { router as airportRouter } from './airports/airportRoutes';
-
-const {
-  router: destinationsRouter,
-} = require('./destinations/destinationsRoutes');
-const { router: userRouter } = require('./user/userRoutes');
-const { router: airportRouter } = require('./airports/airportRoutes');
-const viewRouter = require('./views/viewRoutes');
-
 // better to use early in the middleware.
 // set http security headers
 app.use(helmet());
@@ -28,7 +23,7 @@ if (process.env.NODE_ENV === 'development') {
   // adding 'GET' log messages
   app.use(
     morgan('dev', {
-      skip: (req, _res) => req.originalUrl.includes('/assets/'),
+      skip: (req) => req.originalUrl.includes('/assets/'),
     })
   );
 }
@@ -79,6 +74,7 @@ app.all('*', (req, res, next) => {
 });
 
 // global error handler
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err, _req, res, _next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
@@ -102,4 +98,4 @@ const handleJWTError = () =>
 const handleTokenExpiredError = () =>
   new AppError('Token expired. Please log in again!', 401);
 
-module.exports = app;
+export default app;
