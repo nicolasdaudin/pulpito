@@ -3,7 +3,7 @@ import authController from './authController';
 // import AppError from '../utils/appError';
 import mongoose from 'mongoose';
 import { faker } from '@faker-js/faker';
-import User from '../user/userModel';
+import User from './userModel';
 import email from '../utils/email';
 import jwt from 'jsonwebtoken';
 import AppError from '../utils/appError';
