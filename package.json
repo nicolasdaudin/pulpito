@@ -1,6 +1,6 @@
 {
   "name": "pulpito",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "API and APP to help organize travels from different places to one destination, and find cheapest weekends to a given destination",
   "main": "server.js",
   "scripts": {
