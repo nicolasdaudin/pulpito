@@ -1,8 +1,8 @@
-import User from './userModel';
 import { catchAsync } from '../utils/catchAsync';
 import AppError from '../utils/appError';
 import utils from '../utils/utils';
 import { findByIataCode } from '../airports/airportService';
+import { UserRepository } from './userRepository';
 
 /**
  * Get all users
@@ -10,7 +10,7 @@ import { findByIataCode } from '../airports/airportService';
  * @param {*} res
  */
 const getAllUsers = async (req, res) => {
-  const users = await User.find();
+  const users = await UserRepository.all();
 
   res.status(200).json({
     status: 'success',
@@ -38,13 +38,13 @@ const updateMe = catchAsync(async (req, res, next) => {
   const allowedFields = ['name', 'email'];
 
   // 2) Filter out unwanted fields names that are not allowed to be updated, to avoid users to set themselves as admin, for example
+  // FIXME: ça c'est une business rule
   const filteredBody = utils.filterObj(req.body, allowedFields);
 
   // 3) Update user
-  const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
-    new: true,
-    runValidators: true, // fields validator will be run, for example isEmail()
-  });
+  // FIXME: le controller est directement couplé à MongoDB ... faudrait un service userService avec user.findMe, user.updateMe, ....
+  // est-ce que pour séparer en couche on aurait pas mieux fait de mettre tous mes models ensemble au lieu de mettre par métier?
+  const updatedUser = await UserRepository.updateOne(req.user.id, filteredBody);
 
   res.status(200).json({
     status: 'success',
@@ -59,9 +59,7 @@ const updateMe = catchAsync(async (req, res, next) => {
  */
 const deleteMe = catchAsync(async (req, res) => {
   // 3) Update user
-  await User.findByIdAndUpdate(req.user.id, {
-    active: false,
-  });
+  await UserRepository.deleteOne(req.user.id);
 
   res.status(204).json({
     status: 'success',
@@ -73,7 +71,7 @@ const deleteMe = catchAsync(async (req, res) => {
  * Get favorite airports for the currently logged-in user
  */
 const getFavAirports = catchAsync(async (req, res) => {
-  const user = await User.findById(req.user.id);
+  const user = await UserRepository.findOne(req.user.id);
 
   res.status(200).json({
     status: 'success',
@@ -86,7 +84,7 @@ const getFavAirports = catchAsync(async (req, res) => {
 /**
  * Add a favorite airport to the list of favorite airports for that user
  */
-const addFavAirport = catchAsync(async (req, res, next) => {
+const addFavAirportToUser = catchAsync(async (req, res, next) => {
   if (!req.body.airport) {
     return next(new AppError('Please specify an airport', 400));
   }
@@ -99,14 +97,9 @@ const addFavAirport = catchAsync(async (req, res, next) => {
     );
   }
 
-  const updatedUser = await User.findByIdAndUpdate(
+  const updatedUser = await UserRepository.addFavAirportToUser(
     req.user.id,
-    {
-      $addToSet: { favAirports: req.body.airport },
-    },
-    {
-      new: true,
-    }
+    req.body.airport
   );
 
   res.status(200).json({
@@ -133,14 +126,9 @@ const removeFavAirport = catchAsync(async (req, res, next) => {
     );
   }
 
-  const updatedUser = await User.findByIdAndUpdate(
+  const updatedUser = await UserRepository.removeFavAirportFromUser(
     req.user.id,
-    {
-      $pullAll: { favAirports: [req.body.airport] },
-    },
-    {
-      new: true,
-    }
+    req.body.airport
   );
 
   res.status(200).json({
@@ -152,7 +140,7 @@ const removeFavAirport = catchAsync(async (req, res, next) => {
 });
 
 export = {
-  addFavAirport,
+  addFavAirport: addFavAirportToUser,
   deleteMe,
   getAllUsers,
   getFavAirports,
