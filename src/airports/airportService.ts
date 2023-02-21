@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { countries } from './countryService';
+import { countries } from '../countries/countryService';
 import fs from 'fs';
 import path from 'path';
 
