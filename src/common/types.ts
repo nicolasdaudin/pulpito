@@ -22,3 +22,21 @@ export type WeekendFlightsParams = {
   infants: number;
   weekendLength?: WeekendLengthEnum;
 };
+
+export type QueryParams = {
+  sort?: string;
+  limit?: string;
+  page?: string;
+  maxConnections?: string;
+  priceFrom?: string;
+  priceTo?: string;
+};
+
+export type FilterParams = {
+  sort: string;
+  limit: number;
+  page: number;
+  maxConnections?: number;
+  priceFrom?: number;
+  priceTo?: number;
+};

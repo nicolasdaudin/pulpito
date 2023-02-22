@@ -1,74 +1,11 @@
-import validatorService from './validatorService';
-import { RESULTS_SEARCH_LIMIT, DEFAULT_SORT_FIELD } from '../config';
-import AppError from '../utils/appError';
+import {
+  validateRequestParamsManyOrigins,
+  validateRequestParamsOneOrigin,
+  validateRequestParamsWeekend,
+} from './validatorService';
+import AppError from '../../utils/appError';
 
 describe('ValidatorService', function () {
-  describe('filterParams', function () {
-    let req, res, next;
-    beforeEach(() => {
-      res = {
-        status: jest.fn().mockImplementation(function () {
-          // console.log('calling res.status');
-          return this;
-        }),
-        json: jest.fn().mockImplementation(function (obj) {
-          // console.log('calling res.json');
-          this.data = obj.data;
-          this.message = obj.message;
-        }),
-        data: null,
-        message: null,
-      };
-
-      req = {};
-
-      next = jest.fn().mockImplementation(function (err) {
-        console.error(err);
-      });
-    });
-
-    test("should add param 'sort' to req.filter", function () {
-      req = { query: { origin: 'MAD', sort: 'price' } };
-
-      validatorService.filterParams(req, res, next);
-      expect(req.filter.sort).toBe('price');
-    });
-
-    test("should remove param 'sort' from req.query", function () {
-      req = { query: { origin: 'MAD', sort: 'price' } };
-
-      validatorService.filterParams(req, res, next);
-      expect(req.query.sort).toBeUndefined();
-    });
-
-    test("should not add param 'origin' to req.filter", function () {
-      req = { query: { origin: 'MAD', sort: 'price' } };
-
-      validatorService.filterParams(req, res, next);
-      expect(req.filter.origin).toBeUndefined();
-    });
-
-    test('should add default params to req.filter even when not present', function () {
-      req = { query: { origin: 'MAD' } };
-
-      validatorService.filterParams(req, res, next);
-      expect(req.filter.sort).toBe(DEFAULT_SORT_FIELD);
-      expect(req.filter.limit).toBe(RESULTS_SEARCH_LIMIT);
-      expect(req.filter.page).toBe(1);
-    });
-
-    test('should add params maxConnections, priceFrom, priceTo to req.filter when  present', function () {
-      req = {
-        query: { origin: 'MAD', maxConnections: 2, priceFrom: 32, priceTo: 56 },
-      };
-
-      validatorService.filterParams(req, res, next);
-      expect(req.filter.maxConnections).toBe(2);
-      expect(req.filter.priceFrom).toBe(32);
-      expect(req.filter.priceTo).toBe(56);
-    });
-  });
-
   describe('validate middleware', function () {
     let req, res, next;
     beforeEach(() => {
@@ -104,7 +41,7 @@ describe('ValidatorService', function () {
           },
         };
 
-        validatorService.validateRequestParamsWeekend(req, res, next);
+        validateRequestParamsWeekend(req, res, next);
         // expect(next).toHaveBeenCalledWith() is always true, whether next is called without any argument or with an error.
         expect(next).not.toHaveBeenCalledWith(expect.any(AppError));
       });
@@ -117,7 +54,7 @@ describe('ValidatorService', function () {
           },
         };
 
-        validatorService.validateRequestParamsWeekend(req, res, next);
+        validateRequestParamsWeekend(req, res, next);
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/missing(.*)origin/),
@@ -133,7 +70,7 @@ describe('ValidatorService', function () {
           },
         };
 
-        validatorService.validateRequestParamsWeekend(req, res, next);
+        validateRequestParamsWeekend(req, res, next);
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/missing(.*)destination/),
@@ -149,7 +86,7 @@ describe('ValidatorService', function () {
           },
         };
 
-        validatorService.validateRequestParamsWeekend(req, res, next);
+        validateRequestParamsWeekend(req, res, next);
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/missing(.*)departureDateFrom/),
@@ -165,7 +102,7 @@ describe('ValidatorService', function () {
           },
         };
 
-        validatorService.validateRequestParamsWeekend(req, res, next);
+        validateRequestParamsWeekend(req, res, next);
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/missing(.*)departureDateTo/),
@@ -182,7 +119,7 @@ describe('ValidatorService', function () {
           },
         };
 
-        validatorService.validateRequestParamsWeekend(req, res, next);
+        validateRequestParamsWeekend(req, res, next);
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/expected(.*)origin/),
@@ -201,7 +138,7 @@ describe('ValidatorService', function () {
           },
         };
 
-        validatorService.validateRequestParamsOneOrigin(req, res, next);
+        validateRequestParamsOneOrigin(req, res, next);
         expect(next).not.toHaveBeenCalledWith(expect.any(AppError));
       });
       test('should call next with an AppError when origin param is missing', function () {
@@ -212,7 +149,7 @@ describe('ValidatorService', function () {
           },
         };
 
-        validatorService.validateRequestParamsOneOrigin(req, res, next);
+        validateRequestParamsOneOrigin(req, res, next);
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/missing(.*)origin/),
@@ -228,7 +165,7 @@ describe('ValidatorService', function () {
           },
         };
 
-        validatorService.validateRequestParamsOneOrigin(req, res, next);
+        validateRequestParamsOneOrigin(req, res, next);
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/missing(.*)departureDate/),
@@ -244,7 +181,7 @@ describe('ValidatorService', function () {
           },
         };
 
-        validatorService.validateRequestParamsOneOrigin(req, res, next);
+        validateRequestParamsOneOrigin(req, res, next);
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/missing(.*)returnDate/),
@@ -260,7 +197,7 @@ describe('ValidatorService', function () {
           },
         };
 
-        validatorService.validateRequestParamsOneOrigin(req, res, next);
+        validateRequestParamsOneOrigin(req, res, next);
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/expected(.*)origin/),
@@ -280,7 +217,7 @@ describe('ValidatorService', function () {
           },
         };
 
-        validatorService.validateRequestParamsManyOrigins(req, res, next);
+        validateRequestParamsManyOrigins(req, res, next);
         expect(next).not.toHaveBeenCalledWith(expect.any(AppError));
       });
       test('should call next with an AppError when origin param is missing', function () {
@@ -291,7 +228,7 @@ describe('ValidatorService', function () {
           },
         };
 
-        validatorService.validateRequestParamsManyOrigins(req, res, next);
+        validateRequestParamsManyOrigins(req, res, next);
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/missing(.*)origin/),
@@ -307,7 +244,7 @@ describe('ValidatorService', function () {
           },
         };
 
-        validatorService.validateRequestParamsManyOrigins(req, res, next);
+        validateRequestParamsManyOrigins(req, res, next);
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/missing(.*)departureDate/),
@@ -323,7 +260,7 @@ describe('ValidatorService', function () {
           },
         };
 
-        validatorService.validateRequestParamsManyOrigins(req, res, next);
+        validateRequestParamsManyOrigins(req, res, next);
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/missing(.*)returnDate/),
@@ -339,7 +276,7 @@ describe('ValidatorService', function () {
           },
         };
 
-        validatorService.validateRequestParamsManyOrigins(req, res, next);
+        validateRequestParamsManyOrigins(req, res, next);
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/expected(.*)origin/),
@@ -357,7 +294,7 @@ describe('ValidatorService', function () {
           },
         };
 
-        validatorService.validateRequestParamsManyOrigins(req, res, next);
+        validateRequestParamsManyOrigins(req, res, next);
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/same(.*)adults/),
@@ -375,7 +312,7 @@ describe('ValidatorService', function () {
           },
         };
 
-        validatorService.validateRequestParamsManyOrigins(req, res, next);
+        validateRequestParamsManyOrigins(req, res, next);
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/same(.*)children/),
@@ -393,7 +330,7 @@ describe('ValidatorService', function () {
           },
         };
 
-        validatorService.validateRequestParamsManyOrigins(req, res, next);
+        validateRequestParamsManyOrigins(req, res, next);
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/same(.*)infants/),

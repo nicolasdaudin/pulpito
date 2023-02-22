@@ -1,16 +1,10 @@
-import validator from '../utils/validator';
+import validator from '../../utils/validator';
 import { isAlpha, isDate, isNumeric } from 'validator';
-import AppError from '../utils/appError';
-import { RESULTS_SEARCH_LIMIT, DEFAULT_SORT_FIELD } from '../config';
-
-const PARAMS_TO_FILTER = [
-  { name: 'sort', default: DEFAULT_SORT_FIELD },
-  { name: 'limit', default: RESULTS_SEARCH_LIMIT },
-  { name: 'page', default: 1 },
-  { name: 'maxConnections' },
-  { name: 'priceFrom' },
-  { name: 'priceTo' },
-];
+import AppError from '../../utils/appError';
+import { NextFunction, Response } from 'express';
+import { TypedRequestQueryWithFilter } from '../../common/interfaces';
+import { FilterParams, QueryParams } from '../../common/types';
+import { getFilterParamsFromQueryParams } from './validatorHelper';
 
 const ONE_CITYCODE_PARAM_MODEL = {
   required: true,
@@ -45,23 +39,13 @@ const SEVERAL_PASSENGERS_PARAM_MODEL = {
  * @param {*} res
  * @param {*} next
  */
-const filterParams = (req, res, next) => {
-  req.filter = {};
+export const filterParams = (
+  req: TypedRequestQueryWithFilter<QueryParams, FilterParams>,
+  res: Response,
+  next: NextFunction
+) => {
   if (req.query) {
-    PARAMS_TO_FILTER.forEach((param) => {
-      if (req.query[param.name]) {
-        // if param present in the queryString, we add it to req.filter and remove it from req.query
-
-        req.filter[param.name] = req.query[param.name];
-
-        delete req.query[param.name];
-      } else {
-        // if param not present but he has a default value, we add it to req.filter
-        if (param.default) {
-          req.filter[param.name] = param.default;
-        }
-      }
-    });
+    req.filter = getFilterParamsFromQueryParams(req.query);
   }
   next();
 };
@@ -72,7 +56,7 @@ const filterParams = (req, res, next) => {
  * @param {*} res
  * @param {*} next
  */
-const validateRequestParamsWeekend = (req, res, next) => {
+export const validateRequestParamsWeekend = (req, res, next) => {
   const requestModelParams = [
     { name: 'origin', ...ONE_CITYCODE_PARAM_MODEL },
     {
@@ -113,7 +97,7 @@ const validateRequestParamsWeekend = (req, res, next) => {
  * @param {*} res
  * @param {*} next
  */
-const validateRequestParamsManyOrigins = (req, res, next) => {
+export const validateRequestParamsManyOrigins = (req, res, next) => {
   // FIXME: is this really necessary to be so specific about parameter types? isn't it better to have a good documentation and only send an error msg like "Parameters have wrong type"
   const requestModelParams = [
     { name: 'origin', ...SEVERAL_CITYCODES_PARAM_MODEL },
@@ -185,7 +169,7 @@ const validateRequestParamsManyOrigins = (req, res, next) => {
  * @param {*} res
  * @param {*} next
  */
-const validateRequestParamsOneOrigin = (req, res, next) => {
+export const validateRequestParamsOneOrigin = (req, res, next) => {
   // FIXME: is this really necessary to be so specific about parameter types? isn't it better to have a good documentation and only send an error msg like "Parameters have wrong type"
   const requestModelParams = [
     {
@@ -263,12 +247,4 @@ const checkMissingParams = (modelParams, query, next) => {
         400
       )
     );
-};
-
-// TODO: validate request param for cheapest weekend requests
-export = {
-  validateRequestParamsManyOrigins,
-  validateRequestParamsOneOrigin,
-  validateRequestParamsWeekend,
-  filterParams,
 };
