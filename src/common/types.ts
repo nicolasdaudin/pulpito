@@ -7,9 +7,9 @@ export type RegularFlightsParams = {
   origin: string;
   departureDate: string;
   returnDate: string;
-  adults: number;
-  children: number;
-  infants: number;
+  adults?: number;
+  children?: number;
+  infants?: number;
 };
 
 export type WeekendFlightsParams = {
@@ -17,9 +17,9 @@ export type WeekendFlightsParams = {
   destination: string;
   departureDateFrom: string;
   departureDateTo: string;
-  adults: number;
-  children: number;
-  infants: number;
+  adults?: number;
+  children?: number;
+  infants?: number;
   weekendLength?: WeekendLengthEnum;
 };
 

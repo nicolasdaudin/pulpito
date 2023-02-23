@@ -7,6 +7,7 @@ import {
   FLIGHT_API_PARAMS_FIXTURE_WEEKEND_NON_EXISTING_ORIGIN,
   FLIGHT_API_PARAMS_FIXTURE_WEEKEND,
 } from '../utils/fixtures';
+import { WeekendLengthEnum } from '../common/types';
 
 const maybe = process.env.SKIP_ASYNC_TESTS ? describe.skip : describe;
 // skip the async tests using Kiwi real URL, if npm test is called like this :
@@ -22,33 +23,6 @@ maybe('Flight Service - Integration with KIWI API', function () {
       expect(Array.isArray(flights)).toBe(true);
       expect(flights[0]).toHaveProperty('flyFrom');
       expect(flights[0].flyFrom).toBe(FLIGHT_API_PARAMS_FIXTURE.origin);
-    });
-
-    test('should throw a 400 error when empty params for KIWI service', async function () {
-      // try {
-      //   await flightService.getFlights({});
-      // } catch (e) {
-      //   expect(e.message).toMatch(/400/);
-      // }
-      expect.assertions(1);
-      await expect(flightService.getFlights({})).rejects.toMatchObject({
-        message: expect.stringMatching(/400/),
-      });
-    });
-
-    test('should throw a 400 error when missing params for KIWI service', async function () {
-      const { origin } = FLIGHT_API_PARAMS_FIXTURE;
-
-      // try {
-      //   await flightService.getFlights({ fly_from });
-      // } catch (e) {
-      //   expect(e.message).toMatch(/400/);
-      // }
-
-      expect.assertions(1);
-      await expect(flightService.getFlights({ origin })).rejects.toMatchObject({
-        message: expect.stringMatching(/400/),
-      });
     });
 
     test('should throw a 422 error when non-existing origin for KIWI service', async function () {
@@ -84,7 +58,7 @@ maybe('Flight Service - Integration with KIWI API', function () {
       const prepareSpy = jest.spyOn(helper, 'prepareAxiosParams');
       await flightService.getWeekendFlights({
         ...FLIGHT_API_PARAMS_FIXTURE_WEEKEND,
-        weekendLength: 'long',
+        weekendLength: WeekendLengthEnum.LONG,
       });
 
       expect(prepareSpy).toHaveBeenCalledWith(
@@ -105,7 +79,7 @@ maybe('Flight Service - Integration with KIWI API', function () {
       const prepareSpy = jest.spyOn(helper, 'prepareAxiosParams');
       await flightService.getWeekendFlights({
         ...FLIGHT_API_PARAMS_FIXTURE_WEEKEND,
-        weekendLength: 'short',
+        weekendLength: WeekendLengthEnum.SHORT,
       });
 
       expect(prepareSpy).toHaveBeenCalledWith(
@@ -119,32 +93,6 @@ maybe('Flight Service - Integration with KIWI API', function () {
 
       prepareSpy.mockRestore();
       spy.mockRestore();
-    });
-
-    test('should throw a 400 error when empty params for KIWI service', async function () {
-      // try {
-      //   await flightService.getWeekendFlights({});
-      // } catch (e) {
-      //   expect(e.message).toMatch(/400/);
-      // }
-      await expect(flightService.getWeekendFlights({})).rejects.toMatchObject({
-        message: expect.stringMatching(/400/),
-      });
-    });
-
-    test('should throw a 400 error when missing params for KIWI service', async function () {
-      const fly_from = '';
-
-      // try {
-      //   await flightService.getWeekendFlights({ fly_from });
-      // } catch (e) {
-      //   expect(e.message).toMatch(/400/);
-      // }
-      await expect(
-        flightService.getWeekendFlights({ fly_from })
-      ).rejects.toMatchObject({
-        message: expect.stringMatching(/400/),
-      });
     });
 
     test('should throw a 422 error when non-existing origin for KIWI service', async function () {

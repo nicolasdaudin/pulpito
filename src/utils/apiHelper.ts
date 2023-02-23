@@ -247,6 +247,7 @@ const prepareAxiosParams = (params) => {
  * @param {*} params input params
  * @returns
  */
+// FIXME: not sure if still necessary since in getFlights we put default params if needed. In any case, should be in API-related helper fonction, or this apiHelper module should be renamed to kiwi slmething ...
 const prepareDefaultAPIParams = (params) => {
   return {
     ...params,

@@ -32,6 +32,9 @@ const DEFAULT_KIWI_API_PARAMS: Partial<KiwiBaseAPIParams> = {
   limit: 1000,
   flight_type: 'round',
 };
+const DEFAULT_ADULTS_PARAM = 1;
+const DEFAULT_CHILDREN_PARAM = 0;
+const DEFAULT_INFANTS_PARAM = 0;
 
 enum DayOfWeek {
   SUNDAY = 0,
@@ -47,9 +50,9 @@ type KiwiBaseAPIParams = {
   fly_from: IataCode;
   dateFrom: DateDDMMYYYY;
   dateTo: DateDDMMYYYY;
-  adults?: number;
-  children?: number;
-  infants?: number;
+  adults: number;
+  children: number;
+  infants: number;
   max_stopovers?: number;
   partner_market?: string;
   lang?: string;
@@ -86,14 +89,14 @@ const getWeekendFlights = async (params: WeekendFlightsParams) => {
 
   // FIXME: added 'any' to allow compiler, otherwise it fails. Please create a type or interface.
   let axiosParams: KiwiAPIWeekendParams = {
+    ...DEFAULT_KIWI_API_PARAMS,
     fly_from: params.origin,
     fly_to: params.destination,
     dateFrom: params.departureDateFrom,
     dateTo: params.departureDateTo,
-    adults: params.adults,
-    children: params.children,
-    infants: params.infants,
-    ...DEFAULT_KIWI_API_PARAMS,
+    adults: params.adults ?? DEFAULT_ADULTS_PARAM,
+    children: params.children ?? DEFAULT_CHILDREN_PARAM,
+    infants: params.infants ?? DEFAULT_INFANTS_PARAM,
   };
 
   if (params.weekendLength === WeekendLengthEnum.LONG) {
@@ -154,9 +157,9 @@ const getFlights = async (params: RegularFlightsParams) => {
       dateTo: params.departureDate,
       returnFrom: params.returnDate,
       returnTo: params.returnDate,
-      adults: params.adults,
-      children: params.children,
-      infants: params.infants,
+      adults: params.adults ?? DEFAULT_ADULTS_PARAM,
+      children: params.children ?? DEFAULT_CHILDREN_PARAM,
+      infants: params.infants ?? DEFAULT_INFANTS_PARAM,
       ret_from_diff_airport: 0,
       ret_to_diff_airport: 0,
       one_for_city: 1,
