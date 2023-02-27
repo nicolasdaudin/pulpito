@@ -1,21 +1,29 @@
 import helper from './apiHelper';
 import apiOneWayAnswer from '../datasets/fixtures/apiOneWayAnswer.json';
 import apiReturnAnswer from '../datasets/fixtures/apiReturnAnswer.json';
+import { Itinerary, KiwiItinerary } from '../common/types';
+import {
+  COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BOD,
+  COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BRU,
+  COMMON_DESTINATION_KIWI_RESULT_FIXTURE_MAD,
+} from './fixtures';
 
 describe('API Helper', function () {
-  describe('cleanItineraryData', function () {
+  describe('convertKiwiItineraryToItinerary', function () {
     test('should remove data from one-way itinerary', function () {
-      const itinerary = apiOneWayAnswer.data[0];
-      const cleaned = helper.cleanItineraryData(itinerary);
-      expect(cleaned).not.toHaveProperty('countryFrom');
+      const itinerary: KiwiItinerary = apiOneWayAnswer.data[0];
+      const converted: Itinerary =
+        helper.convertKiwiItineraryToItinerary(itinerary);
+      expect(converted).not.toHaveProperty('countryFrom');
     });
 
     test('should remove data from return itinerary', function () {
       const itinerary = apiReturnAnswer.data[0];
-      const cleaned = helper.cleanItineraryData(itinerary);
+      const cleaned = helper.convertKiwiItineraryToItinerary(itinerary);
       expect(cleaned).not.toHaveProperty('countryFrom');
     });
-
+  });
+  describe('cleanItineraryData', function () {
     test('should normalize data from one-way itinerary', function () {
       const itinerary = apiOneWayAnswer.data[0];
       const cleaned = helper.cleanItineraryData(itinerary);
@@ -55,51 +63,15 @@ describe('API Helper', function () {
 
   describe('prepareItineraryData', function () {
     const itineraries = [
-      {
-        cityFrom: 'Madrid',
-        flyFrom: 'MAD',
-        countryTo: { name: 'Spain' },
-        cityCodeTo: 'IBZ',
-        cityTo: 'Ibiza',
-        price: 78,
-        distance: 600,
-        duration: { departure: 85, return: 85 },
-      },
-      {
-        cityFrom: 'Bordeaux',
-        flyFrom: 'BOD',
-        countryTo: { name: 'Spain' },
-        cityCodeTo: 'IBZ',
-        cityTo: 'Ibiza',
-        price: 65,
-        distance: 800,
-        duration: { departure: 105, return: 105 },
-      },
-      {
-        cityFrom: 'Brussels',
-        flyFrom: 'BRU',
-        countryTo: { name: 'Spain' },
-        cityCodeTo: 'IBZ',
-        cityTo: 'Ibiza',
-        price: 130,
-        distance: 1500,
-        duration: { departure: 135, return: 135 },
-      },
-      {
-        cityFrom: 'Brussels',
-        flyFrom: 'BRU',
-        countryTo: { name: 'Spain' },
-        cityCodeTo: 'OPO',
-        cityTo: 'Oporto',
-        price: 130,
-        distance: 1500,
-        duration: { departure: 135, return: 135 },
-      },
+      ...COMMON_DESTINATION_KIWI_RESULT_FIXTURE_MAD,
+      ...COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BRU,
+      ...COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BOD,
     ];
     const mapPassengersPerOrigin = new Map();
     mapPassengersPerOrigin.set('MAD', 1);
     mapPassengersPerOrigin.set('BRU', 2);
     mapPassengersPerOrigin.set('BOD', 2);
+
     test('should exclude a flight that does not go to that destination', () => {
       const itinerary = helper.prepareItineraryData(
         'Ibiza',
@@ -107,10 +79,11 @@ describe('API Helper', function () {
         mapPassengersPerOrigin
       );
 
-      expect(itinerary.countryTo).toBe('Spain');
+      expect(itinerary.countryTo).toBe('Espagne');
       expect(itinerary.cityCodeTo).toBe('IBZ');
       expect(itinerary.flights).toHaveLength(3);
     });
+
     test('should compute all info about a set of flights', () => {
       const itinerary = helper.prepareItineraryData(
         'Ibiza',
@@ -118,7 +91,11 @@ describe('API Helper', function () {
         mapPassengersPerOrigin
       );
 
-      expect(itinerary.price).toBe(78 + 65 + 130);
+      expect(itinerary.price).toBe(
+        COMMON_DESTINATION_KIWI_RESULT_FIXTURE_MAD[0].price +
+          COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BOD[0].price +
+          COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BRU[0].price
+      );
     });
   });
 

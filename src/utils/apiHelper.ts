@@ -1,4 +1,11 @@
 import { Settings, Duration, DateTime } from 'luxon';
+import {
+  CommonDestination,
+  Itinerary,
+  KiwiItinerary,
+  KiwiRoute,
+  Route,
+} from '../common/types';
 Settings.defaultLocale = 'fr';
 
 /**
@@ -42,10 +49,14 @@ const isCommonDestination = (destination, origins) => {
  * @param {*} passengersPerOrigin a map representing the number of passengers per origin (as iata code), like {"MAD" => 1, "BOD" => 2}
  * @returns an object for that destination, with aggregated info
  */
-const prepareItineraryData = (dest, itineraries, passengersPerOrigin) => {
+const prepareItineraryData = (
+  dest,
+  itineraries: Itinerary[],
+  passengersPerOrigin
+) => {
   // FIXME: I had to add 'any' otherwise the TypeScript compiler would not allow "sequentially added properties". I need to create a type or an interface
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const itinerary: any = { cityTo: dest };
+  const itinerary: Partial<CommonDestination> = { cityTo: dest };
 
   // corresponding origins to that particular destination, we remove flights that do not go to that destination
   // itinerary.flights will have one item per origin
@@ -91,37 +102,74 @@ const prepareItineraryData = (dest, itineraries, passengersPerOrigin) => {
   return itinerary;
 };
 
+const convertKiwiItineraryToItinerary = (input: KiwiItinerary): Itinerary => {
+  return {
+    flyFrom: input.flyFrom,
+    flyTo: input.flyTo,
+    cityFrom: input.cityFrom,
+    cityCodeFrom: input.cityCodeFrom,
+    cityTo: input.cityTo,
+    cityCodeTo: input.cityCodeTo,
+    countryTo: input.countryTo,
+    distance: input.distance,
+    duration: input.duration,
+    price: input.price,
+    deep_link: input.deep_link,
+    local_arrival: input.local_arrival,
+    utc_arrival: input.utc_arrival,
+    local_departure: input.local_departure,
+    utc_departure: input.utc_departure,
+    route: input.route.map(convertKiwiRouteToRoute),
+  };
+};
+
+const convertKiwiRouteToRoute = (input: KiwiRoute): Route => {
+  return {
+    flyFrom: input.flyFrom,
+    flyTo: input.flyTo,
+    cityFrom: input.cityFrom,
+    cityCodeFrom: input.cityCodeFrom,
+    cityTo: input.cityTo,
+    cityCodeTo: input.cityCodeTo,
+    return: input.return,
+    local_arrival: input.local_arrival,
+    utc_arrival: input.utc_arrival,
+    local_departure: input.local_departure,
+    utc_departure: input.utc_departure,
+  };
+};
+
 /**
  * TODO: merge with prepareItineraryData
  * Remove unnecessary data from API payload and regroup some other data by oneway and return flights
  * @param {*} input itinerary to be cleaned. Won't be mutated.
  * @returns a copy of the itinerary, but cleaned.
  */
-const cleanItineraryData = (input) => {
+const cleanItineraryData = (input: Itinerary) => {
   const itinerary = Object.assign({}, input);
 
-  delete itinerary.type_flights;
-  delete itinerary.nightsInDest;
-  delete itinerary.quality;
-  delete itinerary.conversion;
-  // delete itinerary.fare;
-  delete itinerary.bags_price;
-  delete itinerary.baglimit;
-  delete itinerary.availability;
-  delete itinerary.countryFrom;
-  // delete itinerary.countryTo;
-  delete itinerary.routes;
+  // delete itinerary.type_flights;
+  // delete itinerary.nightsInDest;
+  // delete itinerary.quality;
+  // delete itinerary.conversion;
+  // // delete itinerary.fare;
+  // delete itinerary.bags_price;
+  // delete itinerary.baglimit;
+  // delete itinerary.availability;
+  // delete itinerary.countryFrom;
+  // // delete itinerary.countryTo;
+  // delete itinerary.routes;
 
   const filteredRoute = itinerary.route.map((r) => {
-    delete r.fare_basis;
-    delete r.fare_category;
-    delete r.fare_classes;
-    delete r.fare_family;
-    delete r.bags_recheck_required;
-    delete r.vi_connection;
-    delete r.guarantee;
-    delete r.equipment;
-    delete r.vehicle_type;
+    // delete r.fare_basis;
+    // delete r.fare_category;
+    // delete r.fare_classes;
+    // delete r.fare_family;
+    // delete r.bags_recheck_required;
+    // delete r.vi_connection;
+    // delete r.guarantee;
+    // delete r.equipment;
+    // delete r.vehicle_type;
     return r;
   });
 
@@ -176,21 +224,21 @@ const cleanItineraryData = (input) => {
 
   itinerary.route = route;
 
-  delete itinerary.tracking_pixel;
-  delete itinerary.facilitated_booking_available;
-  delete itinerary.pnr_count;
-  delete itinerary.has_airport_change;
-  delete itinerary.technical_stops;
-  delete itinerary.throw_away_ticketing;
-  delete itinerary.hidden_city_ticketing;
-  delete itinerary.virtual_interlining;
-  delete itinerary.transfers;
-  delete itinerary.booking_token;
-  // delete itinerary.deep_link;
-  delete itinerary.local_arrival;
-  delete itinerary.local_departure;
-  delete itinerary.utc_arrival;
-  delete itinerary.utc_departure;
+  // delete itinerary.tracking_pixel;
+  // delete itinerary.facilitated_booking_available;
+  // delete itinerary.pnr_count;
+  // delete itinerary.has_airport_change;
+  // delete itinerary.technical_stops;
+  // delete itinerary.throw_away_ticketing;
+  // delete itinerary.hidden_city_ticketing;
+  // delete itinerary.virtual_interlining;
+  // delete itinerary.transfers;
+  // delete itinerary.booking_token;
+  // // delete itinerary.deep_link;
+  // delete itinerary.local_arrival;
+  // delete itinerary.local_departure;
+  // delete itinerary.utc_arrival;
+  // delete itinerary.utc_departure;
 
   return itinerary;
 };
@@ -336,6 +384,7 @@ const prepareSeveralOriginAPIParams = (params) => {
 
 export = {
   cleanItineraryData,
+  convertKiwiItineraryToItinerary,
   extractConnections,
   filterDestinationCities,
   isCommonDestination,

@@ -2,13 +2,14 @@ import axios from 'axios';
 import helper from '../utils/apiHelper';
 import { setupCache } from 'axios-cache-interceptor';
 import {
+  DateDDMMYYYY,
+  IataCode,
+  Itinerary,
+  KiwiItinerary,
   RegularFlightsParams,
   WeekendFlightsParams,
   WeekendLengthEnum,
 } from '../common/types';
-
-type IataCode = string;
-type DateDDMMYYYY = string;
 
 // type DefaultKiwiAPIParams = {
 //   max_stopovers: 2;
@@ -80,8 +81,58 @@ type KiwiAPIAllDaysParams = {
 
 setupCache(axios, { ttl: 1000 * 60 * 15 }); //15 minutes
 
+// FIXME: better handle errors
+const getFlights = async (
+  params: RegularFlightsParams
+): Promise<Itinerary[]> => {
+  try {
+    const axiosParams: KiwiAPIAllDaysParams = {
+      ...DEFAULT_KIWI_API_PARAMS,
+      fly_to: 'anywhere',
+      fly_from: params.origin,
+      dateFrom: params.departureDate,
+      dateTo: params.departureDate,
+      returnFrom: params.returnDate,
+      returnTo: params.returnDate,
+      adults: +(params.adults ?? DEFAULT_ADULTS_PARAM),
+      children: +(params.children ?? DEFAULT_CHILDREN_PARAM),
+      infants: +(params.infants ?? DEFAULT_INFANTS_PARAM),
+      ret_from_diff_airport: 0,
+      ret_to_diff_airport: 0,
+      one_for_city: 1,
+    };
+    // atime_from: '10:00',
+    // atime_to: '22:00',
+    // ret_dtime_from: '15:00',
+    // ret_dtime_to: '21:00',
+    if (!process.env.KIWI_URL || !process.env.KIWI_API_KEY)
+      throw new Error('Missing KIWI_URL or KIWI_API_KEY environment variables');
+    const response = await axios.get(process.env.KIWI_URL, {
+      headers: {
+        apikey: process.env.KIWI_API_KEY,
+      },
+      params: axiosParams,
+    });
+
+    if (response && response.data) {
+      const kiwiItineraries: KiwiItinerary[] = response.data.data;
+      return kiwiItineraries.map(helper.convertKiwiItineraryToItinerary);
+    } else {
+      return [];
+    }
+  } catch (err) {
+    console.error(err.message);
+    // console.error(err.response.data.error);
+    // console.error(err.response.request.path);
+
+    throw err;
+  }
+};
+
 // FIXME: added 'any' to allow compiler
-const getWeekendFlights = async (params: WeekendFlightsParams) => {
+const getWeekendFlights = async (
+  params: WeekendFlightsParams
+): Promise<Itinerary[]> => {
   // var flyingDaysParams = new URLSearchParams();
   // flyingDaysParams.append('fly_days', 4);
   // flyingDaysParams.append('fly_days', 5);
@@ -94,9 +145,9 @@ const getWeekendFlights = async (params: WeekendFlightsParams) => {
     fly_to: params.destination,
     dateFrom: params.departureDateFrom,
     dateTo: params.departureDateTo,
-    adults: params.adults ?? DEFAULT_ADULTS_PARAM,
-    children: params.children ?? DEFAULT_CHILDREN_PARAM,
-    infants: params.infants ?? DEFAULT_INFANTS_PARAM,
+    adults: +(params.adults ?? DEFAULT_ADULTS_PARAM),
+    children: +(params.children ?? DEFAULT_CHILDREN_PARAM),
+    infants: +(params.infants ?? DEFAULT_INFANTS_PARAM),
   };
 
   if (params.weekendLength === WeekendLengthEnum.LONG) {
@@ -123,6 +174,9 @@ const getWeekendFlights = async (params: WeekendFlightsParams) => {
   }
 
   try {
+    if (!process.env.KIWI_URL || !process.env.KIWI_API_KEY)
+      throw new Error('Missing KIWI_URL or KIWI_API_KEY environment variables');
+
     const preparedAxiosParams = helper.prepareAxiosParams(axiosParams);
     const response = await axios.get(
       `${process.env.KIWI_URL}?${preparedAxiosParams.toString()}`,
@@ -146,50 +200,4 @@ const getWeekendFlights = async (params: WeekendFlightsParams) => {
   }
 };
 
-// FIXME: better handle errors
-const getFlights = async (params: RegularFlightsParams) => {
-  try {
-    const axiosParams: KiwiAPIAllDaysParams = {
-      ...DEFAULT_KIWI_API_PARAMS,
-      fly_to: 'anywhere',
-      fly_from: params.origin,
-      dateFrom: params.departureDate,
-      dateTo: params.departureDate,
-      returnFrom: params.returnDate,
-      returnTo: params.returnDate,
-      adults: params.adults ?? DEFAULT_ADULTS_PARAM,
-      children: params.children ?? DEFAULT_CHILDREN_PARAM,
-      infants: params.infants ?? DEFAULT_INFANTS_PARAM,
-      ret_from_diff_airport: 0,
-      ret_to_diff_airport: 0,
-      one_for_city: 1,
-    };
-    // atime_from: '10:00',
-    // atime_to: '22:00',
-    // ret_dtime_from: '15:00',
-    // ret_dtime_to: '21:00',
-    const response = await axios.get(process.env.KIWI_URL, {
-      headers: {
-        apikey: process.env.KIWI_API_KEY,
-      },
-      params: axiosParams,
-    });
-
-    if (response && response.data) {
-      return response.data.data;
-    } else {
-      return [];
-    }
-  } catch (err) {
-    console.error(err.message);
-    // console.error(err.response.data.error);
-    // console.error(err.response.request.path);
-
-    throw err;
-  }
-};
-
-export = {
-  getWeekendFlights,
-  getFlights,
-};
+export = { getFlights, getWeekendFlights };

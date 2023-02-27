@@ -5,7 +5,6 @@ import {
   CHEAPEST_DESTINATION_KIWI_RESULT_FIXTURE,
   CHEAPEST_DESTINATION_QUERY_FIXTURE_NON_EXISTING_ORIGIN,
   COMMON_DESTINATION_QUERY_FIXTURE_NON_EXISTING_ORIGIN,
-  COMMON_DESTINATION_QUERY_FIXTURE_INCORRECT_ORIGIN_FORMAT,
   COMMON_DESTINATION_QUERY_FIXTURE,
   COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BOD,
   COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BRU,
@@ -14,31 +13,44 @@ import {
 } from '../utils/fixtures';
 import flightService from '../data/flightService';
 import AppError from '../utils/appError';
-// import AppError from '../utils/appError';
+
+import { Request, NextFunction } from 'express-serve-static-core';
+import {
+  APISuccessResponse,
+  TypedRequestQueryWithFilter,
+} from '../common/interfaces';
+import {
+  Itinerary,
+  RegularFlightsParams,
+  WeekendFlightsParams,
+} from '../common/types';
 
 // FIXME: should be improved or at least checked. Maybe need to refactor, add or remove some tests. I want to move forward and add some e2e tests so I won't spend time on this at the moment, but I could do it later.
 describe('Destinations Controller', function () {
   describe('getCheapestDestinations', function () {
     describe('success cases', function () {
-      let req, res, next;
-      let getFlightsSpy;
+      let req: Partial<TypedRequestQueryWithFilter<RegularFlightsParams>>,
+        res: Partial<APISuccessResponse> & { data: Itinerary[] },
+        next: NextFunction;
+      // FIXME: is getFlightsSpy necessary? we need a mock, not a spy ... not sure we need implementation details
+      let getFlightsSpy: jest.SpyInstance;
       beforeEach(() => {
         getFlightsSpy = jest
           .spyOn(flightService, 'getFlights')
           .mockResolvedValue(CHEAPEST_DESTINATION_KIWI_RESULT_FIXTURE);
 
-        req = {
-          query: CHEAPEST_DESTINATION_QUERY_FIXTURE,
-        };
+        req = { query: CHEAPEST_DESTINATION_QUERY_FIXTURE };
 
         res = {
-          status: jest.fn().mockImplementation(function () {
+          status: jest.fn().mockImplementation(function (code) {
+            console.log('status method MOCK');
+            this.statusCode = code;
             return this;
           }),
           json: jest.fn().mockImplementation(function (obj) {
             this.data = obj.data;
           }),
-          data: null,
+          data: [],
         };
         next = jest.fn();
       });
@@ -83,7 +95,9 @@ describe('Destinations Controller', function () {
       });
     });
     describe('error cases', function () {
-      let res, next;
+      let req: Partial<TypedRequestQueryWithFilter<RegularFlightsParams>>,
+        res: Partial<APISuccessResponse> & { data: Itinerary[] },
+        next: NextFunction;
       beforeEach(() => {
         res = {
           status: jest.fn().mockImplementation(function () {
@@ -92,48 +106,13 @@ describe('Destinations Controller', function () {
           json: jest.fn().mockImplementation(function (obj) {
             this.data = obj.data;
           }),
-          data: null,
+          data: [],
         };
         next = jest.fn();
       });
 
-      // TODO: is it necessary? before getCheapestDestination, we have a middleware checking for input params
-      test('should return error 400 when no input parameters', async function () {
-        const req = { query: {} };
-
-        await destinationsController.getCheapestDestinations(req, res, next);
-
-        // check that response is an error
-        expect(next).toHaveBeenCalledWith(expect.any(AppError));
-
-        expect(next).toHaveBeenCalledWith(
-          expect.objectContaining({
-            statusCode: 400,
-            message: expect.stringContaining('departure location'),
-          })
-        );
-      });
-
-      test('should return error 400 when missing input parameters', async function () {
-        const req = { query: { origin: 'CDG' } };
-
-        await destinationsController.getCheapestDestinations(req, res, next);
-
-        // check that response is an error
-        expect(next).toHaveBeenCalledWith(expect.any(AppError));
-
-        expect(next).toHaveBeenCalledWith(
-          expect.objectContaining({
-            statusCode: 400,
-            message: expect.stringContaining('when roundtrip requested'),
-          })
-        );
-      });
-
       test('should return error 400 when unknown origin like PXR', async function () {
-        const req = {
-          query: CHEAPEST_DESTINATION_QUERY_FIXTURE_NON_EXISTING_ORIGIN,
-        };
+        req = { query: CHEAPEST_DESTINATION_QUERY_FIXTURE_NON_EXISTING_ORIGIN };
 
         await destinationsController.getCheapestDestinations(req, res, next);
 
@@ -152,9 +131,11 @@ describe('Destinations Controller', function () {
 
   describe('getCommonDestinations', function () {
     describe('success cases', function () {
-      let req, res, next;
+      let req: Partial<TypedRequestQueryWithFilter<RegularFlightsParams>>,
+        res: Partial<APISuccessResponse> & { data: Itinerary[] },
+        next: NextFunction;
 
-      let getFlightsSpy;
+      let getFlightsSpy: jest.SpyInstance;
       beforeEach(() => {
         getFlightsSpy = jest
           .spyOn(flightService, 'getFlights')
@@ -163,9 +144,7 @@ describe('Destinations Controller', function () {
           .mockResolvedValueOnce(COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BOD)
           .mockResolvedValueOnce(COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BRU);
 
-        req = {
-          query: COMMON_DESTINATION_QUERY_FIXTURE,
-        };
+        req = { query: COMMON_DESTINATION_QUERY_FIXTURE };
 
         res = {
           status: jest.fn().mockImplementation(function () {
@@ -174,7 +153,7 @@ describe('Destinations Controller', function () {
           json: jest.fn().mockImplementation(function (obj) {
             this.data = obj.data;
           }),
-          data: null,
+          data: [],
         };
         next = jest.fn();
       });
@@ -190,6 +169,7 @@ describe('Destinations Controller', function () {
         );
       });
 
+      // TODO: not sure if necessary ... isn't it part of endtoend tests?
       test('should search for one adult for each origin if nothing specified', async function () {
         await destinationsController.getCommonDestinations(req, res, next);
         expect(flightService.getFlights).toHaveBeenNthCalledWith(
@@ -219,79 +199,9 @@ describe('Destinations Controller', function () {
         expect(res.data[0].cityTo).toBe('Ibiza');
         expect(res.data).toHaveLength(1);
       });
-    });
-    describe('error cases', function () {
-      let res, next;
-      beforeEach(() => {
-        res = {
-          status: jest.fn().mockImplementation(function () {
-            return this;
-          }),
-          json: jest.fn().mockImplementation(function (obj) {
-            this.data = obj.data;
-          }),
-          data: null,
-        };
-        next = jest.fn();
-      });
-
-      test('should return error 500 when no input parameters', async function () {
-        const req = { query: {} };
-        await destinationsController.getCommonDestinations(req, res, next);
-
-        expect(next).toHaveBeenCalledWith(expect.any(AppError));
-        expect(next).toHaveBeenCalledWith(
-          expect.objectContaining({
-            statusCode: 500,
-          })
-        );
-      });
-
-      test('should return error 400 when parameters are not comma-separated', async function () {
-        const req = {
-          query: COMMON_DESTINATION_QUERY_FIXTURE_INCORRECT_ORIGIN_FORMAT,
-        };
-        await destinationsController.getCommonDestinations(req, res, next);
-
-        expect(next).toHaveBeenCalledWith(expect.any(AppError));
-        expect(next).toHaveBeenCalledWith(
-          expect.objectContaining({
-            statusCode: 400,
-            message: expect.stringContaining('no locations'),
-          })
-        );
-      });
-
-      test('should return error 400 when unknown origin like PXR', async function () {
-        const req = {
-          query: COMMON_DESTINATION_QUERY_FIXTURE_NON_EXISTING_ORIGIN,
-        };
-        await destinationsController.getCommonDestinations(req, res, next);
-
-        expect(next).toHaveBeenCalledWith(expect.any(AppError));
-        expect(next).toHaveBeenCalledWith(
-          expect.objectContaining({
-            statusCode: 400,
-            message: expect.stringContaining('no locations'),
-          })
-        );
-      });
-
-      test('should return error 400 when missing input parameters', async function () {
-        const req = { query: { origin: 'MAD,BKK,CDG' } };
-        await destinationsController.getCommonDestinations(req, res, next);
-
-        expect(next).toHaveBeenCalledWith(expect.any(AppError));
-        expect(next).toHaveBeenCalledWith(
-          expect.objectContaining({
-            statusCode: 400,
-            message: expect.stringContaining('when roundtrip requested'),
-          })
-        );
-      });
 
       test('should return empty data when there are no common destinations', async function () {
-        const req = { query: { origin: 'MAD,MRS' } };
+        req.query = { ...COMMON_DESTINATION_QUERY_FIXTURE, origin: 'MAD,MRS' };
 
         flightService.getFlights = jest
           .fn()
@@ -304,20 +214,51 @@ describe('Destinations Controller', function () {
         expect(res.data).toHaveLength(0);
       });
     });
+    describe('error cases', function () {
+      let req: Partial<Request>,
+        res: Partial<APISuccessResponse> & { data: Itinerary[] },
+        next: NextFunction;
+      beforeEach(() => {
+        res = {
+          status: jest.fn().mockImplementation(function () {
+            return this;
+          }),
+          json: jest.fn().mockImplementation(function (obj) {
+            this.data = obj.data;
+          }),
+          data: [],
+        };
+        next = jest.fn();
+      });
+
+      test('should return error 400 when unknown origin like PXR', async function () {
+        req = { query: COMMON_DESTINATION_QUERY_FIXTURE_NON_EXISTING_ORIGIN };
+        await destinationsController.getCommonDestinations(req, res, next);
+
+        expect(next).toHaveBeenCalledWith(expect.any(AppError));
+        expect(next).toHaveBeenCalledWith(
+          expect.objectContaining({
+            statusCode: 400,
+            message: expect.stringContaining('no locations'),
+          })
+        );
+      });
+    });
   });
 
   describe('getCheapestWeekend', function () {
     describe('success cases', function () {
-      let req, res, next;
-      let getFlightsSpy;
+      let req: Partial<TypedRequestQueryWithFilter<WeekendFlightsParams>>,
+        res: Partial<APISuccessResponse> & { data: Itinerary[] },
+        next: NextFunction;
+      // FIXME: is getFlightsSpy necessary? we need a mock, not a spy ... not sure we need implementation details
+      let getFlightsSpy: jest.SpyInstance;
       beforeEach(() => {
         getFlightsSpy = jest
           .spyOn(flightService, 'getWeekendFlights')
           .mockResolvedValue(CHEAPEST_DESTINATION_KIWI_RESULT_FIXTURE);
 
-        req = {
-          query: CHEAPEST_WEEKEND_QUERY_FIXTURE,
-        };
+        req = { query: CHEAPEST_WEEKEND_QUERY_FIXTURE };
 
         res = {
           status: jest.fn().mockImplementation(function () {
@@ -326,31 +267,12 @@ describe('Destinations Controller', function () {
           json: jest.fn().mockImplementation(function (obj) {
             this.data = obj.data;
           }),
-          data: null,
+          data: [],
         };
         next = jest.fn();
       });
       afterAll(() => {
         getFlightsSpy.mockRestore();
-      });
-
-      test('should use flightService', async function () {
-        await destinationsController.getCheapestWeekend(req, res, next);
-
-        // check that getWeekendFlights has been called
-        expect(flightService.getWeekendFlights).toHaveBeenCalled();
-      });
-
-      test('should search for one adult if nothing specified', async function () {
-        await destinationsController.getCheapestWeekend(req, res, next);
-
-        expect(flightService.getWeekendFlights).toHaveBeenCalledWith(
-          expect.objectContaining({
-            adults: 1,
-            children: 0,
-            infants: 0,
-          })
-        );
       });
 
       test('should return success if all good', async function () {
@@ -389,9 +311,24 @@ describe('Destinations Controller', function () {
         // checking that it has been cleaned
         expect(res.data[0]).not.toHaveProperty('countryFrom');
       });
+
+      // TODO: not sure if necessary ... isn't it part of endtoend tests?
+      test('should search for one adult if nothing specified', async function () {
+        await destinationsController.getCheapestWeekend(req, res, next);
+
+        expect(flightService.getWeekendFlights).toHaveBeenCalledWith(
+          expect.objectContaining({
+            adults: 1,
+            children: 0,
+            infants: 0,
+          })
+        );
+      });
     });
     describe('error cases', function () {
-      let res, next;
+      let req: Partial<TypedRequestQueryWithFilter<RegularFlightsParams>>,
+        res: Partial<APISuccessResponse> & { data: Itinerary[] },
+        next: NextFunction;
       beforeEach(() => {
         res = {
           status: jest.fn().mockImplementation(function () {
@@ -400,32 +337,13 @@ describe('Destinations Controller', function () {
           json: jest.fn().mockImplementation(function (obj) {
             this.data = obj.data;
           }),
-          data: null,
+          data: [],
         };
         next = jest.fn();
       });
 
-      // TODO: is it necessary? before getCheapestDestination, we have a middleware checking for input params
-      test('should return error 400 when no input parameters', async function () {
-        const req = { query: {} };
-
-        await destinationsController.getCheapestWeekend(req, res, next);
-
-        // check that response is an error
-        expect(next).toHaveBeenCalledWith(expect.any(AppError));
-
-        expect(next).toHaveBeenCalledWith(
-          expect.objectContaining({
-            statusCode: 400,
-            message: expect.stringContaining('departure location'),
-          })
-        );
-      });
-
       test('should return error 400 when unknown origin like PXR', async function () {
-        const req = {
-          query: CHEAPEST_DESTINATION_QUERY_FIXTURE_NON_EXISTING_ORIGIN,
-        };
+        req = { query: CHEAPEST_DESTINATION_QUERY_FIXTURE_NON_EXISTING_ORIGIN };
 
         await destinationsController.getCheapestWeekend(req, res, next);
 

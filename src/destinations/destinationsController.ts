@@ -3,6 +3,13 @@ import { catchAsyncKiwi } from '../utils/catchAsync';
 import flightService from '../data/flightService';
 import destinationsService from './destinationsService';
 import resultsHelper from '../utils/resultsHelper';
+import {
+  FilterParams,
+  RegularFlightsParams,
+  WeekendFlightsParams,
+} from '../common/types';
+import { TypedRequestQueryWithFilter } from '../common/interfaces';
+import { APISuccessResponse } from '../common/interfaces';
 
 /**
  * Find cheapest destinations from this origin.
@@ -13,22 +20,27 @@ import resultsHelper from '../utils/resultsHelper';
  * @param {*} req
  * @param {*} res
  */
-const getCheapestDestinations = catchAsyncKiwi(async (req, res) => {
-  const params = helper.prepareDefaultAPIParams(req.query);
+const getCheapestDestinations = catchAsyncKiwi(
+  async (
+    req: TypedRequestQueryWithFilter<RegularFlightsParams>,
+    res: APISuccessResponse
+  ): Promise<void> => {
+    const params = helper.prepareDefaultAPIParams(req.query);
 
-  const flights = await flightService.getFlights(params);
+    const flights = await flightService.getFlights(params);
 
-  let itineraries = flights.map(helper.cleanItineraryData);
-  const totalResults = itineraries.length;
-  itineraries = resultsHelper.applyFilters(itineraries, req.filter);
+    let itineraries = flights.map(helper.cleanItineraryData);
+    const totalResults = itineraries.length;
+    itineraries = resultsHelper.applyFilters(itineraries, req.filter);
 
-  res.status(200).json({
-    status: 'success',
-    totalResults,
-    shownResults: itineraries.length,
-    data: itineraries, //itineraries,
-  });
-});
+    res.status(200).json({
+      status: 'success',
+      totalResults,
+      shownResults: itineraries.length,
+      data: itineraries, //itineraries,
+    });
+  }
+);
 
 /**
  * Find common destinations to several origins.
@@ -38,47 +50,64 @@ const getCheapestDestinations = catchAsyncKiwi(async (req, res) => {
  * @param {*} req
  * @param {*} res
  */
-const getCommonDestinations = catchAsyncKiwi(async (req, res) => {
-  console.info(
-    'API - Getting common destinations with these params',
-    req.query
-  );
-  const allOriginsParams = helper.prepareSeveralOriginAPIParams(req.query);
+const getCommonDestinations = catchAsyncKiwi(
+  async (
+    req: TypedRequestQueryWithFilter<RegularFlightsParams>,
+    res: APISuccessResponse
+  ): Promise<void> => {
+    console.info(
+      'API - Getting common destinations with these params',
+      req.query
+    );
+    const allOriginsParams = helper.prepareSeveralOriginAPIParams(req.query);
 
-  // const instance = prepareAxiosRequest();
+    // const instance = prepareAxiosRequest();
 
-  const origins = req.query.origin.split(',');
+    const origins = req.query.origin.split(',');
 
-  let commonItineraries = await destinationsService.buildCommonItineraries(
-    allOriginsParams,
-    origins
-  );
-  const totalResults = commonItineraries.length;
-  commonItineraries = resultsHelper.applyFilters(commonItineraries, req.filter);
-  res.status(200).json({
-    status: 'success',
-    totalResults,
-    shownResults: commonItineraries.length,
-    data: commonItineraries,
-  });
-});
+    let commonItineraries = await destinationsService.buildCommonItineraries(
+      allOriginsParams,
+      origins
+    );
+    const totalResults = commonItineraries.length;
+    commonItineraries = resultsHelper.applyFilters(
+      commonItineraries,
+      req.filter
+    );
+    res.status(200).json({
+      status: 'success',
+      totalResults,
+      shownResults: commonItineraries.length,
+      data: commonItineraries,
+    });
+  }
+);
 
-const getCheapestWeekend = catchAsyncKiwi(async (req, res) => {
-  const params = helper.prepareDefaultAPIParams(req.query);
+const getCheapestWeekend = catchAsyncKiwi(
+  async (
+    req: TypedRequestQueryWithFilter<WeekendFlightsParams, FilterParams>,
+    res: APISuccessResponse
+  ): Promise<void> => {
+    const params = helper.prepareDefaultAPIParams(req.query);
 
-  const flights = await flightService.getWeekendFlights(params);
+    const flights = await flightService.getWeekendFlights(params);
 
-  let itineraries = flights.map(helper.cleanItineraryData);
-  const totalResults = itineraries.length;
+    let itineraries = flights.map(helper.cleanItineraryData);
+    const totalResults = itineraries.length;
 
-  itineraries = resultsHelper.applyFilters(itineraries, req.filter);
+    itineraries = resultsHelper.applyFilters(itineraries, req.filter);
 
-  res.status(200).json({
-    status: 'success',
-    totalResults,
-    shownResults: itineraries.length,
-    data: itineraries, //flights,
-  });
-});
+    res.status(200).json({
+      status: 'success',
+      totalResults,
+      shownResults: itineraries.length,
+      data: itineraries, //flights,
+    });
+  }
+);
 
-export = { getCheapestDestinations, getCommonDestinations, getCheapestWeekend };
+export = {
+  getCheapestDestinations,
+  getCommonDestinations,
+  getCheapestWeekend,
+};
