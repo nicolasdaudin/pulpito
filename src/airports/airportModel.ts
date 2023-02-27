@@ -17,7 +17,7 @@ const parsedAirports = JSON.parse(
   )
 );
 
-const filterAirportFields = (airport) => {
+const filterAirportFields = (airport: Partial<Airport>) => {
   const { iata_code, iso_country, municipality, name, type } = airport;
   return { iata_code, iso_country, municipality, name, type };
 };

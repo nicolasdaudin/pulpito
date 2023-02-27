@@ -1,3 +1,4 @@
+import { IataCode } from '../common/types';
 import {
   airportContainsQuerySearch,
   airportStartsWithQuerySearch,
@@ -82,7 +83,7 @@ export const findByIataCode = (iataCode: string) => {
  * @param {*} iataCodes city iata codes chosen by the user
  * @returns array with the airport descrptions for each iata code
  */
-export const fillAirportDescriptions = (iataCodes) => {
+export const fillAirportDescriptions = (iataCodes: IataCode[]) => {
   return iataCodes.map((iataCode) => {
     const airportInfo = findByIataCode(iataCode);
     return `${airportInfo.municipality} - ${airportInfo.name} (${airportInfo.iata_code}) - ${airportInfo.country}`;
