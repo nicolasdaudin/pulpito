@@ -80,6 +80,7 @@ export type WeekendFlightsParams = {
 } & QueryParams;
 
 export type QueryParams = {
+  [key: string]: string; // necessary to dynamically check properties in validator.
   sort?: string;
   limit?: string;
   page?: string;
@@ -103,3 +104,10 @@ export type APISuccessAnswer = {
   shownResults: number;
   data: object[];
 };
+
+export type BaseParamModel = {
+  required: boolean;
+  typeCheck: (str: string) => boolean;
+  errorMsg: string;
+};
+export type ParamModel = BaseParamModel & { name: string };

@@ -4,10 +4,19 @@ import {
   validateRequestParamsWeekend,
 } from './validatorService';
 import AppError from '../../utils/appError';
+import { TypedRequestQueryWithFilter } from '../../common/interfaces';
+import {
+  Itinerary,
+  RegularFlightsParams,
+  WeekendFlightsParams,
+} from '../../common/types';
+import { NextFunction, Response } from 'express-serve-static-core';
 
 describe('ValidatorService', function () {
+  // FIXME: all the tests depend on implementation details (like the error msg ...)
   describe('validate middleware', function () {
-    let req, res, next;
+    let res: Partial<Response> & { data: Itinerary[]; message: string },
+      next: NextFunction;
     beforeEach(() => {
       res = {
         status: jest.fn().mockImplementation(function () {
@@ -19,18 +28,16 @@ describe('ValidatorService', function () {
           this.data = obj.data;
           this.message = obj.message;
         }),
-        data: null,
-        message: null,
+        data: [],
+        message: '',
       };
-
-      req = {};
 
       next = jest.fn().mockImplementation(function (err) {
         console.error(err);
       });
     });
-
     describe('validateRequestParamsWeekend', function () {
+      let req: Partial<TypedRequestQueryWithFilter<WeekendFlightsParams>>;
       test('should call next with no arguments when params are ok', function () {
         req = {
           query: {
@@ -41,36 +48,50 @@ describe('ValidatorService', function () {
           },
         };
 
-        validateRequestParamsWeekend(req, res, next);
+        validateRequestParamsWeekend(
+          req as TypedRequestQueryWithFilter<WeekendFlightsParams>,
+          res as Response,
+          next
+        );
         // expect(next).toHaveBeenCalledWith() is always true, whether next is called without any argument or with an error.
         expect(next).not.toHaveBeenCalledWith(expect.any(AppError));
       });
+
       test('should call next with an AppError when origin param is missing', function () {
         req = {
           query: {
             destination: 'BXL',
             departureDateFrom: '22/06/2022',
             departureDateTo: '29/06/2022',
-          },
+          } as WeekendFlightsParams,
         };
 
-        validateRequestParamsWeekend(req, res, next);
+        validateRequestParamsWeekend(
+          req as TypedRequestQueryWithFilter<WeekendFlightsParams>,
+          res as Response,
+          next
+        );
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/missing(.*)origin/),
           })
         );
       });
+
       test('should call next with an AppError when destination param is missing', function () {
         req = {
           query: {
             origin: 'BXL',
             departureDateFrom: '22/06/2022',
             departureDateTo: '29/06/2022',
-          },
+          } as WeekendFlightsParams,
         };
 
-        validateRequestParamsWeekend(req, res, next);
+        validateRequestParamsWeekend(
+          req as TypedRequestQueryWithFilter<WeekendFlightsParams>,
+          res as Response,
+          next
+        );
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/missing(.*)destination/),
@@ -83,10 +104,14 @@ describe('ValidatorService', function () {
             origin: 'BXL',
             destination: 'MAD',
             departureDateTo: '29/06/2022',
-          },
+          } as WeekendFlightsParams,
         };
 
-        validateRequestParamsWeekend(req, res, next);
+        validateRequestParamsWeekend(
+          req as TypedRequestQueryWithFilter<WeekendFlightsParams>,
+          res as Response,
+          next
+        );
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/missing(.*)departureDateFrom/),
@@ -99,10 +124,14 @@ describe('ValidatorService', function () {
             origin: 'BXL',
             destination: 'MAD',
             departureDateFrom: '29/06/2022',
-          },
+          } as WeekendFlightsParams,
         };
 
-        validateRequestParamsWeekend(req, res, next);
+        validateRequestParamsWeekend(
+          req as TypedRequestQueryWithFilter<WeekendFlightsParams>,
+          res as Response,
+          next
+        );
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/missing(.*)departureDateTo/),
@@ -119,7 +148,11 @@ describe('ValidatorService', function () {
           },
         };
 
-        validateRequestParamsWeekend(req, res, next);
+        validateRequestParamsWeekend(
+          req as TypedRequestQueryWithFilter<WeekendFlightsParams>,
+          res as Response,
+          next
+        );
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/expected(.*)origin/),
@@ -129,16 +162,21 @@ describe('ValidatorService', function () {
     });
 
     describe('validateRequestParamsOneOrigin', function () {
+      let req: Partial<TypedRequestQueryWithFilter<RegularFlightsParams>>;
       test('should call next with no arguments when params are ok', function () {
         req = {
           query: {
             origin: 'MAD',
             departureDate: '22/06/2022',
             returnDate: '29/06/2022',
-          },
+          } as RegularFlightsParams,
         };
 
-        validateRequestParamsOneOrigin(req, res, next);
+        validateRequestParamsOneOrigin(
+          req as TypedRequestQueryWithFilter<RegularFlightsParams>,
+          res as Response,
+          next
+        );
         expect(next).not.toHaveBeenCalledWith(expect.any(AppError));
       });
       test('should call next with an AppError when origin param is missing', function () {
@@ -146,10 +184,14 @@ describe('ValidatorService', function () {
           query: {
             departureDate: '22/06/2022',
             returnDate: '29/06/2022',
-          },
+          } as RegularFlightsParams,
         };
 
-        validateRequestParamsOneOrigin(req, res, next);
+        validateRequestParamsOneOrigin(
+          req as TypedRequestQueryWithFilter<RegularFlightsParams>,
+          res as Response,
+          next
+        );
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/missing(.*)origin/),
@@ -162,10 +204,14 @@ describe('ValidatorService', function () {
           query: {
             origin: 'BXL',
             returnDate: '29/06/2022',
-          },
+          } as RegularFlightsParams,
         };
 
-        validateRequestParamsOneOrigin(req, res, next);
+        validateRequestParamsOneOrigin(
+          req as TypedRequestQueryWithFilter<RegularFlightsParams>,
+          res as Response,
+          next
+        );
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/missing(.*)departureDate/),
@@ -178,10 +224,14 @@ describe('ValidatorService', function () {
           query: {
             origin: 'BXL',
             departureDate: '29/06/2022',
-          },
+          } as RegularFlightsParams,
         };
 
-        validateRequestParamsOneOrigin(req, res, next);
+        validateRequestParamsOneOrigin(
+          req as TypedRequestQueryWithFilter<RegularFlightsParams>,
+          res as Response,
+          next
+        );
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/missing(.*)returnDate/),
@@ -197,7 +247,11 @@ describe('ValidatorService', function () {
           },
         };
 
-        validateRequestParamsOneOrigin(req, res, next);
+        validateRequestParamsOneOrigin(
+          req as TypedRequestQueryWithFilter<RegularFlightsParams>,
+          res as Response,
+          next
+        );
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/expected(.*)origin/),
@@ -207,6 +261,7 @@ describe('ValidatorService', function () {
     });
 
     describe('validateRequestParamsManyOrigins', function () {
+      let req: Partial<TypedRequestQueryWithFilter<RegularFlightsParams>>;
       test('should call next with no arguments when params are ok', function () {
         req = {
           query: {
@@ -217,7 +272,11 @@ describe('ValidatorService', function () {
           },
         };
 
-        validateRequestParamsManyOrigins(req, res, next);
+        validateRequestParamsManyOrigins(
+          req as TypedRequestQueryWithFilter<RegularFlightsParams>,
+          res as Response,
+          next
+        );
         expect(next).not.toHaveBeenCalledWith(expect.any(AppError));
       });
       test('should call next with an AppError when origin param is missing', function () {
@@ -225,10 +284,14 @@ describe('ValidatorService', function () {
           query: {
             departureDate: '22/06/2022',
             returnDate: '29/06/2022',
-          },
+          } as RegularFlightsParams,
         };
 
-        validateRequestParamsManyOrigins(req, res, next);
+        validateRequestParamsManyOrigins(
+          req as TypedRequestQueryWithFilter<RegularFlightsParams>,
+          res as Response,
+          next
+        );
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/missing(.*)origin/),
@@ -241,10 +304,14 @@ describe('ValidatorService', function () {
           query: {
             origin: 'MAD,BXL',
             returnDate: '29/06/2022',
-          },
+          } as RegularFlightsParams,
         };
 
-        validateRequestParamsManyOrigins(req, res, next);
+        validateRequestParamsManyOrigins(
+          req as TypedRequestQueryWithFilter<RegularFlightsParams>,
+          res as Response,
+          next
+        );
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/missing(.*)departureDate/),
@@ -257,10 +324,14 @@ describe('ValidatorService', function () {
           query: {
             origin: 'MAD,BXL',
             departureDate: '29/06/2022',
-          },
+          } as RegularFlightsParams,
         };
 
-        validateRequestParamsManyOrigins(req, res, next);
+        validateRequestParamsManyOrigins(
+          req as TypedRequestQueryWithFilter<RegularFlightsParams>,
+          res as Response,
+          next
+        );
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/missing(.*)returnDate/),
@@ -276,7 +347,11 @@ describe('ValidatorService', function () {
           },
         };
 
-        validateRequestParamsManyOrigins(req, res, next);
+        validateRequestParamsManyOrigins(
+          req as TypedRequestQueryWithFilter<RegularFlightsParams>,
+          res as Response,
+          next
+        );
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/expected(.*)origin/),
@@ -294,7 +369,11 @@ describe('ValidatorService', function () {
           },
         };
 
-        validateRequestParamsManyOrigins(req, res, next);
+        validateRequestParamsManyOrigins(
+          req as TypedRequestQueryWithFilter<RegularFlightsParams>,
+          res as Response,
+          next
+        );
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/same(.*)adults/),
@@ -312,7 +391,11 @@ describe('ValidatorService', function () {
           },
         };
 
-        validateRequestParamsManyOrigins(req, res, next);
+        validateRequestParamsManyOrigins(
+          req as TypedRequestQueryWithFilter<RegularFlightsParams>,
+          res as Response,
+          next
+        );
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/same(.*)children/),
@@ -330,7 +413,11 @@ describe('ValidatorService', function () {
           },
         };
 
-        validateRequestParamsManyOrigins(req, res, next);
+        validateRequestParamsManyOrigins(
+          req as TypedRequestQueryWithFilter<RegularFlightsParams>,
+          res as Response,
+          next
+        );
         expect(next).toHaveBeenCalledWith(
           expect.objectContaining({
             message: expect.stringMatching(/same(.*)infants/),
@@ -339,7 +426,7 @@ describe('ValidatorService', function () {
       });
     });
 
-    // no need for tests for checkMissingParams or checkWrongTypeParams
-    // their functionality is covered by testing the different validate middlewares
+    // FIXME: need for tests for checkMissingParams or checkWrongTypeParams, even if their functionality is covered by testing the different validate middlewares
+    // indeed when we test the valdiate middlewares we test the error messages, mainly.
   });
 });

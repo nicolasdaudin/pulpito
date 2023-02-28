@@ -1,14 +1,21 @@
 import validator from '../../utils/validator';
-import { isAlpha, isDate, isNumeric } from 'validator';
+import validatorJs from 'validator';
 import AppError from '../../utils/appError';
 import { NextFunction, Response } from 'express';
 import { TypedRequestQueryWithFilter } from '../../common/interfaces';
-import { FilterParams, QueryParams } from '../../common/types';
+import {
+  BaseParamModel,
+  FilterParams,
+  ParamModel,
+  QueryParams,
+  RegularFlightsParams,
+  WeekendFlightsParams,
+} from '../../common/types';
 import { getFilterParamsFromQueryParams } from './validatorHelper';
 
-const ONE_CITYCODE_PARAM_MODEL = {
+const ONE_CITYCODE_PARAM_MODEL: BaseParamModel = {
   required: true,
-  typeCheck: isAlpha,
+  typeCheck: validatorJs.isAlpha,
   errorMsg: 'only airport or airport area codes, for example LON or JFK', // see https://wikitravel.org/en/Metropolitan_Area_Airport_Codes
 };
 const SEVERAL_CITYCODES_PARAM_MODEL = {
@@ -18,12 +25,12 @@ const SEVERAL_CITYCODES_PARAM_MODEL = {
 };
 const DATE_PARAM_MODEL = {
   required: true,
-  typeCheck: (str) => isDate(str, { format: 'DD/MM/YYYY' }),
+  typeCheck: (str: string) => validatorJs.isDate(str, { format: 'DD/MM/YYYY' }),
   errorMsg: `a date of format DD/MM/YYYY, for example 22/06/2022`,
 };
 const ONE_PASSENGER_PARAM_MODEL = {
   required: false,
-  typeCheck: isNumeric,
+  typeCheck: validatorJs.isNumeric,
   errorMsg: 'a number, for example 2',
 };
 const SEVERAL_PASSENGERS_PARAM_MODEL = {
@@ -56,8 +63,12 @@ export const filterParams = (
  * @param {*} res
  * @param {*} next
  */
-export const validateRequestParamsWeekend = (req, res, next) => {
-  const requestModelParams = [
+export const validateRequestParamsWeekend = (
+  req: TypedRequestQueryWithFilter<WeekendFlightsParams>,
+  res: Response,
+  next: NextFunction
+) => {
+  const requestModelParams: ParamModel[] = [
     { name: 'origin', ...ONE_CITYCODE_PARAM_MODEL },
     {
       name: 'destination',
@@ -97,9 +108,13 @@ export const validateRequestParamsWeekend = (req, res, next) => {
  * @param {*} res
  * @param {*} next
  */
-export const validateRequestParamsManyOrigins = (req, res, next) => {
+export const validateRequestParamsManyOrigins = (
+  req: TypedRequestQueryWithFilter<RegularFlightsParams>,
+  res: Response,
+  next: NextFunction
+) => {
   // FIXME: is this really necessary to be so specific about parameter types? isn't it better to have a good documentation and only send an error msg like "Parameters have wrong type"
-  const requestModelParams = [
+  const requestModelParams: ParamModel[] = [
     { name: 'origin', ...SEVERAL_CITYCODES_PARAM_MODEL },
     {
       name: 'departureDate',
@@ -169,9 +184,13 @@ export const validateRequestParamsManyOrigins = (req, res, next) => {
  * @param {*} res
  * @param {*} next
  */
-export const validateRequestParamsOneOrigin = (req, res, next) => {
+export const validateRequestParamsOneOrigin = (
+  req: TypedRequestQueryWithFilter<RegularFlightsParams>,
+  res: Response,
+  next: NextFunction
+) => {
   // FIXME: is this really necessary to be so specific about parameter types? isn't it better to have a good documentation and only send an error msg like "Parameters have wrong type"
-  const requestModelParams = [
+  const requestModelParams: ParamModel[] = [
     {
       name: 'origin',
       ...ONE_CITYCODE_PARAM_MODEL,
@@ -212,7 +231,11 @@ export const validateRequestParamsOneOrigin = (req, res, next) => {
  * @param {*} next the next call if there is an error
  * @returns if no wrong type params
  */
-const checkWrongTypeParams = (modelParams, query, next) => {
+const checkWrongTypeParams = (
+  modelParams: ParamModel[],
+  query: QueryParams,
+  next: NextFunction
+) => {
   const wrongTypeParams = validator.findWrongTypeParams(modelParams, query);
   if (wrongTypeParams.length > 0) {
     const errorMsg = modelParams
@@ -236,7 +259,11 @@ const checkWrongTypeParams = (modelParams, query, next) => {
  * @param {*} next the next call if there is an error
  * @returns if no missing  params
  */
-const checkMissingParams = (modelParams, query, next) => {
+const checkMissingParams = (
+  modelParams: ParamModel[],
+  query: QueryParams,
+  next: NextFunction
+) => {
   const missingParams = validator.findMissingParams(modelParams, query);
   if (missingParams.length > 0)
     return next(
