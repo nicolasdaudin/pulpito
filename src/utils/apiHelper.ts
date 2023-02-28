@@ -131,6 +131,7 @@ const convertKiwiItineraryToItinerary = (input: KiwiItinerary): Itinerary => {
     countryTo: input.countryTo,
     distance: input.distance,
     duration: input.duration,
+    fare: input.fare,
     price: input.price,
     deep_link: input.deep_link,
     local_arrival: input.local_arrival,

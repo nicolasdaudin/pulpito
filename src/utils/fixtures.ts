@@ -106,6 +106,11 @@ const CHEAPEST_DESTINATION_KIWI_RESULT_FIXTURE = [
       return: 0,
       total: 4800,
     },
+    fare: {
+      adults: 60,
+      children: 60,
+      infants: 78.41,
+    },
     price: 48,
     route: [
       {

@@ -11,6 +11,7 @@ export type Itinerary = {
   };
   distance: number;
   duration: { departure: number; return: number; total: number };
+  fare: { adults: number; children: number; infants: number };
   price: number;
   route: Route[];
   deep_link: URL;
