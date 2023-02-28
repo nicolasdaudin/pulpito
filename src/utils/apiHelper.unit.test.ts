@@ -1,7 +1,11 @@
 import helper from './apiHelper';
 import apiOneWayAnswer from '../datasets/fixtures/apiOneWayAnswer.json';
 import apiReturnAnswer from '../datasets/fixtures/apiReturnAnswer.json';
-import { Itinerary, KiwiItinerary } from '../common/types';
+import {
+  Itinerary,
+  KiwiItinerary,
+  RegularFlightsParams,
+} from '../common/types';
 import {
   COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BOD,
   COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BRU,
@@ -95,6 +99,94 @@ describe('API Helper', function () {
         COMMON_DESTINATION_KIWI_RESULT_FIXTURE_MAD[0].price +
           COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BOD[0].price +
           COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BRU[0].price
+      );
+    });
+  });
+
+  describe('getMapPassengersPerOrigin', function () {
+    test('builds a map of total passengers per origin', () => {
+      const params: RegularFlightsParams[] = [
+        {
+          origin: 'MAD',
+          departureDate: '25/03/2023',
+          returnDate: '28/03/2023',
+          adults: '1',
+          children: '0',
+          infants: '0',
+        },
+        {
+          origin: 'BCN',
+          departureDate: '25/03/2023',
+          returnDate: '28/03/2023',
+          adults: '3',
+          children: '2',
+          infants: '1',
+        },
+        {
+          origin: 'CDG',
+          departureDate: '25/03/2023',
+          returnDate: '28/03/2023',
+          adults: '0',
+          children: '0',
+          infants: '0',
+        },
+      ];
+      const received = helper.getMapPassengersPerOrigin(params);
+
+      expect(received.get('MAD')).toBe(1);
+      expect(received.get('BCN')).toBe(6);
+      expect(received.get('CDG')).toBe(0);
+    });
+  });
+
+  describe('groupByDestination', function () {
+    test('groups itineraries by destination city', () => {
+      //     const itineraries : (Partial<Itinerary>)[] = [
+      //       {cityTo:'Milan',cityFrom:'Madrid'},
+      //     {cityTo:'Milan',cityFrom:'Bordeaux'},
+      //     {cityTo:'Milan',cityFrom:'Bruxelles'},
+      //     {cityTo:'Ibiza',cityFrom:'Bordeaux'},
+      //     {cityTo:'Ibiza',cityFrom:'Madrid'},
+      //     {cityTo:'Prague',cityFrom:'Bordeaux'}
+      // ];
+      const itineraries = [
+        ...COMMON_DESTINATION_KIWI_RESULT_FIXTURE_MAD,
+        ...COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BRU,
+        ...COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BOD,
+      ];
+
+      const receivedDestinations = helper.groupByDestination(itineraries);
+      const expectedDestinationCities = [
+        'Ibiza',
+        'Lisbonne',
+        'Genève',
+        'Oslo',
+        'Séville',
+        'Bilbao',
+        'Prague',
+      ];
+      expect(Array.from(receivedDestinations.keys())).toEqual(
+        expect.arrayContaining(expectedDestinationCities)
+      );
+
+      const expectedCityCodesForIbiza = ['MAD', 'BRU', 'BOD'];
+      const ibizaItineraries = receivedDestinations.get('Ibiza');
+      expect(ibizaItineraries).toHaveLength(3);
+      expect(expectedCityCodesForIbiza).toContain(
+        ibizaItineraries[0].cityCodeFrom
+      );
+      expect(expectedCityCodesForIbiza).toContain(
+        ibizaItineraries[1].cityCodeFrom
+      );
+      expect(expectedCityCodesForIbiza).toContain(
+        ibizaItineraries[2].cityCodeFrom
+      );
+
+      const expectedCityCodesForOslo = ['BOD'];
+      const osloItineraries = receivedDestinations.get('Oslo');
+      expect(osloItineraries).toHaveLength(1);
+      expect(expectedCityCodesForOslo).toContain(
+        osloItineraries[0].cityCodeFrom
       );
     });
   });
@@ -232,8 +324,10 @@ describe('API Helper', function () {
 
   describe('prepareSeveralOriginAPIParams', function () {
     test('should return an array of same lengh than the number of origins', () => {
-      const params = {
+      const params: RegularFlightsParams = {
         origin: 'MAD,CRL,BRU,SXF,JFK',
+        departureDate: '25/03/2023',
+        returnDate: '28/03/2023',
       };
 
       const preparedParams = helper.prepareSeveralOriginAPIParams(params);
@@ -244,6 +338,8 @@ describe('API Helper', function () {
     test('should return 1 adult, 0 children, 0 infant for each origin if nothing specified', () => {
       const params = {
         origin: 'MAD,CRL,BRU,SXF,JFK',
+        departureDate: '25/03/2023',
+        returnDate: '28/03/2023',
       };
 
       const preparedParams = helper.prepareSeveralOriginAPIParams(params);
@@ -256,6 +352,8 @@ describe('API Helper', function () {
     test('should return the correct number of adults, children and infants for each origin when specified', () => {
       const params = {
         origin: 'MAD,CRL,BRU,SXF,JFK',
+        departureDate: '25/03/2023',
+        returnDate: '28/03/2023',
         adults: '1,2,1,3,1',
         children: '0,0,3,1,1',
       };

@@ -1,12 +1,30 @@
 import { Settings, Duration, DateTime } from 'luxon';
+// import groupByToMap from 'core-js-pure/actual/array/group-by-to-map';
+import groupBy from 'lodash.groupby';
 import {
   CommonDestination,
   Itinerary,
   KiwiItinerary,
   KiwiRoute,
+  RegularFlightsParams,
   Route,
 } from '../common/types';
 Settings.defaultLocale = 'fr';
+
+const groupByDestination = (
+  itineraries: Itinerary[]
+): Map<string, Itinerary[]> => {
+  const destinationsDictionary = groupBy(itineraries, 'cityTo');
+  // groupByToMap(itineraries, (item) => {
+  //   return item.cityTo;
+  // });
+
+  const destinations = new Map<string, Itinerary[]>();
+  for (const key in destinationsDictionary) {
+    destinations.set(key, destinationsDictionary[key]);
+  }
+  return destinations;
+};
 
 /**
  * Filters destinations according to if they can be reached from all the origins.
@@ -359,27 +377,44 @@ const prepareSeveralOriginAPIParamsFromView = (params) => {
     }
  * @returns
  */
-const prepareSeveralOriginAPIParams = (params) => {
+const prepareSeveralOriginAPIParams = (
+  params: RegularFlightsParams
+): RegularFlightsParams[] => {
   const origins = params.origin.split(',');
   const adults = params.adults
     ? params.adults.split(',')
-    : new Array(origins.length).fill(1);
+    : new Array(origins.length).fill('1');
   const children = params.children
     ? params.children.split(',')
-    : new Array(origins.length).fill(0);
+    : new Array(origins.length).fill('0');
   const infants = params.infants
     ? params.infants.split(',')
-    : new Array(origins.length).fill(0);
+    : new Array(origins.length).fill('0');
 
   return origins.map((origin, i) => {
     return {
       ...params,
       origin,
-      adults: +adults[i],
-      children: +children[i],
-      infants: +infants[i],
+      adults: adults[i],
+      children: children[i],
+      infants: infants[i],
     };
   });
+};
+
+const getMapPassengersPerOrigin = (
+  allOriginsParams: RegularFlightsParams[]
+): Map<string, number> => {
+  //FIXME: decide if RegularFlightsParams.adults can be undefined or no (optional or no). We can probably refactor and add the default number of adults, children and infants in the validation software.
+  return new Map(
+    allOriginsParams.map((oneOriginParam) => [
+      oneOriginParam.origin,
+      +(oneOriginParam.adults ?? 1) +
+        +(oneOriginParam.children ?? 0) +
+        +(oneOriginParam.infants ?? 0),
+    ])
+  );
+  // return new Map();
 };
 
 export = {
@@ -393,4 +428,6 @@ export = {
   prepareDefaultAPIParams,
   prepareSeveralOriginAPIParams,
   prepareSeveralOriginAPIParamsFromView,
+  groupByDestination,
+  getMapPassengersPerOrigin,
 };
