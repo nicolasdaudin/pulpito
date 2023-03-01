@@ -152,7 +152,7 @@ const forgotPassword = catchAsync(async (req, res, next) => {
 
     // if there has been an error, we reset the password reset token thing
     user.passwordResetToken = undefined;
-    user.passwordExpires = undefined;
+    user.passwordResetExpiresAt = undefined;
     await user.save({ validateBeforeSave: false });
 
     return next(
