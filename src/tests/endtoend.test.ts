@@ -1,15 +1,19 @@
 import request from 'supertest';
 import app from '../app';
 import { faker } from '@faker-js/faker';
-import User from '../user/userModel';
-import mongoose from 'mongoose';
+import User, { IUser } from '../user/userModel';
+import mongoose, { HydratedDocument } from 'mongoose';
 import { DateTime } from 'luxon';
+import { Itinerary } from '../common/types';
 
 const KIWI_DATE_FORMAT = `dd'/'LL'/'yyyy`;
 
 describe('End to end tests', () => {
   jest.setTimeout(15000);
   beforeAll(async () => {
+    if (!process.env.DATABASE || !process.env.DATABASE_PASSWORD)
+      throw Error('Missing env variables');
+
     const DB = process.env.DATABASE.replace(
       '<PASSWORD>',
       process.env.DATABASE_PASSWORD
@@ -86,7 +90,7 @@ describe('End to end tests', () => {
     });
 
     describe('API Signup and Auth Route', () => {
-      let newUser, fakeUser;
+      let newUser: HydratedDocument<IUser>, fakeUser: Partial<IUser>;
       beforeEach(async () => {
         // creating a fake user in DB
 
@@ -215,7 +219,7 @@ describe('End to end tests', () => {
         expect(response.statusCode).toBe(200);
         expect(response.body.totalResults).toBeGreaterThan(0);
         expect(
-          response.body.data[0].flights.every((flight) =>
+          response.body.data[0].flights.every((flight: Itinerary) =>
             origins.includes(flight.cityCodeFrom)
           )
         ).toBe(true);
