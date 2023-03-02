@@ -117,10 +117,10 @@ const addFavAirportToUser = catchAsync(
       );
     }
 
-    const updatedUser = await UserRepository.addFavAirportToUser(
+    const updatedUser = (await UserRepository.addFavAirportToUser(
       req.user.id,
       req.body.airport
-    );
+    )) as IUser;
 
     res.status(200).json({
       status: 'success',

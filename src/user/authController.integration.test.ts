@@ -12,6 +12,8 @@ describe('AuthController', () => {
   jest.setTimeout(15000);
 
   beforeAll(async () => {
+    if (!process.env.DATABASE || !process.env.DATABASE_PASSWORD)
+      throw new Error('missing env variables');
     const DB = process.env.DATABASE.replace(
       '<PASSWORD>',
       process.env.DATABASE_PASSWORD
@@ -29,8 +31,8 @@ describe('AuthController', () => {
   // TODO: improve typing of req and have something like TypedRequestQueryWithFilter
   let req: Partial<Request>,
     res: Partial<Response> & {
-      data: { user: HydratedDocument<IUser> };
-      message: string;
+      data?: { user: HydratedDocument<IUser> };
+      message?: string;
     },
     next: NextFunction;
   beforeEach(() => {
@@ -46,8 +48,6 @@ describe('AuthController', () => {
         this.data = obj.data;
         this.message = obj.message;
       }),
-      data: null,
-      message: '',
       cookie: jest.fn().mockImplementation(function () {
         // console.log('calling res.status');
         return this;
@@ -73,6 +73,8 @@ describe('AuthController', () => {
         expect.anything(),
         expect.anything()
       );
+
+      if (!process.env.JWT_SECRET) throw Error('missing env variables');
 
       const decoded = (await jwt.verify(
         token,
@@ -103,7 +105,7 @@ describe('AuthController', () => {
         expect(res.cookie).toHaveBeenCalled();
         expect(fakeUserFromDb.password).toBeUndefined();
         expect(res.status).toHaveBeenCalledWith(fakeStatusCode);
-        expect(res.data.user._id).toBe(fakeUserFromDb._id);
+        expect(res.data?.user._id).toBe(fakeUserFromDb._id);
       });
     });
   });
@@ -133,12 +135,14 @@ describe('AuthController', () => {
 
         // expect(usersLengthAfterCreate).toBe(usersLengthBeforeCreate + 1);
 
-        const createdUser = await User.findOne({ email: fakeUser.email });
+        const createdUser = (await User.findOne({
+          email: fakeUser.email,
+        })) as IUser;
         expect(createdUser.email.toLowerCase()).toEqual(
           fakeUser.email.toLowerCase()
         );
 
-        const result = await User.deleteOne({ email: createdUser.email });
+        const result = await User.deleteOne({ email: createdUser?.email });
         console.log(
           `User with email ${fakeUser.email} correctly deleted after test? ${
             result.deletedCount > 0
@@ -188,7 +192,7 @@ describe('AuthController', () => {
         await authController.login(req, res, next);
 
         expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.data.user._id).toEqual(newUser._id);
+        expect(res.data?.user._id).toEqual(newUser._id);
       });
     });
     describe('error cases', () => {
@@ -241,7 +245,7 @@ describe('AuthController', () => {
 
     // here we need to redefine req to allow TS compilation
     // otherwise it errors on req.user.id saying property user does not exist on Request
-    let req: Partial<Request> & { user: HydratedDocument<IUser> };
+    let req: Partial<Request> & { user?: HydratedDocument<IUser> };
 
     beforeEach(async () => {
       // creating a fake user in DB
@@ -256,6 +260,8 @@ describe('AuthController', () => {
       };
       newUser = await User.create(fakeUser);
 
+      if (!process.env.JWT_SECRET) throw Error('missing env variables');
+
       token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN,
       });
@@ -264,7 +270,6 @@ describe('AuthController', () => {
       // otherwise it errors on req.user.id saying property user does not exist on Request
       req = {
         headers: { authorization: 'Bearer ' + token },
-        user: null,
       };
     });
     afterEach(async () => {
@@ -274,7 +279,7 @@ describe('AuthController', () => {
       test('should grant access to protected route', async function () {
         await authController.protect(req, res, next);
 
-        expect(req.user.id).toEqual(newUser.id);
+        expect(req.user?.id).toEqual(newUser.id);
       });
     });
     describe('error cases', () => {
@@ -325,7 +330,7 @@ describe('AuthController', () => {
         expect(sendPasswordResetTokenEmailSpy).toHaveBeenCalled();
 
         // retrieve the new user from DB
-        const updatedUser = await User.findById(newUser.id);
+        const updatedUser = (await User.findById(newUser.id)) as IUser;
         //console.log('newUser', newUser);
         //console.log('updatedUser', updatedUser);
         expect(updatedUser.passwordResetToken).not.toBeUndefined();

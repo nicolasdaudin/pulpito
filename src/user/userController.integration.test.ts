@@ -1,6 +1,6 @@
 import userController from './userController';
 import User, { IUser } from './userModel';
-import mongoose, { HydratedDocument, Types } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import { faker } from '@faker-js/faker';
 import { NextFunction, Request, Response } from 'express-serve-static-core';
 
@@ -10,6 +10,8 @@ describe('UserController', () => {
   let fakeUser: Partial<IUser>;
 
   beforeAll(async () => {
+    if (!process.env.DATABASE || !process.env.DATABASE_PASSWORD)
+      throw new Error('missing env variables');
     const DB = process.env.DATABASE.replace(
       '<PASSWORD>',
       process.env.DATABASE_PASSWORD
@@ -24,7 +26,7 @@ describe('UserController', () => {
   });
 
   let req: Partial<Request> & { user: Partial<HydratedDocument<IUser>> },
-    res: Partial<Response> & { data: any; message: string },
+    res: Partial<Response> & Partial<{ data: any; message: string }>,
     next: NextFunction;
   beforeEach(() => {
     res = {
@@ -37,8 +39,8 @@ describe('UserController', () => {
         this.data = obj.data;
         this.message = obj.message;
       }),
-      data: null,
-      message: null,
+      data: undefined,
+      message: '',
     };
 
     next = jest.fn().mockImplementation(function (err) {
