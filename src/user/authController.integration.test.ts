@@ -1,12 +1,12 @@
-import { promisify } from 'util';
 import authController from './authController';
 // import AppError from '../utils/appError';
-import mongoose from 'mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 import { faker } from '@faker-js/faker';
-import User from './userModel';
+import User, { IUser } from './userModel';
 import email from '../utils/email';
 import jwt from 'jsonwebtoken';
 import AppError from '../utils/appError';
+import { NextFunction, Request, Response } from 'express-serve-static-core';
 
 describe('AuthController', () => {
   jest.setTimeout(15000);
@@ -25,7 +25,14 @@ describe('AuthController', () => {
     mongoose.disconnect();
   });
 
-  let req, res, next;
+  // TODO: dependency to Mongoose but we are just testing integration, this should be abstracted, right?
+  // TODO: improve typing of req and have something like TypedRequestQueryWithFilter
+  let req: Partial<Request>,
+    res: Partial<Response> & {
+      data: { user: HydratedDocument<IUser> };
+      message: string;
+    },
+    next: NextFunction;
   beforeEach(() => {
     res = {
       status: jest.fn().mockImplementation(function () {
@@ -40,7 +47,7 @@ describe('AuthController', () => {
         this.message = obj.message;
       }),
       data: null,
-      message: null,
+      message: '',
       cookie: jest.fn().mockImplementation(function () {
         // console.log('calling res.status');
         return this;
@@ -55,7 +62,8 @@ describe('AuthController', () => {
   describe('signToken', function () {
     test('should sign a token', async () => {
       const signSpy = jest.spyOn(jwt, 'sign');
-      const fakeId = faker.database.mongodbObjectId();
+      const fakeId =
+        faker.database.mongodbObjectId() as unknown as Types.ObjectId;
 
       const token = authController.signToken(fakeId);
 
@@ -66,10 +74,10 @@ describe('AuthController', () => {
         expect.anything()
       );
 
-      const decoded = await promisify(jwt.verify)(
+      const decoded = (await jwt.verify(
         token,
         process.env.JWT_SECRET
-      );
+      )) as jwt.JwtPayload;
       expect(decoded.id).toBe(fakeId);
     });
   });
@@ -79,19 +87,23 @@ describe('AuthController', () => {
       test('should sign a token, add it to the cookies and prepare the answer', () => {
         const signSpy = jest.spyOn(jwt, 'sign');
 
-        const fakeUser = {
-          _id: faker.database.mongodbObjectId(),
+        const fakeUserFromDb: Partial<HydratedDocument<IUser>> = {
+          _id: faker.database.mongodbObjectId() as unknown as Types.ObjectId,
           password: faker.internet.password(),
         };
         const fakeStatusCode = faker.internet.httpStatusCode();
 
-        authController.createSendToken(fakeUser, fakeStatusCode, res);
+        authController.createSendToken(
+          fakeUserFromDb as HydratedDocument<IUser>,
+          fakeStatusCode,
+          res as Response
+        );
 
         expect(signSpy).toHaveBeenCalled();
         expect(res.cookie).toHaveBeenCalled();
-        expect(fakeUser.password).toBeUndefined();
+        expect(fakeUserFromDb.password).toBeUndefined();
         expect(res.status).toHaveBeenCalledWith(fakeStatusCode);
-        expect(res.data.user._id).toBe(fakeUser._id);
+        expect(res.data.user._id).toBe(fakeUserFromDb._id);
       });
     });
   });
@@ -143,7 +155,8 @@ describe('AuthController', () => {
   });
 
   describe('login', () => {
-    let newUser, fakeUser;
+    let newUser: HydratedDocument<IUser>;
+    let fakeUser: Partial<IUser>;
     beforeEach(async () => {
       // creating a fake user in DB
 
@@ -222,7 +235,14 @@ describe('AuthController', () => {
   });
 
   describe('protect', () => {
-    let token, newUser, fakeUser;
+    let token;
+    let newUser: HydratedDocument<IUser>;
+    let fakeUser: Partial<IUser>;
+
+    // here we need to redefine req to allow TS compilation
+    // otherwise it errors on req.user.id saying property user does not exist on Request
+    let req: Partial<Request> & { user: HydratedDocument<IUser> };
+
     beforeEach(async () => {
       // creating a fake user in DB
 
@@ -240,8 +260,11 @@ describe('AuthController', () => {
         expiresIn: process.env.JWT_EXPIRES_IN,
       });
 
-      req.headers = {
-        authorization: 'Bearer ' + token,
+      // here we need to redefine req to allow TS compilation
+      // otherwise it errors on req.user.id saying property user does not exist on Request
+      req = {
+        headers: { authorization: 'Bearer ' + token },
+        user: null,
       };
     });
     afterEach(async () => {
@@ -266,7 +289,8 @@ describe('AuthController', () => {
 
   describe('forgotPassword', function () {
     describe('success cases', () => {
-      let newUser;
+      let newUser: HydratedDocument<IUser>;
+
       beforeEach(async () => {
         // creating a fake user in DB
 
