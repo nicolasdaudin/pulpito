@@ -1,10 +1,13 @@
 import userController from './userController';
-import User from './userModel';
-import mongoose from 'mongoose';
+import User, { IUser } from './userModel';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 import { faker } from '@faker-js/faker';
+import { NextFunction, Request, Response } from 'express-serve-static-core';
 
 describe('UserController', () => {
   jest.setTimeout(15000);
+  let newUser: HydratedDocument<IUser>;
+  let fakeUser: Partial<IUser>;
 
   beforeAll(async () => {
     const DB = process.env.DATABASE.replace(
@@ -20,7 +23,9 @@ describe('UserController', () => {
     mongoose.disconnect();
   });
 
-  let req, res, next;
+  let req: Partial<Request> & { user: Partial<HydratedDocument<IUser>> },
+    res: Partial<Response> & { data: any; message: string },
+    next: NextFunction;
   beforeEach(() => {
     res = {
       status: jest.fn().mockImplementation(function () {
@@ -46,7 +51,7 @@ describe('UserController', () => {
       test('should get all users', async () => {
         // console.log(allUsers);
 
-        await userController.getAllUsers(req, res);
+        await userController.getAllUsers(req as Request, res as Response);
 
         console.log(res.data.users);
         expect(res.status).toHaveBeenCalledWith(200);
@@ -58,7 +63,6 @@ describe('UserController', () => {
   });
 
   describe('updateMe', () => {
-    let newUser, fakeUser;
     beforeEach(async () => {
       // creating a fake user in DB
 
@@ -104,7 +108,6 @@ describe('UserController', () => {
   });
 
   describe('airports', () => {
-    let newUser, fakeUser;
     beforeEach(async () => {
       // creating a fake user in DB
 
@@ -207,7 +210,6 @@ describe('UserController', () => {
   });
 
   describe('deleteMe', () => {
-    let newUser, fakeUser;
     beforeEach(async () => {
       // creating a fake user in DB
 
