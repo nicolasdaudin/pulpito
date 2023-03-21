@@ -1,7 +1,8 @@
-import User from './userModel';
+import { IataCode } from '../common/types';
+import User, { IUser } from './userModel';
 
 export class UserRepository {
-  static updateOne = async (id, update) => {
+  static updateOne = async (id: string, update: Partial<IUser>) => {
     return await User.findByIdAndUpdate(id, update, {
       new: true,
       runValidators: true, // fields validator will be run, for example isEmail()
@@ -12,17 +13,17 @@ export class UserRepository {
     return await User.find();
   };
 
-  static findOne = async (id) => {
+  static findOne = async (id: string) => {
     return await User.findById(id);
   };
 
-  static deleteOne = async (id) => {
+  static deleteOne = async (id: string) => {
     await User.findByIdAndUpdate(id, {
       active: false,
     });
   };
 
-  static addFavAirportToUser = async (id, airport) => {
+  static addFavAirportToUser = async (id: string, airport: IataCode) => {
     return await User.findByIdAndUpdate(
       id,
       {
@@ -34,7 +35,7 @@ export class UserRepository {
     );
   };
 
-  static removeFavAirportFromUser = async (id, airport) => {
+  static removeFavAirportFromUser = async (id: string, airport: IataCode) => {
     return await User.findByIdAndUpdate(
       id,
       {
