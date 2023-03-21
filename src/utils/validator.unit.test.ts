@@ -1,5 +1,5 @@
 import validator from './validator';
-import { isAlpha, isDate, isNumeric } from 'validator';
+import { isAlpha, isDate, isNumeric } from 'validator/validator';
 
 describe('validator utils', () => {
   describe('isCommaSeparatedAlpha', () => {

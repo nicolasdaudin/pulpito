@@ -344,9 +344,9 @@ describe('API Helper', function () {
 
       const preparedParams = helper.prepareSeveralOriginAPIParams(params);
 
-      expect(preparedParams[0].adults).toBe(1);
-      expect(preparedParams[0].children).toBe(0);
-      expect(preparedParams[0].infants).toBe(0);
+      expect(preparedParams[0].adults).toBe('1');
+      expect(preparedParams[0].children).toBe('0');
+      expect(preparedParams[0].infants).toBe('0');
     });
 
     test('should return the correct number of adults, children and infants for each origin when specified', () => {
@@ -360,9 +360,9 @@ describe('API Helper', function () {
 
       const preparedParams = helper.prepareSeveralOriginAPIParams(params);
 
-      expect(preparedParams[1].adults).toBe(2);
-      expect(preparedParams[2].children).toBe(3);
-      expect(preparedParams[0].infants).toBe(0);
+      expect(preparedParams[1].adults).toBe('2');
+      expect(preparedParams[2].children).toBe('3');
+      expect(preparedParams[0].infants).toBe('0');
     });
   });
 });

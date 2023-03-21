@@ -175,17 +175,17 @@ describe('Destinations Controller', function () {
         expect(flightService.getFlights).toHaveBeenNthCalledWith(
           1,
           expect.objectContaining({
-            adults: 1,
-            children: 0,
-            infants: 0,
+            adults: '1',
+            children: '0',
+            infants: '0',
           })
         );
         expect(flightService.getFlights).toHaveBeenNthCalledWith(
           COMMON_DESTINATION_QUERY_FIXTURE.origin.split(',').length - 1,
           expect.objectContaining({
-            adults: 1,
-            children: 0,
-            infants: 0,
+            adults: '1',
+            children: '0',
+            infants: '0',
           })
         );
       });
