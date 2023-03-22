@@ -2,7 +2,8 @@ import { Settings, Duration, DateTime } from 'luxon';
 // import groupByToMap from 'core-js-pure/actual/array/group-by-to-map';
 import groupBy from 'lodash.groupby';
 import {
-  CommonDestination,
+  DestinationWithItineraries,
+  IataCode,
   Itinerary,
   KiwiItinerary,
   KiwiRoute,
@@ -35,7 +36,10 @@ const groupByDestination = (
  * @param {*} origins an array of the origins from which we are departing (as iata code, i.e. [ 'MAD', 'CDG', 'BRU' ])
  * @returns an array of destination cities
  */
-const filterDestinationCities = (destinations, origins) => {
+const filterDestinationCities = (
+  destinations: Map<string, Itinerary[]>,
+  origins: IataCode[]
+) => {
   return Array.from(destinations.keys()).filter((key) =>
     isCommonDestination(destinations.get(key), origins)
   );
@@ -47,17 +51,21 @@ const filterDestinationCities = (destinations, origins) => {
  * @param {*} origins array of origins (as iata code, i.e. [ 'MAD', 'CDG', 'BRU' ])
  * @returns true if all the origins can be reached from that destination, false otherwise
  */
-const isCommonDestination = (destination, origins) => {
-  // for each origin ('every'), I want to find it at least once as an origin ('cityCodeFrom' or 'flyFrom') in the list of flights corresponding to this destination ('destinations.get(key)')
+const isCommonDestination = (itineraries: Itinerary[], origins: IataCode[]) => {
+  // for each origin ('every'), I want to find it at least once as an origin ('cityCodeFrom' or 'flyFrom') in the list of itineraries ('destinations.get(key)')
   // be careful with cityCodeFrom and flyFrom : for metropolitan areas like London NewYork Paris and others, cityCodeFrom is the iata code of the metropolitan area, and flyFrom the actual airport
   // for example flyFrom=ORY and cityCodeFrom=PAR
 
   return origins.every(
     (origin) =>
-      destination.findIndex(
-        (value) => value.cityCodeFrom === origin || value.flyFrom === origin
+      itineraries.findIndex((itinerary) =>
+        itineraryHasOrigin(itinerary, origin)
       ) > -1
   );
+};
+
+const itineraryHasOrigin = (itinerary: Itinerary, origin: IataCode) => {
+  return itinerary.cityCodeFrom === origin || itinerary.flyFrom === origin;
 };
 
 /**
@@ -68,13 +76,13 @@ const isCommonDestination = (destination, origins) => {
  * @returns an object for that destination, with aggregated info
  */
 const prepareItineraryData = (
-  dest,
+  dest: string,
   itineraries: Itinerary[],
-  passengersPerOrigin
+  passengersPerOrigin: Map<string, number>
 ) => {
-  // FIXME: I had to add 'any' otherwise the TypeScript compiler would not allow "sequentially added properties". I need to create a type or an interface
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const itinerary: Partial<CommonDestination> = { cityTo: dest };
+  const itinerary: Partial<DestinationWithItineraries> = {
+    cityTo: dest,
+  };
 
   // corresponding origins to that particular destination, we remove flights that do not go to that destination
   // itinerary.flights will have one item per origin
@@ -164,7 +172,7 @@ const convertKiwiRouteToRoute = (input: KiwiRoute): Route => {
  * @param {*} input itinerary to be cleaned. Won't be mutated.
  * @returns a copy of the itinerary, but cleaned.
  */
-const cleanItineraryData = (input: Itinerary) => {
+const cleanItineraryData = (input: Itinerary): Itinerary => {
   const itinerary = Object.assign({}, input);
 
   // delete itinerary.type_flights;
@@ -202,7 +210,13 @@ const cleanItineraryData = (input: Itinerary) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const route: any = {
     oneway: {
+      flyFrom: onewayFlights[0].flyFrom,
+      flyTo: onewayFlights[onewayFlights.length - 1].flyTo,
+      duration: Duration.fromMillis(
+        itinerary.duration.departure * 1000
+      ).toFormat("hh'h'mm"),
       flights: onewayFlights,
+      connections: extractConnections(onewayFlights),
       local_departure: formatTime(onewayFlights[0].local_departure),
       local_arrival: formatTime(
         onewayFlights[onewayFlights.length - 1].local_arrival
@@ -211,19 +225,19 @@ const cleanItineraryData = (input: Itinerary) => {
       utc_arrival: formatTime(
         onewayFlights[onewayFlights.length - 1].utc_arrival
       ),
-      connections: extractConnections(onewayFlights),
-      flyFrom: onewayFlights[0].flyFrom,
-      flyTo: onewayFlights[onewayFlights.length - 1].flyTo,
-      duration: Duration.fromMillis(
-        itinerary.duration.departure * 1000
-      ).toFormat("hh'h'mm"),
     },
   };
 
   // if there are return flights
   if (returnFlights && returnFlights.length > 0) {
     route.return = {
+      flyFrom: returnFlights[0].flyFrom,
+      flyTo: returnFlights[returnFlights.length - 1].flyTo,
+      duration: Duration.fromMillis(itinerary.duration.return * 1000).toFormat(
+        "hh'h'mm"
+      ),
       flights: returnFlights,
+      connections: extractConnections(returnFlights),
       local_departure: formatTime(returnFlights[0].local_departure),
       local_arrival: formatTime(
         returnFlights[returnFlights.length - 1].local_arrival
@@ -231,12 +245,6 @@ const cleanItineraryData = (input: Itinerary) => {
       utc_departure: formatTime(returnFlights[0].utc_departure),
       utc_arrival: formatTime(
         returnFlights[returnFlights.length - 1].utc_arrival
-      ),
-      connections: extractConnections(returnFlights),
-      flyFrom: returnFlights[0].flyFrom,
-      flyTo: returnFlights[returnFlights.length - 1].flyTo,
-      duration: Duration.fromMillis(itinerary.duration.return * 1000).toFormat(
-        "hh'h'mm"
       ),
     };
   }

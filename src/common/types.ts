@@ -21,7 +21,7 @@ export type Itinerary = {
   utc_departure: ISODate;
 };
 
-export type CommonDestination = {
+export type DestinationWithItineraries = {
   cityTo: string;
   flights: Itinerary[];
   countryTo: string;
