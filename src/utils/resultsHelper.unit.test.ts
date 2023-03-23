@@ -1,165 +1,203 @@
 import helper from './resultsHelper';
 import { RESULTS_SEARCH_LIMIT } from '../config';
+import {
+  DestinationWithItineraries,
+  FilterParams,
+  Itinerary,
+  Route,
+} from '../common/types';
 
 describe('Results Helper', () => {
   const ZERO_CONNECTIONS = [];
   const ONE_CONNECTION = ['London'];
   const TWO_CONNECTIONS = ['London', 'Chicago'];
-  const ITINERARY_SEVERAL_ORIGINS = {
+  const DESTINATION_WITH_ITINERARIES: Partial<DestinationWithItineraries> = {
     cityTo: 'Dallas',
-    flights: [
+    itineraries: [
       {
         flyFrom: 'CDG',
-        route: {
-          oneway: {
-            connections: ZERO_CONNECTIONS,
-          },
-          return: {
-            connections: ONE_CONNECTION,
-          },
+
+        onewayRoute: {
+          connections: ZERO_CONNECTIONS,
         },
+        returnRoute: {
+          connections: ONE_CONNECTION,
+        },
+
         price: 978,
         // fare: { adults: 978 },
-      },
+      } as Itinerary,
       {
         flyFrom: 'LYS',
-        route: {
-          oneway: {
-            connections: TWO_CONNECTIONS,
-          },
-          return: {
-            connections: TWO_CONNECTIONS,
-          },
+        onewayRoute: {
+          connections: TWO_CONNECTIONS,
         },
+        returnRoute: {
+          connections: TWO_CONNECTIONS,
+        },
+
         price: 1245,
         //fare: { adults: 1245 },
-      },
+      } as Itinerary,
     ],
     price: 2223, // 978 + 12
   };
-  const ITINERARY_SEVERAL_ORIGINS_2 = {
+  const DESTINATION_WITH_ITINERARIES_2: Partial<DestinationWithItineraries> = {
     cityTo: 'Bangkok',
-    flights: [
+    itineraries: [
       {
         flyFrom: 'CDG',
-        route: {
-          oneway: {
-            connections: ZERO_CONNECTIONS,
-          },
-          return: {
-            connections: ONE_CONNECTION,
-          },
+        onewayRoute: {
+          connections: ZERO_CONNECTIONS,
         },
+        returnRoute: {
+          connections: ONE_CONNECTION,
+        },
+
         price: 1521,
         // fare: { adults: 978 },
-      },
+      } as Itinerary,
       {
         flyFrom: 'BER',
-        route: {
-          oneway: {
-            connections: TWO_CONNECTIONS,
-          },
-          return: {
-            connections: TWO_CONNECTIONS,
-          },
+
+        onewayRoute: {
+          connections: TWO_CONNECTIONS,
         },
+        returnRoute: {
+          connections: TWO_CONNECTIONS,
+        },
+
         price: 1314,
         //fare: { adults: 1245 },
-      },
+      } as Itinerary,
     ],
     price: 2835, // 1521 + 1314
   };
-  const ITINERARY_ONE_ORIGIN = {
+  const ITINERARY_ONE_ORIGIN: Partial<Itinerary> = {
     cityTo: 'Dallas',
     flyFrom: 'CDG',
-    route: {
-      oneway: {
-        connections: ONE_CONNECTION,
-      },
-      return: {
-        connections: ONE_CONNECTION,
-      },
-    },
+    onewayRoute: {
+      connections: ONE_CONNECTION,
+    } as Route,
+    returnRoute: {
+      connections: ONE_CONNECTION,
+    } as Route,
+
     price: 1120,
     // fare: { adults: 1120 },
   };
 
   describe('filterByMaxConnections', () => {
     test('should return true when there are several origins and no flights have  more than 2 connections', () => {
-      expect(helper.filterByMaxConnections(ITINERARY_SEVERAL_ORIGINS, 2)).toBe(
-        true
-      );
+      expect(
+        helper.filterByMaxConnections(
+          DESTINATION_WITH_ITINERARIES as DestinationWithItineraries,
+          2
+        )
+      ).toBe(true);
     });
     test('should return true when there is only origin and no flights have  more than 2 connections', () => {
-      expect(helper.filterByMaxConnections(ITINERARY_ONE_ORIGIN, 2)).toBe(true);
+      expect(
+        helper.filterByMaxConnections(ITINERARY_ONE_ORIGIN as Itinerary, 2)
+      ).toBe(true);
     });
     test('should return false when there are several origins and at least one flight have more than 1 connection', () => {
-      expect(helper.filterByMaxConnections(ITINERARY_SEVERAL_ORIGINS, 1)).toBe(
-        false
-      );
+      expect(
+        helper.filterByMaxConnections(
+          DESTINATION_WITH_ITINERARIES as DestinationWithItineraries,
+          1
+        )
+      ).toBe(false);
     });
     test('should return false when there is only one origin and at least one flight have more than 0 connection', () => {
-      expect(helper.filterByMaxConnections(ITINERARY_ONE_ORIGIN, 0)).toBe(
-        false
-      );
+      expect(
+        helper.filterByMaxConnections(ITINERARY_ONE_ORIGIN as Itinerary, 0)
+      ).toBe(false);
     });
   });
 
   describe('filterByPriceRange', () => {
     test('should return true when there are several origins and all the flights prices are inside the price range', () => {
       expect(
-        helper.filterByPriceRange(ITINERARY_SEVERAL_ORIGINS, 900, 1300)
+        helper.filterByPriceRange(
+          DESTINATION_WITH_ITINERARIES as DestinationWithItineraries,
+          900,
+          1300
+        )
       ).toBe(true);
     });
     test('should return true when there is only one origin and the flight price is inside the price range', () => {
-      expect(helper.filterByPriceRange(ITINERARY_ONE_ORIGIN, 900, 1300)).toBe(
-        true
-      );
+      expect(
+        helper.filterByPriceRange(ITINERARY_ONE_ORIGIN as Itinerary, 900, 1300)
+      ).toBe(true);
     });
     test('should return true when there are several origins, no min price has been specified and all the flights prices are below the max price', () => {
       expect(
-        helper.filterByPriceRange(ITINERARY_SEVERAL_ORIGINS, undefined, 1300)
+        helper.filterByPriceRange(
+          DESTINATION_WITH_ITINERARIES as DestinationWithItineraries,
+          undefined,
+          1300
+        )
       ).toBe(true);
     });
     test('should return true when there are several origins, no max price has been specified and all the flights prices are above the min price', () => {
       expect(
-        helper.filterByPriceRange(ITINERARY_SEVERAL_ORIGINS, 900, undefined)
+        helper.filterByPriceRange(
+          DESTINATION_WITH_ITINERARIES as DestinationWithItineraries,
+          900,
+          undefined
+        )
       ).toBe(true);
     });
     test('should return true when there is only one origin, no min price has been specified and the flight price is below the max price', () => {
       expect(
-        helper.filterByPriceRange(ITINERARY_ONE_ORIGIN, undefined, 1300)
+        helper.filterByPriceRange(
+          ITINERARY_ONE_ORIGIN as Itinerary,
+          undefined,
+          1300
+        )
       ).toBe(true);
     });
     test('should return true when there is only one origin, no max price has been specified and the flight price is above the min price', () => {
       expect(
-        helper.filterByPriceRange(ITINERARY_ONE_ORIGIN, 900, undefined)
+        helper.filterByPriceRange(
+          ITINERARY_ONE_ORIGIN as Itinerary,
+          900,
+          undefined
+        )
       ).toBe(true);
     });
     test('should return false when there are several origins and at least one flight price is not inside the price range', () => {
       expect(
-        helper.filterByPriceRange(ITINERARY_SEVERAL_ORIGINS, 1200, 1300)
+        helper.filterByPriceRange(
+          DESTINATION_WITH_ITINERARIES as DestinationWithItineraries,
+          1200,
+          1300
+        )
       ).toBe(false);
     });
     test('should return true when there is only one origin and the flight price is not inside the price range', () => {
-      expect(helper.filterByPriceRange(ITINERARY_ONE_ORIGIN, 1200, 1300)).toBe(
-        false
-      );
+      expect(
+        helper.filterByPriceRange(ITINERARY_ONE_ORIGIN as Itinerary, 1200, 1300)
+      ).toBe(false);
     });
   });
 
   describe('getFilters', () => {
     test('should returns an object with all the current filters applied', () => {
       const itineraries = [
-        ITINERARY_SEVERAL_ORIGINS,
-        ITINERARY_SEVERAL_ORIGINS_2,
+        DESTINATION_WITH_ITINERARIES,
+        DESTINATION_WITH_ITINERARIES_2,
       ];
       const filterParams = {
         priceFrom: 13,
         priceTo: 424,
         maxConnections: 1,
       };
-      const filters = helper.getFilters(itineraries, filterParams);
+      const filters = helper.getFilters(
+        itineraries as DestinationWithItineraries[],
+        filterParams as FilterParams
+      );
 
       expect(filters.minPossiblePrice).toEqual(978);
       expect(filters.maxPossiblePrice).toEqual(1521);
@@ -191,27 +229,42 @@ describe('Results Helper', () => {
     ];
 
     test('should return only some itineraries for regular cases', () => {
-      const result = helper.paginate(itineraries, { page: 2, limit: 3 });
+      const result = helper.paginate(
+        itineraries as unknown as Itinerary[],
+        { page: 2, limit: 3 } as FilterParams
+      );
       expect(result).toStrictEqual(['item4', 'item5', 'item6']);
     });
 
     test('should return the first itineraries for the first page', () => {
-      const result = helper.paginate(itineraries, { page: 1, limit: 3 });
+      const result = helper.paginate(
+        itineraries as unknown as Itinerary[],
+        { page: 1, limit: 3 } as FilterParams
+      );
       expect(result).toStrictEqual(['item1', 'item2', 'item3']);
     });
 
     test('should return the last itineraries for the last page', () => {
-      const result = helper.paginate(itineraries, { page: 4, limit: 3 });
+      const result = helper.paginate(
+        itineraries as unknown as Itinerary[],
+        { page: 4, limit: 3 } as FilterParams
+      );
       expect(result).toStrictEqual(['item10']);
     });
 
     test('should return no itineraries if page is too big', () => {
-      const result = helper.paginate(itineraries, { page: 5, limit: 3 });
+      const result = helper.paginate(
+        itineraries as unknown as Itinerary[],
+        { page: 5, limit: 3 } as FilterParams
+      );
       expect(result).toStrictEqual([]);
     });
 
     test('should return all the itineraries if limit is bigger than the number of itineraries', () => {
-      const result = helper.paginate(itineraries, { page: 1, limit: 12 });
+      const result = helper.paginate(
+        itineraries as unknown as Itinerary[],
+        { page: 1, limit: 12 } as FilterParams
+      );
       expect(result).toStrictEqual(itineraries);
     });
 
@@ -227,7 +280,10 @@ describe('Results Helper', () => {
         itineraries,
         itineraries,
       ].flat();
-      const result = helper.paginate(manyResults, {});
+      const result = helper.paginate(
+        manyResults as unknown as Itinerary[],
+        {} as FilterParams
+      );
       expect(result).toHaveLength(RESULTS_SEARCH_LIMIT);
     });
 
@@ -249,7 +305,10 @@ describe('Results Helper', () => {
     ];
 
     test('should sort by ascending price when no sort parameters', () => {
-      const sorted = helper.sort(itineraries, {});
+      const sorted = helper.sort(
+        itineraries as Itinerary[],
+        {} as FilterParams
+      );
       expect(sorted[0].cityTo).toEqual('Paris');
       expect(sorted[1].cityTo).toEqual('London');
       expect(sorted[2].cityTo).toEqual('Barcelona');
@@ -257,21 +316,30 @@ describe('Results Helper', () => {
     });
 
     test('should sort by ascending total price when sort=price parameter is provided', () => {
-      const sorted = helper.sort(itineraries, { sort: 'price' });
+      const sorted = helper.sort(
+        itineraries as Itinerary[],
+        { sort: 'price' } as FilterParams
+      );
       expect(sorted[0].cityTo).toEqual('Paris');
       expect(sorted[1].cityTo).toEqual('London');
       expect(sorted[2].cityTo).toEqual('Barcelona');
       expect(sorted[3].cityTo).toEqual('Bangkok');
     });
     test('should sort by ascending total distance when sort=distance parameter is provided', () => {
-      const sorted = helper.sort(itineraries, { sort: 'distance' });
+      const sorted = helper.sort(
+        itineraries as Itinerary[],
+        { sort: 'distance' } as FilterParams
+      );
       expect(sorted[0].cityTo).toEqual('Barcelona');
       expect(sorted[1].cityTo).toEqual('Paris');
       expect(sorted[2].cityTo).toEqual('London');
       expect(sorted[3].cityTo).toEqual('Bangkok');
     });
     test('should sort by ascending price when the sort parameter is a non-sortable field', () => {
-      const sorted = helper.sort(itineraries, { sort: 'departureDate' });
+      const sorted = helper.sort(
+        itineraries as Itinerary[],
+        { sort: 'departureDate' } as FilterParams
+      );
       expect(sorted[0].cityTo).toEqual('Paris');
       expect(sorted[1].cityTo).toEqual('London');
       expect(sorted[2].cityTo).toEqual('Barcelona');
@@ -279,7 +347,7 @@ describe('Results Helper', () => {
     });
 
     test('should return an empty array if the itineraries argument is empty', () => {
-      const sorted = helper.sort([], {});
+      const sorted = helper.sort([], {} as FilterParams);
       expect(sorted).toBeInstanceOf(Array);
       expect(sorted).toHaveLength(0);
     });
