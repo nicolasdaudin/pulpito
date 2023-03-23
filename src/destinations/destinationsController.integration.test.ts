@@ -25,6 +25,8 @@ import {
   WeekendFlightsParams,
 } from '../common/types';
 
+import helper from '../utils/apiHelper';
+
 // FIXME: should be improved or at least checked. Maybe need to refactor, add or remove some tests. I want to move forward and add some e2e tests so I won't spend time on this at the moment, but I could do it later.
 describe('Destinations Controller', function () {
   describe('getCheapestDestinations', function () {
@@ -37,7 +39,11 @@ describe('Destinations Controller', function () {
       beforeEach(() => {
         getFlightsSpy = jest
           .spyOn(flightService, 'getFlights')
-          .mockResolvedValue(CHEAPEST_DESTINATION_KIWI_RESULT_FIXTURE);
+          .mockResolvedValue(
+            CHEAPEST_DESTINATION_KIWI_RESULT_FIXTURE.map(
+              helper.convertKiwiItineraryToItinerary
+            )
+          );
 
         req = { query: CHEAPEST_DESTINATION_QUERY_FIXTURE };
 
@@ -70,9 +76,9 @@ describe('Destinations Controller', function () {
 
         expect(flightService.getFlights).toHaveBeenCalledWith(
           expect.objectContaining({
-            adults: 1,
-            children: 0,
-            infants: 0,
+            adults: '1',
+            children: '0',
+            infants: '0',
           })
         );
       });
@@ -139,10 +145,26 @@ describe('Destinations Controller', function () {
       beforeEach(() => {
         getFlightsSpy = jest
           .spyOn(flightService, 'getFlights')
-          .mockResolvedValue(COMMON_DESTINATION_KIWI_RESULT_FIXTURE_MAD)
-          .mockResolvedValueOnce(COMMON_DESTINATION_KIWI_RESULT_FIXTURE_MAD)
-          .mockResolvedValueOnce(COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BOD)
-          .mockResolvedValueOnce(COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BRU);
+          .mockResolvedValue(
+            COMMON_DESTINATION_KIWI_RESULT_FIXTURE_MAD.map(
+              helper.convertKiwiItineraryToItinerary
+            )
+          )
+          .mockResolvedValueOnce(
+            COMMON_DESTINATION_KIWI_RESULT_FIXTURE_MAD.map(
+              helper.convertKiwiItineraryToItinerary
+            )
+          )
+          .mockResolvedValueOnce(
+            COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BOD.map(
+              helper.convertKiwiItineraryToItinerary
+            )
+          )
+          .mockResolvedValueOnce(
+            COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BRU.map(
+              helper.convertKiwiItineraryToItinerary
+            )
+          );
 
         req = { query: COMMON_DESTINATION_QUERY_FIXTURE };
 
@@ -256,7 +278,11 @@ describe('Destinations Controller', function () {
       beforeEach(() => {
         getFlightsSpy = jest
           .spyOn(flightService, 'getWeekendFlights')
-          .mockResolvedValue(CHEAPEST_DESTINATION_KIWI_RESULT_FIXTURE);
+          .mockResolvedValue(
+            CHEAPEST_DESTINATION_KIWI_RESULT_FIXTURE.map(
+              helper.convertKiwiItineraryToItinerary
+            )
+          );
 
         req = { query: CHEAPEST_WEEKEND_QUERY_FIXTURE };
 
@@ -318,9 +344,9 @@ describe('Destinations Controller', function () {
 
         expect(flightService.getWeekendFlights).toHaveBeenCalledWith(
           expect.objectContaining({
-            adults: 1,
-            children: 0,
-            infants: 0,
+            adults: '1',
+            children: '0',
+            infants: '0',
           })
         );
       });

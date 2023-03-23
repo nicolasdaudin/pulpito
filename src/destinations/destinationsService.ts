@@ -44,15 +44,15 @@ const buildCommonItineraries = async (
     filteredDestinationCities.includes(itinerary.cityTo)
   );
 
-  // remove unnecessary fields
-  // FIXME: this operation takes now 100-250ms to complete, depending on the number of itineraries to clean
-  const cleanedItineraries = filteredItineraries.map(helper.cleanItineraryData);
-
   // For each destination, have an array with the flights, total price and total distance and total duration
   // (preparing for display)
   // and sort by price
   const commonItineraries = filteredDestinationCities.map((dest) =>
-    helper.prepareItineraryData(dest, cleanedItineraries, passengersPerOrigin)
+    helper.prepareDestinationData(
+      dest,
+      filteredItineraries,
+      passengersPerOrigin
+    )
   );
   return commonItineraries;
 };

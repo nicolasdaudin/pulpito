@@ -25,11 +25,12 @@ const getCheapestDestinations = catchAsyncKiwi(
     req: TypedRequestQueryWithFilter<RegularFlightsParams>,
     res: APISuccessResponse
   ): Promise<void> => {
-    const params = helper.prepareDefaultAPIParams(req.query);
+    const params = helper.prepareDefaultAPIParams(
+      req.query
+    ) as RegularFlightsParams;
 
-    const flights = await flightService.getFlights(params);
+    let itineraries = await flightService.getFlights(params);
 
-    let itineraries = flights.map(helper.cleanItineraryData);
     const totalResults = itineraries.length;
     itineraries = resultsHelper.applyFilters(itineraries, req.filter);
 
@@ -65,20 +66,17 @@ const getCommonDestinations = catchAsyncKiwi(
 
     const origins = req.query.origin.split(',');
 
-    let commonItineraries = await destinationsService.buildCommonItineraries(
+    let destinations = await destinationsService.buildCommonItineraries(
       allOriginsParams,
       origins
     );
-    const totalResults = commonItineraries.length;
-    commonItineraries = resultsHelper.applyFilters(
-      commonItineraries,
-      req.filter
-    );
+    const totalResults = destinations.length;
+    destinations = resultsHelper.applyFilters(destinations, req.filter);
     res.status(200).json({
       status: 'success',
       totalResults,
-      shownResults: commonItineraries.length,
-      data: commonItineraries,
+      shownResults: destinations.length,
+      data: destinations,
     });
   }
 );
@@ -88,11 +86,12 @@ const getCheapestWeekend = catchAsyncKiwi(
     req: TypedRequestQueryWithFilter<WeekendFlightsParams, FilterParams>,
     res: APISuccessResponse
   ): Promise<void> => {
-    const params = helper.prepareDefaultAPIParams(req.query);
+    const params = helper.prepareDefaultAPIParams(
+      req.query
+    ) as WeekendFlightsParams;
 
-    const flights = await flightService.getWeekendFlights(params);
+    let itineraries = await flightService.getWeekendFlights(params);
 
-    let itineraries = flights.map(helper.cleanItineraryData);
     const totalResults = itineraries.length;
 
     itineraries = resultsHelper.applyFilters(itineraries, req.filter);

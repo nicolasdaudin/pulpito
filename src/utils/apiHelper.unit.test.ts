@@ -4,6 +4,7 @@ import apiReturnAnswer from '../datasets/fixtures/apiReturnAnswer.json';
 import {
   Itinerary,
   KiwiItinerary,
+  KiwiRoute,
   RegularFlightsParams,
 } from '../common/types';
 import {
@@ -26,20 +27,19 @@ describe('API Helper', function () {
       const cleaned = helper.convertKiwiItineraryToItinerary(itinerary);
       expect(cleaned).not.toHaveProperty('countryFrom');
     });
-  });
-  describe('cleanItineraryData', function () {
-    test('should normalize data from one-way itinerary', function () {
+
+    test('should add data from one-way itinerary', function () {
       const itinerary = apiOneWayAnswer.data[0];
-      const cleaned = helper.cleanItineraryData(itinerary);
-      expect(cleaned).toHaveProperty('route.oneway');
-      expect(cleaned).not.toHaveProperty('route.return');
+      const cleaned = helper.convertKiwiItineraryToItinerary(itinerary);
+      expect(cleaned).toHaveProperty('onewayRoute');
+      expect(cleaned).not.toHaveProperty('returnRoute');
     });
 
-    test('should normalize data from return itinerary', function () {
+    test('should add data from return itinerary', function () {
       const itinerary = apiReturnAnswer.data[0];
-      const cleaned = helper.cleanItineraryData(itinerary);
-      expect(cleaned).toHaveProperty('route.oneway');
-      expect(cleaned).toHaveProperty('route.return');
+      const cleaned = helper.convertKiwiItineraryToItinerary(itinerary);
+      expect(cleaned).toHaveProperty('onewayRoute');
+      expect(cleaned).toHaveProperty('returnRoute');
     });
   });
 
@@ -49,7 +49,7 @@ describe('API Helper', function () {
         { cityFrom: 'CDG', cityTo: 'MAD' },
         { cityFrom: 'MAD', cityTo: 'UIO' },
       ];
-      const connections = helper.extractConnections(flights);
+      const connections = helper.extractConnections(flights as KiwiRoute[]);
       expect(connections[0]).toBe('MAD');
     });
 
@@ -59,25 +59,28 @@ describe('API Helper', function () {
         { cityFrom: 'MAD', cityTo: 'UIO' },
         { cityFrom: 'UIO', cityTo: 'GPS' },
       ];
-      const connections = helper.extractConnections(flights);
+      const connections = helper.extractConnections(flights as KiwiRoute[]);
       expect(connections[0]).toBe('MAD');
       expect(connections[1]).toBe('UIO');
     });
   });
 
-  describe('prepareItineraryData', function () {
-    const itineraries = [
+  describe('prepareDestinationData', function () {
+    const kiwiItineraries = [
       ...COMMON_DESTINATION_KIWI_RESULT_FIXTURE_MAD,
       ...COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BRU,
       ...COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BOD,
     ];
+    const itineraries = kiwiItineraries.map(
+      helper.convertKiwiItineraryToItinerary
+    );
     const mapPassengersPerOrigin = new Map();
     mapPassengersPerOrigin.set('MAD', 1);
     mapPassengersPerOrigin.set('BRU', 2);
     mapPassengersPerOrigin.set('BOD', 2);
 
     test('should exclude a flight that does not go to that destination', () => {
-      const itinerary = helper.prepareItineraryData(
+      const itinerary = helper.prepareDestinationData(
         'Ibiza',
         itineraries,
         mapPassengersPerOrigin
@@ -85,11 +88,11 @@ describe('API Helper', function () {
 
       expect(itinerary.countryTo).toBe('Espagne');
       expect(itinerary.cityCodeTo).toBe('IBZ');
-      expect(itinerary.flights).toHaveLength(3);
+      expect(itinerary.itineraries).toHaveLength(3);
     });
 
     test('should compute all info about a set of flights', () => {
-      const itinerary = helper.prepareItineraryData(
+      const itinerary = helper.prepareDestinationData(
         'Ibiza',
         itineraries,
         mapPassengersPerOrigin
@@ -149,11 +152,14 @@ describe('API Helper', function () {
       //     {cityTo:'Ibiza',cityFrom:'Madrid'},
       //     {cityTo:'Prague',cityFrom:'Bordeaux'}
       // ];
-      const itineraries = [
+      const kiwiItineraries = [
         ...COMMON_DESTINATION_KIWI_RESULT_FIXTURE_MAD,
         ...COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BRU,
         ...COMMON_DESTINATION_KIWI_RESULT_FIXTURE_BOD,
       ];
+      const itineraries = kiwiItineraries.map(
+        helper.convertKiwiItineraryToItinerary
+      );
 
       const receivedDestinations = helper.groupByDestination(itineraries);
       const expectedDestinationCities = [
@@ -232,7 +238,7 @@ describe('API Helper', function () {
       { cityCodeFrom: 'BOD', flyFrom: 'BOD' },
       { cityCodeFrom: 'BRU', flyFrom: 'BRU' },
       { cityCodeFrom: 'LON', flyFrom: 'LGW' },
-    ];
+    ] as Itinerary[];
 
     test('returns true if all the origins are present as origins from the destination flights', () => {
       const origins = ['MAD', 'BOD', 'BRU'];
@@ -255,10 +261,10 @@ describe('API Helper', function () {
   describe('prepareDefaultAPIParams', function () {
     test('should used user params when present', () => {
       const params = {
-        adults: 3,
-        children: 2,
-        infants: 3,
-      };
+        adults: '3',
+        children: '2',
+        infants: '3',
+      } as RegularFlightsParams;
 
       const preparedParams = helper.prepareDefaultAPIParams(params);
 
@@ -268,13 +274,13 @@ describe('API Helper', function () {
     });
 
     test('should include default params when missing', () => {
-      const params = {};
+      const params = {} as RegularFlightsParams;
 
       const preparedParams = helper.prepareDefaultAPIParams(params);
 
-      expect(preparedParams.adults).toBe(1);
-      expect(preparedParams.children).toBe(0);
-      expect(preparedParams.infants).toBe(0);
+      expect(preparedParams.adults).toBe('1');
+      expect(preparedParams.children).toBe('0');
+      expect(preparedParams.infants).toBe('0');
     });
   });
 
@@ -298,9 +304,9 @@ describe('API Helper', function () {
       const preparedParams =
         helper.prepareSeveralOriginAPIParamsFromView(params);
 
-      expect(preparedParams[0].adults).toBe(1);
-      expect(preparedParams[0].children).toBe(0);
-      expect(preparedParams[0].infants).toBe(0);
+      expect(preparedParams[0].adults).toBe('1');
+      expect(preparedParams[0].children).toBe('0');
+      expect(preparedParams[0].infants).toBe('0');
     });
 
     test('should return the correct number of adults, children and infants for each origin when specified', () => {
@@ -316,9 +322,9 @@ describe('API Helper', function () {
       const preparedParams =
         helper.prepareSeveralOriginAPIParamsFromView(params);
 
-      expect(preparedParams[0].adults).toBe(2);
-      expect(preparedParams[1].children).toBe(1);
-      expect(preparedParams[2].infants).toBe(1);
+      expect(preparedParams[0].adults).toBe('2');
+      expect(preparedParams[1].children).toBe('1');
+      expect(preparedParams[2].infants).toBe('1');
     });
   });
 

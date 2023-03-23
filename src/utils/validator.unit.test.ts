@@ -1,5 +1,6 @@
 import validator from './validator';
 import { isAlpha, isDate, isNumeric } from 'validator/validator';
+import { ParamModel } from '../common/types';
 
 describe('validator utils', () => {
   describe('isCommaSeparatedAlpha', () => {
@@ -68,7 +69,7 @@ describe('validator utils', () => {
         name: 'nonRequiredParam1',
         required: false,
       },
-    ];
+    ] as ParamModel[];
 
     test('should return an empty array if no parameters from given model are missing', () => {
       const params = {
@@ -108,7 +109,7 @@ describe('validator utils', () => {
         name: 'dateParam',
         typeCheck: (str) => isDate(str, { format: 'DD/MM/YYYY' }),
       },
-    ];
+    ] as ParamModel[];
 
     test('should return an empty array if parameters have the correct type', () => {
       const params = {

@@ -47,6 +47,7 @@ const searchFlights = catchAsyncKiwi(async (req, res) => {
     requestParams
   );
 
+  // FIXME: once we migrated viewController to TS, we need to update prepareSeveralOriginAPIParamsFromView
   const allOriginParams =
     helper.prepareSeveralOriginAPIParamsFromView(requestParams);
 

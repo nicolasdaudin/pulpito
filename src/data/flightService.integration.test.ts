@@ -55,7 +55,7 @@ maybe('Flight Service - Integration with KIWI API', function () {
 
     test('should use particular parameters if weekend length is long', async () => {
       const spy = jest.spyOn(axios, 'get').mockImplementation(jest.fn());
-      const prepareSpy = jest.spyOn(helper, 'prepareAxiosParams');
+      const prepareSpy = jest.spyOn(helper, 'prepareWeekendParamsForAxios');
       await flightService.getWeekendFlights({
         ...FLIGHT_API_PARAMS_FIXTURE_WEEKEND,
         weekendLength: WeekendLengthEnum.LONG,
@@ -76,7 +76,7 @@ maybe('Flight Service - Integration with KIWI API', function () {
 
     test('should use particular parameters if weekend length is short', async () => {
       const spy = jest.spyOn(axios, 'get').mockImplementation(jest.fn());
-      const prepareSpy = jest.spyOn(helper, 'prepareAxiosParams');
+      const prepareSpy = jest.spyOn(helper, 'prepareWeekendParamsForAxios');
       await flightService.getWeekendFlights({
         ...FLIGHT_API_PARAMS_FIXTURE_WEEKEND,
         weekendLength: WeekendLengthEnum.SHORT,

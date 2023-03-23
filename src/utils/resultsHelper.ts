@@ -1,30 +1,44 @@
+import {
+  DestinationWithItineraries,
+  FilterParams,
+  Itinerary,
+} from '../common/types';
+import cloneDeep from 'lodash.clonedeep';
+
 import { RESULTS_SEARCH_LIMIT, DEFAULT_SORT_FIELD } from '../config';
 
 /**
- * Checks if the flights for that itinerary have more than maxConnections
- * @param {*} itinerary the itinerary
+ * Checks if the itineraries for that destination have more than maxConnections
+ * @param {*} destination the destination with its itineraries
  * @param {*} maxConnections max number of connections
  * @returns true if number of connections is less or equal to the allowed max number of connections
  */
-const filterByMaxConnections = (itinerary, maxConnections) => {
+const filterByMaxConnections = (
+  source: DestinationWithItineraries | Itinerary,
+  maxConnections: number
+) => {
   let nbConnections = 0;
-  if (itinerary.flights) {
+
+  if (isDestinationWithItineraries(source)) {
     // if several origins
-    nbConnections = itinerary.flights.reduce(
-      (max, flight) =>
+    nbConnections = source.itineraries.reduce(
+      (max, itinerary) =>
         Math.max(
           max,
-          flight.route.oneway.connections.length,
-          flight.route.return.connections.length
+          itinerary.onewayRoute.connections.length,
+          itinerary.returnRoute?.connections.length
         ),
       0
     );
-  } else {
+  }
+
+  if (isItinerary(source)) {
     nbConnections = Math.max(
-      itinerary.route.oneway.connections.length,
-      itinerary.route.return.connections.length
+      source.onewayRoute.connections.length,
+      source.returnRoute?.connections.length
     );
   }
+
   return nbConnections <= maxConnections;
 };
 
@@ -35,26 +49,32 @@ const filterByMaxConnections = (itinerary, maxConnections) => {
  * @param {*} priceTo price upper limit
  * @returns true if flight prices are above priceFrom and below priceTo
  */
-const filterByPriceRange = (itinerary, priceFrom, priceTo) => {
+const filterByPriceRange = (
+  source: DestinationWithItineraries | Itinerary,
+  priceFrom: number,
+  priceTo: number
+) => {
   // flight.price has the total price for all passengers of that flight
   // we want to compare with the price per adult
 
   let minPrice = 20000;
   let maxPrice = 0;
-  if (itinerary.flights) {
+  if (isDestinationWithItineraries(source)) {
     // if several origins
-    minPrice = itinerary.flights.reduce(
-      (min, flight) => Math.min(min, flight.price),
+    minPrice = source.itineraries.reduce(
+      (min, itinerary) => Math.min(min, itinerary.price),
       minPrice
     );
-    maxPrice = itinerary.flights.reduce(
-      (max, flight) => Math.max(max, flight.price),
+    maxPrice = source.itineraries.reduce(
+      (max, itinerary) => Math.max(max, itinerary.price),
       maxPrice
     );
-  } else {
+  }
+
+  if (isItinerary(source)) {
     // if one origin
-    minPrice = itinerary.price;
-    maxPrice = itinerary.price;
+    minPrice = source.price;
+    maxPrice = source.price;
   }
 
   return (
@@ -65,23 +85,26 @@ const filterByPriceRange = (itinerary, priceFrom, priceTo) => {
 /**
  * Returns an object with the necessary info to display the results and the search filters, like the filtered minimum price (requested by the user in the filterParams), the filtered maximum price (requested by the user in filterParams), the minimum possible itinerary price (out of all the itineraries), the maximum possible price (out of all the itineraries)....
  * Currently only works for search with several origins (getCommon) since it is the only one implemented in the webapp
- * @param {*} itineraries
+ * @param {*} destinations
  * @param {*} filterParams
  * returns an object representing the filters used. Has the following properties: minPossiblePrice, maxPossiblePrice, priceFrom, priceTo, maxConnections
  */
-const getFilters = (itineraries, filterParams) => {
-  const minPossiblePrice = itineraries.reduce((min, itinerary) => {
-    const tempMin = itinerary.flights.reduce((min, flight) => {
-      // flight.price has the total price for all passengers of that flight
+const getFilters = (
+  destinations: DestinationWithItineraries[],
+  filterParams: FilterParams
+) => {
+  const minPossiblePrice = destinations.reduce((min, destination) => {
+    const tempMin = destination.itineraries.reduce((min, itinerary) => {
+      // itinerary.price has the total price for all passengers of that flight
       // we want to compare with the price per adult
-      return Math.min(min, flight.price);
+      return Math.min(min, itinerary.price);
     }, 20000);
     return Math.min(tempMin, min);
   }, 20000);
 
-  const maxPossiblePrice = itineraries.reduce((max, itinerary) => {
-    const tempMax = itinerary.flights.reduce(
-      (max, flight) => Math.max(max, flight.price),
+  const maxPossiblePrice = destinations.reduce((max, destination) => {
+    const tempMax = destination.itineraries.reduce(
+      (max, itinerary) => Math.max(max, itinerary.price),
       0
     );
     return Math.max(tempMax, max);
@@ -105,33 +128,41 @@ const getFilters = (itineraries, filterParams) => {
  * @param {*} filterParams the filters to apply to the itineraries (maxConnections, priceFrom, ...)
  * @returns a copy of the itineraries after filtering
  */
-const filter = (itineraries, filterParams) => {
-  let result = JSON.parse(JSON.stringify(itineraries));
+const filter = (
+  source: DestinationWithItineraries[] | Itinerary[],
+  filterParams: FilterParams
+) => {
+  const resultAfterClone = cloneDeep(source);
+  let result: Array<typeof resultAfterClone[number]> = resultAfterClone;
 
   // filter by max number of connections allowed on each individual flight
-  if (filterParams.maxConnections) {
-    result = result.filter((itinerary) => {
-      const filtered = filterByMaxConnections(
-        itinerary,
-        filterParams.maxConnections
-      );
-      return filtered;
-    });
+  if (filterParams.maxConnections !== undefined) {
+    result = result.filter(
+      (itinerary: DestinationWithItineraries | Itinerary) => {
+        const filtered = filterByMaxConnections(
+          itinerary,
+          filterParams.maxConnections
+        );
+        return filtered;
+      }
+    );
   }
 
   // filter by price range
   if (filterParams.priceFrom || filterParams.priceTo) {
-    result = result.filter((itinerary) => {
-      const filtered = filterByPriceRange(
-        itinerary,
-        filterParams.priceFrom,
-        filterParams.priceTo
-      );
-      return filtered;
-    });
+    result = result.filter(
+      (itinerary: DestinationWithItineraries | Itinerary) => {
+        const filtered = filterByPriceRange(
+          itinerary,
+          filterParams.priceFrom,
+          filterParams.priceTo
+        );
+        return filtered;
+      }
+    );
   }
 
-  return result;
+  return result as DestinationWithItineraries[] | Itinerary[];
 };
 
 /**
@@ -140,12 +171,13 @@ const filter = (itineraries, filterParams) => {
  * @param {*} filterParams the filters to apply. Specifically we use filterParams.page (default 1) and filterParams.limit (default RESULTS_SEARCH_LIMIT)
  * @returns a paginated copy of the itineraries
  */
-const paginate = (itineraries, filterParams) => {
+const paginate = (
+  source: DestinationWithItineraries[] | Itinerary[],
+  filterParams: FilterParams
+) => {
   const page = filterParams.page ?? 1;
   const limit = filterParams.limit ?? RESULTS_SEARCH_LIMIT;
-  const result = JSON.parse(JSON.stringify(itineraries));
-  return result.slice((page - 1) * limit, page * limit);
-  // return result;
+  return source.slice((page - 1) * limit, page * limit);
 };
 
 /**
@@ -154,13 +186,18 @@ const paginate = (itineraries, filterParams) => {
  * @param {*} filterParams the filters to apply. Specifically we use filterParams.sort (default DEFAULT_SORT_FIELD)
  * @returns a sorted copy of the itineraries
  */
-const sort = (itineraries, filterParams) => {
+const sort = (
+  source: DestinationWithItineraries[] | Itinerary[],
+  filterParams: FilterParams
+) => {
+  const resultAfterClone = cloneDeep(source);
   const sortBy = filterParams.sort ?? DEFAULT_SORT_FIELD;
-  const result = JSON.parse(JSON.stringify(itineraries));
-  if (sortBy === 'price') return result.sort((a, b) => a.price - b.price);
+
+  if (sortBy === 'price')
+    return resultAfterClone.sort((a, b) => a.price - b.price);
   if (sortBy === 'distance')
-    return result.sort((a, b) => a.distance - b.distance);
-  return result.sort((a, b) => a.price - b.price);
+    return resultAfterClone.sort((a, b) => a.distance - b.distance);
+  return resultAfterClone.sort((a, b) => a.price - b.price);
 };
 
 /**
@@ -242,6 +279,15 @@ const buildNavigationUrlsFromRequest = (req, route, hasNextUrl) => {
   };
 
   return navigation;
+};
+
+const isItinerary = (value: unknown): value is Itinerary => {
+  return (value as Itinerary).onewayRoute !== undefined;
+};
+const isDestinationWithItineraries = (
+  value: unknown
+): value is DestinationWithItineraries => {
+  return (value as DestinationWithItineraries).itineraries !== undefined;
 };
 
 export = {

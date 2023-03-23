@@ -2,9 +2,11 @@ import axios from 'axios';
 import helper from '../utils/apiHelper';
 import { setupCache } from 'axios-cache-interceptor';
 import {
-  DateDDMMYYYY,
-  IataCode,
+  DayOfWeek,
   Itinerary,
+  KiwiAPIAllDaysParams,
+  KiwiAPIWeekendParams,
+  KiwiBaseAPIParams,
   KiwiItinerary,
   RegularFlightsParams,
   WeekendFlightsParams,
@@ -36,48 +38,6 @@ const DEFAULT_KIWI_API_PARAMS: Partial<KiwiBaseAPIParams> = {
 const DEFAULT_ADULTS_PARAM = 1;
 const DEFAULT_CHILDREN_PARAM = 0;
 const DEFAULT_INFANTS_PARAM = 0;
-
-enum DayOfWeek {
-  SUNDAY = 0,
-  MONDAY = 1,
-  TUESDAY = 2,
-  WEDNESDAY = 3,
-  THURSDAY = 4,
-  FRIDAY = 5,
-  SATURDAY = 6,
-}
-
-type KiwiBaseAPIParams = {
-  fly_from: IataCode;
-  dateFrom: DateDDMMYYYY;
-  dateTo: DateDDMMYYYY;
-  adults: number;
-  children: number;
-  infants: number;
-  max_stopovers?: number;
-  partner_market?: string;
-  lang?: string;
-  limit?: number;
-  flight_type?: 'round' | 'oneway';
-};
-
-type KiwiAPIWeekendParams = {
-  fly_to: IataCode;
-
-  fly_days?: DayOfWeek[];
-  ret_fly_days?: DayOfWeek[];
-  nights_in_dst_from?: number;
-  nights_in_dst_to?: number;
-} & KiwiBaseAPIParams;
-
-type KiwiAPIAllDaysParams = {
-  fly_to: 'anywhere';
-  returnFrom?: DateDDMMYYYY;
-  returnTo?: DateDDMMYYYY;
-  ret_from_diff_airport?: number;
-  ret_to_diff_airport?: number;
-  one_for_city?: number;
-} & KiwiBaseAPIParams;
 
 setupCache(axios, { ttl: 1000 * 60 * 15 }); //15 minutes
 
@@ -177,7 +137,8 @@ const getWeekendFlights = async (
     if (!process.env.KIWI_URL || !process.env.KIWI_API_KEY)
       throw new Error('Missing KIWI_URL or KIWI_API_KEY environment variables');
 
-    const preparedAxiosParams = helper.prepareAxiosParams(axiosParams);
+    const preparedAxiosParams =
+      helper.prepareWeekendParamsForAxios(axiosParams);
     const response = await axios.get(
       `${process.env.KIWI_URL}?${preparedAxiosParams.toString()}`,
       {
@@ -186,8 +147,10 @@ const getWeekendFlights = async (
         },
       }
     );
+
     if (response && response.data) {
-      return response.data.data;
+      const kiwiItineraries: KiwiItinerary[] = response.data.data;
+      return kiwiItineraries.map(helper.convertKiwiItineraryToItinerary);
     } else {
       return [];
     }

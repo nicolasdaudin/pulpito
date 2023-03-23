@@ -219,8 +219,8 @@ describe('End to end tests', () => {
         expect(response.statusCode).toBe(200);
         expect(response.body.totalResults).toBeGreaterThan(0);
         expect(
-          response.body.data[0].flights.every((flight: Itinerary) =>
-            origins.includes(flight.cityCodeFrom)
+          response.body.data[0].itineraries.every((itinerary: Itinerary) =>
+            origins.includes(itinerary.cityCodeFrom)
           )
         ).toBe(true);
       });
