@@ -50,18 +50,21 @@ const createSendToken = (
 // sort of createUser but in the context of AUTH it's a signup.
 // it's a signup = we create the user and log in, that's why we send back the token
 // FIXME: we could type Request.body (like TypedRequestWithParam) to make sure we have certain query params
-const signup = catchAsync(async (req: Request, res: Response) => {
-  // we could have done User.create(req.body) but we would allow API users to register themselves as 'admin' just by putting role=admin in the body. Doing this manually field by field prevents people to register as admin.
-  const newUser = await User.create({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm,
-    passwordChangedAt: req.body.passwordChangedAt,
-  });
+const signup = catchAsync(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async (req: Request, res: Response, _next: NextFunction) => {
+    // we could have done User.create(req.body) but we would allow API users to register themselves as 'admin' just by putting role=admin in the body. Doing this manually field by field prevents people to register as admin.
+    const newUser = await User.create({
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
+      passwordConfirm: req.body.passwordConfirm,
+      passwordChangedAt: req.body.passwordChangedAt,
+    });
 
-  createSendToken(newUser, 201, res);
-});
+    createSendToken(newUser, 201, res);
+  }
+);
 
 const login = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -92,7 +95,7 @@ const login = catchAsync(
 const protect = catchAsync(
   async (
     req: Request & { user: HydratedDocument<IUser> },
-    res: Response,
+    _res: Response,
     next: NextFunction
   ) => {
     // 1) Get the token and check if it exists

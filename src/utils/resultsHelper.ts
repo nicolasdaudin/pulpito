@@ -2,10 +2,14 @@ import {
   DestinationWithItineraries,
   FilterParams,
   Itinerary,
+  RegularFlightsParams,
+  WeekendFlightsParams,
 } from '../common/types';
 import cloneDeep from 'lodash.clonedeep';
 
 import { RESULTS_SEARCH_LIMIT, DEFAULT_SORT_FIELD } from '../config';
+import { Request } from 'express-serve-static-core';
+import { TypedRequestQueryWithFilter } from '../common/interfaces';
 
 /**
  * Checks if the itineraries for that destination have more than maxConnections
@@ -13,10 +17,7 @@ import { RESULTS_SEARCH_LIMIT, DEFAULT_SORT_FIELD } from '../config';
  * @param {*} maxConnections max number of connections
  * @returns true if number of connections is less or equal to the allowed max number of connections
  */
-const filterByMaxConnections = (
-  source: DestinationWithItineraries | Itinerary,
-  maxConnections: number
-) => {
+const filterByMaxConnections = <T>(source: T, maxConnections: number) => {
   let nbConnections = 0;
 
   if (isDestinationWithItineraries(source)) {
@@ -49,8 +50,8 @@ const filterByMaxConnections = (
  * @param {*} priceTo price upper limit
  * @returns true if flight prices are above priceFrom and below priceTo
  */
-const filterByPriceRange = (
-  source: DestinationWithItineraries | Itinerary,
+const filterByPriceRange = <T>(
+  source: T,
   priceFrom: number,
   priceTo: number
 ) => {
@@ -128,41 +129,34 @@ const getFilters = (
  * @param {*} filterParams the filters to apply to the itineraries (maxConnections, priceFrom, ...)
  * @returns a copy of the itineraries after filtering
  */
-const filter = (
-  source: DestinationWithItineraries[] | Itinerary[],
-  filterParams: FilterParams
-) => {
+const filter = <T>(source: T[], filterParams: FilterParams) => {
   const resultAfterClone = cloneDeep(source);
   let result: Array<typeof resultAfterClone[number]> = resultAfterClone;
 
   // filter by max number of connections allowed on each individual flight
   if (filterParams.maxConnections !== undefined) {
-    result = result.filter(
-      (itinerary: DestinationWithItineraries | Itinerary) => {
-        const filtered = filterByMaxConnections(
-          itinerary,
-          filterParams.maxConnections
-        );
-        return filtered;
-      }
-    );
+    result = result.filter((itinerary: T) => {
+      const filtered = filterByMaxConnections(
+        itinerary,
+        filterParams.maxConnections
+      );
+      return filtered;
+    });
   }
 
   // filter by price range
   if (filterParams.priceFrom || filterParams.priceTo) {
-    result = result.filter(
-      (itinerary: DestinationWithItineraries | Itinerary) => {
-        const filtered = filterByPriceRange(
-          itinerary,
-          filterParams.priceFrom,
-          filterParams.priceTo
-        );
-        return filtered;
-      }
-    );
+    result = result.filter((itinerary: T) => {
+      const filtered = filterByPriceRange(
+        itinerary,
+        filterParams.priceFrom,
+        filterParams.priceTo
+      );
+      return filtered;
+    });
   }
 
-  return result as DestinationWithItineraries[] | Itinerary[];
+  return result;
 };
 
 /**
@@ -171,10 +165,7 @@ const filter = (
  * @param {*} filterParams the filters to apply. Specifically we use filterParams.page (default 1) and filterParams.limit (default RESULTS_SEARCH_LIMIT)
  * @returns a paginated copy of the itineraries
  */
-const paginate = (
-  source: DestinationWithItineraries[] | Itinerary[],
-  filterParams: FilterParams
-) => {
+const paginate = <T>(source: T[], filterParams: FilterParams) => {
   const page = filterParams.page ?? 1;
   const limit = filterParams.limit ?? RESULTS_SEARCH_LIMIT;
   return source.slice((page - 1) * limit, page * limit);
@@ -186,8 +177,8 @@ const paginate = (
  * @param {*} filterParams the filters to apply. Specifically we use filterParams.sort (default DEFAULT_SORT_FIELD)
  * @returns a sorted copy of the itineraries
  */
-const sort = (
-  source: DestinationWithItineraries[] | Itinerary[],
+const sort = <T extends { price: number; distance: number }>(
+  source: T[],
   filterParams: FilterParams
 ) => {
   const resultAfterClone = cloneDeep(source);
@@ -206,10 +197,13 @@ const sort = (
  * @param {*} filterParams filters
  * @returns a copy of the itineraries
  */
-const applyFilters = (itineraries, filterParams) => {
-  if (!itineraries || !filterParams) return itineraries;
+const applyFilters = <T extends { price: number; distance: number }>(
+  source: T[],
+  filterParams: FilterParams
+): T[] => {
+  if (!source || !filterParams) return source;
 
-  let filtered = filter(itineraries, filterParams);
+  let filtered = filter(source, filterParams);
   filtered = sort(filtered, filterParams);
   filtered = paginate(filtered, filterParams);
   return filtered;
@@ -220,7 +214,7 @@ const applyFilters = (itineraries, filterParams) => {
  * @param {*} req
  * @returns a URLSearchPArams object representing the current url for that request
  */
-const getCurrentUrlFromRequest = (req) => {
+const getCurrentUrlFromRequest = (req: Request) => {
   const urlSearchParamsBase = new URLSearchParams();
   const { departureDate, returnDate, origins } = req.body?.departureDate
     ? req.body
@@ -228,7 +222,7 @@ const getCurrentUrlFromRequest = (req) => {
   if (departureDate) urlSearchParamsBase.append('departureDate', departureDate);
   if (returnDate) urlSearchParamsBase.append('returnDate', returnDate);
   if (origins) {
-    origins.flyFrom.forEach((_, i) => {
+    origins.flyFrom.forEach((_: any, i: number) => {
       urlSearchParamsBase.append('origins[][flyFrom]', origins.flyFrom[i]);
       urlSearchParamsBase.append('origins[][adults]', origins.adults[i]);
       urlSearchParamsBase.append('origins[][children]', origins.children[i]);
@@ -245,7 +239,11 @@ const getCurrentUrlFromRequest = (req) => {
  * @param {*} hasNextUrl true if we should add a next url
  * @returns an object representing the navigation links, with the following properties: previous, next, sort, sortByPrice, sortByDistance. Each property has an URL based on the base current url.
  */
-const buildNavigationUrlsFromRequest = (req, route, hasNextUrl) => {
+const buildNavigationUrlsFromRequest = (
+  req: TypedRequestQueryWithFilter<RegularFlightsParams | WeekendFlightsParams>,
+  route: string,
+  hasNextUrl: boolean
+) => {
   const urlSearchParamsBase = getCurrentUrlFromRequest(req);
 
   const { page, sort, priceFrom, priceTo, maxConnections } = req.filter;

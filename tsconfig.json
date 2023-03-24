@@ -7,11 +7,11 @@
     "sourceMap": true,
     "module": "CommonJS",
     "resolveJsonModule": true /* Enable importing .json files. */,
-    "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
+    "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
     /* Type Checking */
     // "strict": true /* Enable all strict type-checking options. */,
-    // "noImplicitAny": true,                            /* Enable error reporting for expressions and declarations with an implied 'any' type. */
-    // "strictNullChecks": true /* When type checking, take into account 'null' and 'undefined'. */,
+    "noImplicitAny": true /* Enable error reporting for expressions and declarations with an implied 'any' type. */
+    // "strictNullChecks": true /* When type checking, take into account 'null' and 'undefined'. */
     // "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
 

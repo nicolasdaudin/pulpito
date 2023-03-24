@@ -4,11 +4,15 @@ import {
   DestinationWithItineraries,
   FilterParams,
   Itinerary,
+  QueryParams,
+  RegularFlightsParams,
   Route,
 } from '../common/types';
+import { Request } from 'express-serve-static-core';
+import { TypedRequestQueryWithFilter } from '../common/interfaces';
 
 describe('Results Helper', () => {
-  const ZERO_CONNECTIONS = [];
+  const ZERO_CONNECTIONS: string[] = [];
   const ONE_CONNECTION = ['London'];
   const TWO_CONNECTIONS = ['London', 'Chicago'];
   const DESTINATION_WITH_ITINERARIES: Partial<DestinationWithItineraries> = {
@@ -374,7 +378,7 @@ describe('Results Helper', () => {
         },
       };
 
-      const url = helper.getCurrentUrlFromRequest(req);
+      const url = helper.getCurrentUrlFromRequest(req as unknown as Request);
       expect(url).toBeInstanceOf(URLSearchParams);
       expect(url.get('departureDate')).toBe('2022-09-22');
       expect(url.getAll('origins[][flyFrom]')).toEqual(
@@ -394,7 +398,7 @@ describe('Results Helper', () => {
         },
       };
 
-      const url = helper.getCurrentUrlFromRequest(req);
+      const url = helper.getCurrentUrlFromRequest(req as unknown as Request);
       expect(url).toBeInstanceOf(URLSearchParams);
       expect(url.get('departureDate')).toBe('2022-09-22');
       expect(url.getAll('origins[][flyFrom]')).toEqual(
@@ -404,7 +408,8 @@ describe('Results Helper', () => {
   });
 
   describe('buildNavigationUrlsFromRequest', () => {
-    let req, route;
+    let req: Partial<TypedRequestQueryWithFilter<RegularFlightsParams>>;
+    let route: string;
     beforeEach(() => {
       req = {
         body: {
@@ -422,13 +427,13 @@ describe('Results Helper', () => {
           priceFrom: 32,
           priceTo: 522,
           maxConnections: 0,
-        },
+        } as FilterParams,
       };
       route = '/common';
     });
     test('should return an object with previous, next, sort, sortByPrice and sortByDistance fields', () => {
       const navigation = helper.buildNavigationUrlsFromRequest(
-        req,
+        req as unknown as TypedRequestQueryWithFilter<RegularFlightsParams>,
         route,
         true
       );
@@ -442,7 +447,7 @@ describe('Results Helper', () => {
 
     test('should return a previous url with a page field in a normal scenario', () => {
       const navigation = helper.buildNavigationUrlsFromRequest(
-        req,
+        req as unknown as TypedRequestQueryWithFilter<RegularFlightsParams>,
         route,
         true
       );
@@ -452,7 +457,7 @@ describe('Results Helper', () => {
     test('should return a null previous url when there is no page parameter', () => {
       delete req.filter.page;
       const navigation = helper.buildNavigationUrlsFromRequest(
-        req,
+        req as unknown as TypedRequestQueryWithFilter<RegularFlightsParams>,
         route,
         true
       );
@@ -461,7 +466,7 @@ describe('Results Helper', () => {
     test('should return a null previous url when page parameter is 1', () => {
       req.filter.page = 1;
       const navigation = helper.buildNavigationUrlsFromRequest(
-        req,
+        req as unknown as TypedRequestQueryWithFilter<RegularFlightsParams>,
         route,
         true
       );
@@ -470,7 +475,7 @@ describe('Results Helper', () => {
 
     test('should return a null next url when no next page is requested', () => {
       const navigation = helper.buildNavigationUrlsFromRequest(
-        req,
+        req as unknown as TypedRequestQueryWithFilter<RegularFlightsParams>,
         route,
         false
       );

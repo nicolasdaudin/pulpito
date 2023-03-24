@@ -25,7 +25,7 @@ describe('UserController', () => {
     mongoose.disconnect();
   });
 
-  let req: Partial<Request> & { user: Partial<HydratedDocument<IUser>> },
+  let req: Request & { user: HydratedDocument<IUser> },
     res: Partial<Response> & Partial<{ data: any; message: string }>,
     next: NextFunction;
   beforeEach(() => {
@@ -53,7 +53,7 @@ describe('UserController', () => {
       test('should get all users', async () => {
         // console.log(allUsers);
 
-        await userController.getAllUsers(req as Request, res as Response);
+        await userController.getAllUsers(req, res as Response);
 
         console.log(res.data.users);
         expect(res.status).toHaveBeenCalledWith(200);
@@ -91,9 +91,9 @@ describe('UserController', () => {
         req = {
           body: UPDATED_PROPERTIES,
           user: { id: newUser.id },
-        };
+        } as Request & { user: HydratedDocument<IUser> };
 
-        await userController.updateMe(req, res, next);
+        await userController.updateMe(req, res as Response, next);
 
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.data.user.id).toEqual(newUser.id);
@@ -133,9 +133,9 @@ describe('UserController', () => {
             user: {
               id: newUser.id,
             },
-          };
+          } as Request & { user: HydratedDocument<IUser> };
 
-          await userController.getFavAirports(req, res, next);
+          await userController.getFavAirports(req, res as Response, next);
 
           expect(res.status).toHaveBeenCalledWith(200);
           expect(Array.isArray(res.data.favAirports)).toBe(true);
@@ -152,9 +152,9 @@ describe('UserController', () => {
               id: newUser.id,
             },
             body: { airport: 'JFK' },
-          };
+          } as Request & { user: HydratedDocument<IUser> };
 
-          await userController.addFavAirport(req, res, next);
+          await userController.addFavAirport(req, res as Response, next);
 
           expect(res.status).toHaveBeenCalledWith(200);
           expect(Array.isArray(res.data.favAirports)).toBe(true);
@@ -182,7 +182,7 @@ describe('UserController', () => {
               id: newUser.id,
             },
             body: { airport: 'JFK' },
-          };
+          } as Request & { user: HydratedDocument<IUser> };
 
           // add an airport to that fake user
           await User.findByIdAndUpdate(newUser.id, {
@@ -190,7 +190,7 @@ describe('UserController', () => {
           });
 
           // and then remove it ...
-          await userController.removeFavAirport(req, res, next);
+          await userController.removeFavAirport(req, res as Response, next);
 
           expect(res.status).toHaveBeenCalledWith(200);
           expect(Array.isArray(res.data.favAirports)).toBe(true);
@@ -235,12 +235,12 @@ describe('UserController', () => {
           user: {
             id: newUser.id,
           },
-        };
+        } as Request & { user: HydratedDocument<IUser> };
 
         const user = await User.findById(newUser.id);
         expect(user).not.toBeUndefined();
 
-        await userController.deleteMe(req, res, next);
+        await userController.deleteMe(req, res as Response, next);
 
         const updatedUser = await User.findById(newUser.id);
         expect(res.status).toHaveBeenCalledWith(204);

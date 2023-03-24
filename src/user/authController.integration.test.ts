@@ -29,7 +29,7 @@ describe('AuthController', () => {
 
   // TODO: dependency to Mongoose but we are just testing integration, this should be abstracted, right?
   // TODO: improve typing of req and have something like TypedRequestQueryWithFilter
-  let req: Partial<Request>,
+  let req: Request,
     res: Partial<Response> & {
       data?: { user: HydratedDocument<IUser> };
       message?: string;
@@ -127,9 +127,9 @@ describe('AuthController', () => {
           passwordConfirm: fakePassword,
         };
         console.log(fakeUser);
-        req = { body: fakeUser };
+        req = { body: fakeUser } as Request;
 
-        await authController.signup(req, res, next);
+        await authController.signup(req, res as Response, next);
 
         // const usersLengthAfterCreate = (await User.find()).length;
 
@@ -187,9 +187,9 @@ describe('AuthController', () => {
       test('should login the user when given correct login credentials', async function () {
         req = {
           body: { email: fakeUser.email, password: fakeUser.password },
-        };
+        } as Request;
 
-        await authController.login(req, res, next);
+        await authController.login(req, res as Response, next);
 
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.data?.user._id).toEqual(newUser._id);
@@ -204,9 +204,9 @@ describe('AuthController', () => {
 
         req = {
           body: { email: fakeUser.email, password: fakeUser.password },
-        };
+        } as Request;
 
-        await authController.login(req, res, next);
+        await authController.login(req, res as Response, next);
 
         // expect(next).toHaveBeenCalledWith(expect.any(typeof AppError));
         // expect(next).toHaveBeenCalledWith(
@@ -277,7 +277,7 @@ describe('AuthController', () => {
     });
     describe('success case', () => {
       test('should grant access to protected route', async function () {
-        await authController.protect(req, res, next);
+        await authController.protect(req as Request, res as Response, next);
 
         expect(req.user?.id).toEqual(newUser.id);
       });
@@ -315,7 +315,7 @@ describe('AuthController', () => {
       });
 
       test('should return OK when the user email has been found and the token can be sent', async function () {
-        req = { body: { email: newUser.email } };
+        req = { body: { email: newUser.email } } as Request;
 
         // MOCKING the send email part
         // TODO: mocking the nodemailer.createTransport and connecting to mailtrap.io. Right now it's connected to mailtrap.ip because we are in dev, but once in production we will need to connect to a particular mail transport sandbox and not send real email
@@ -325,7 +325,7 @@ describe('AuthController', () => {
             //console.log('not sending an actual email');
           });
 
-        await authController.forgotPassword(req, res, next);
+        await authController.forgotPassword(req, res as Response, next);
 
         expect(sendPasswordResetTokenEmailSpy).toHaveBeenCalled();
 
@@ -340,7 +340,7 @@ describe('AuthController', () => {
       });
 
       test('should return an error when the user email has been found but the token can not be sent by email for some reason', async function () {
-        req = { body: { email: newUser.email } };
+        req = { body: { email: newUser.email } } as Request;
 
         // MOCKING the send email part
         // TODO: mocking the nodemailer.createTransport and connecting to mailtrap.io. Right now it's connected to mailtrap.ip because we are in dev, but once in production we will need to connect to a particular mail transport sandbox and not send real email
@@ -348,7 +348,7 @@ describe('AuthController', () => {
           .spyOn(email, 'sendPasswordResetTokenEmail')
           .mockRejectedValue('Mocking Error');
 
-        await authController.forgotPassword(req, res, next);
+        await authController.forgotPassword(req, res as Response, next);
 
         expect(sendPasswordResetTokenEmailSpy).toHaveBeenCalled();
         expect(newUser.passwordResetToken).toBeUndefined();
@@ -367,9 +367,9 @@ describe('AuthController', () => {
 
     describe('error cases', () => {
       test('should return error 404 when the email is empty in the body', async function () {
-        req = { body: { email: '' } };
+        req = { body: { email: '' } } as Request;
 
-        await authController.forgotPassword(req, res, next);
+        await authController.forgotPassword(req, res as Response, next);
 
         // expect(true).toBe(true);
         // expect(res.status).toHaveBeenCalledWith(404);
@@ -384,9 +384,9 @@ describe('AuthController', () => {
       });
 
       test('should return error 404 when the email can not be found', async function () {
-        req = { body: { email: 'milady@castle.com' } };
+        req = { body: { email: 'milady@castle.com' } } as Request;
 
-        await authController.forgotPassword(req, res, next);
+        await authController.forgotPassword(req, res as Response, next);
 
         // expect(true).toBe(true);
         // expect(res.status).toHaveBeenCalledWith(404);

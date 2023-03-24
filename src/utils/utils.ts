@@ -3,10 +3,10 @@ import utf8 from 'utf8';
 
 /**
  * Helper to reencode data from airport json data source
- * @param {*} str 
- * @returns 
+ * @param {*} str
+ * @returns
  */
-const reencodeString = (str) => {
+const reencodeString = (str: string) => {
   const result = utf8.decode(
     buffer.transcode(Buffer.from(str), 'utf8', 'latin1').toString('latin1')
   );
@@ -15,10 +15,10 @@ const reencodeString = (str) => {
 
 /**
  * Helper to normalize data from airport data json source
- * @param {*} str 
- * @returns 
+ * @param {*} str
+ * @returns
  */
-const normalizeString = (str) => {
+const normalizeString = (str: string) => {
   const result = reencodeString(str)
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '');
@@ -30,8 +30,8 @@ const normalizeString = (str) => {
  * @param {*} obj
  * @param  {...any} allowedFields
  */
-const filterObj = (obj, allowedFields) => {
-  const newObj = {};
+const filterObj = (obj: any, allowedFields: string[]) => {
+  const newObj: any = {};
   Object.keys(obj).forEach((el) => {
     if (allowedFields.includes(el)) {
       newObj[el] = obj[el];

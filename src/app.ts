@@ -4,7 +4,7 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import mongoSanitize from 'express-mongo-sanitize';
-import xss from 'xss-clean';
+import xss from './utils/xss';
 import hpp from 'hpp';
 
 import AppError from './utils/appError';
@@ -13,6 +13,7 @@ import { router as destinationsRouter } from './destinations/destinationsRoutes'
 import { router as userRouter } from './user/userRoutes';
 import { router as airportRouter } from './airports/airportRoutes';
 import { router as viewRouter } from './views/viewRoutes';
+import { NextFunction, Request, Response } from 'express-serve-static-core';
 
 const app = express();
 // better to use early in the middleware.
@@ -74,11 +75,12 @@ app.all('*', (req, res, next) => {
 });
 
 // global error handler
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-app.use((err, _req, res, _next) => {
-  err.statusCode = err.statusCode || 500;
-  err.status = err.status || 'error';
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  if (!(err instanceof AppError)) {
+    err.statusCode = 500;
+    err.status = 'error';
+  }
   if (err.name === 'JsonWebTokenError') err = handleJWTError();
   if (err.name === 'TokenExpiredError') err = handleTokenExpiredError();
 
