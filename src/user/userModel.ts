@@ -1,9 +1,33 @@
-import mongoose from 'mongoose';
+import { Schema, model, Types, Model } from 'mongoose';
 import crypto from 'crypto';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
 
-const userSchema = new mongoose.Schema({
+export interface IUser {
+  name: string;
+  email: string;
+  favAirports?: Types.Array<string>;
+  password: string;
+  passwordConfirm?: string;
+  passwordChangedAt: number;
+  passwordResetToken: string;
+  passwordResetExpiresAt: number;
+  active: boolean;
+}
+
+interface IUserMethods {
+  changedPasswordAfter(JWTTimestamp: number): boolean;
+  isCorrectPassword(
+    candidatePassword: string,
+    userPassword: string
+  ): Promise<boolean>;
+  createPasswordResetToken(): string;
+}
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+type UserModel = Model<IUser, {}, IUserMethods>;
+
+const userSchema = new Schema<IUser, UserModel, IUserMethods>({
   name: {
     type: String,
     required: [true, 'Please tell us your name!'],
@@ -31,7 +55,7 @@ const userSchema = new mongoose.Schema({
     validate: [
       // this only works on CREATE and SAVE !!!
       // so for UPDSTES we need to SAVE instead of findOneAndUpdate
-      function (el) {
+      function (el: string) {
         return this.password === el;
       },
       'Passwords are not the same!',
@@ -71,55 +95,64 @@ userSchema.pre('save', function (next) {
 
 // any query that starts with 'find'
 // find* queries only retrieves active users (that do not have 'active' as false)
-userSchema.pre(/^find/, function (next) {
+userSchema.pre<UserModel>(/^find/, function (next) {
   // Query middleware, so 'this' points to query
   // instead of 'active:true' we use that filter, to account for documents that do not have the field 'active' set.
   this.find({ active: { $ne: false } });
   next();
 });
 
-userSchema.methods.isCorrectPassword = async function (
-  candidatePassword,
-  userPassword
-) {
-  // we can not use this.password because we decided password is not available in the output (because of select:false)
-  // so we send it in the arguments
-  return await bcrypt.compare(candidatePassword, userPassword);
-};
-
-userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
-  if (this.passwordChangedAt) {
-    // const changedTimestamp = parseInt(
-    //   this.passwordChangedAt.getTime() / 1000,
-    //   10
-    // );
-    const changedTimestamp = this.passwordChangedAt.getTime() / 1000;
-
-    // because some users do not have this property
-    return JWTTimestamp < changedTimestamp;
+userSchema.method(
+  'isCorrectPassword',
+  async function isCorrectPassword(
+    candidatePassword: string,
+    userPassword: string
+  ) {
+    // we can not use this.password because we decided password is not available in the output (because of select:false)
+    // so we send it in the arguments
+    return await bcrypt.compare(candidatePassword, userPassword);
   }
-  // false means NOT changed
-  return false;
-};
+);
 
-userSchema.methods.createPasswordResetToken = function () {
-  // gemerate the token
-  // we don't need such security so we can use crypto library instead of bcryptjs library
+userSchema.method(
+  'changedPasswordAfter',
+  function changedPasswordAfter(JWTTimestamp: number) {
+    if (this.passwordChangedAt) {
+      // const changedTimestamp = parseInt(
+      //   this.passwordChangedAt.getTime() / 1000,
+      //   10
+      // );
+      const changedTimestamp = this.passwordChangedAt.getTime() / 1000;
 
-  const resetToken = crypto.randomBytes(32).toString('hex');
+      // because some users do not have this property
+      return JWTTimestamp < changedTimestamp;
+    }
+    // false means NOT changed
+    return false;
+  }
+);
 
-  // we are going to store the reset token in DB but as usually we are going to store it encrypted
-  // same here: encryption does not need to be of the highest security so we can use crypto library
-  this.passwordResetToken = crypto
-    .createHash('sha256')
-    .update(resetToken)
-    .digest('hex');
-  // expiration after 10 minutes
-  this.passwordResetExpiresAt = Date.now() + 10 * 60 * 1000;
+userSchema.method(
+  'createPasswordResetToken',
+  function createPasswordResetToken() {
+    // gemerate the token
+    // we don't need such security so we can use crypto library instead of bcryptjs library
 
-  // we send the non encrypted version to email.
-  return resetToken;
-};
+    const resetToken = crypto.randomBytes(32).toString('hex');
 
-const User = mongoose.model('User', userSchema);
+    // we are going to store the reset token in DB but as usually we are going to store it encrypted
+    // same here: encryption does not need to be of the highest security so we can use crypto library
+    this.passwordResetToken = crypto
+      .createHash('sha256')
+      .update(resetToken)
+      .digest('hex');
+    // expiration after 10 minutes
+    this.passwordResetExpiresAt = Date.now() + 10 * 60 * 1000;
+
+    // we send the non encrypted version to email.
+    return resetToken;
+  }
+);
+
+const User = model<IUser, UserModel>('User', userSchema);
 export default User;

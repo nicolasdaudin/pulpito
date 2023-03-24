@@ -1,7 +1,9 @@
 import AppError from './appError';
+import axios, { AxiosError } from 'axios';
+import { Request, Response, NextFunction } from 'express-serve-static-core';
 
-const handleKiwiError = (err) => {
-  if (err.response.status === 422 || err.response.status === 400) {
+const handleKiwiError = (err: AxiosError) => {
+  if (err.response?.status === 422 || err.response?.status === 400) {
     // an error occurred on 3rd party Kiwi because of some input query parameters fed to to Pulpito API client (if error 422) or because some parameters for KIWI are missing (error 400)
     return new AppError(
       `Error in 3rd party API : ${err.response.data.error}`,
@@ -15,8 +17,8 @@ const handleKiwiError = (err) => {
   }
 };
 
-const catchKiwiError = (err, next) => {
-  if (err.response) {
+const catchKiwiError = (err: Error | AxiosError, next: NextFunction) => {
+  if (axios.isAxiosError(err) && err.response) {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx
     return next(handleKiwiError(err));
@@ -38,9 +40,11 @@ const catchKiwiError = (err, next) => {
  * @param {*} fn function to be try-catched
  * @returns the same function, but now protected by try-catch
  */
-export const catchAsync = (fn) => {
-  return (req, res, next) => {
-    return fn(req, res, next).catch((err) => {
+export const catchAsync = (
+  fn: (req: Request, res: Response, next: NextFunction) => Promise<void>
+) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    return fn(req, res, next).catch((err: Error) => {
       console.error(err);
       next(err);
     });
@@ -53,8 +57,10 @@ export const catchAsync = (fn) => {
  * @param {*} fn function to be try-catched
  * @returns a function protected by try-catch
  */
-export const catchAsyncKiwi = (fn) => {
-  return (req, res, next) => {
-    return fn(req, res, next).catch((err) => catchKiwiError(err, next));
+export const catchAsyncKiwi = (
+  fn: (req: Request, res: Response, next: NextFunction) => Promise<void>
+) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    return fn(req, res, next).catch((err: Error) => catchKiwiError(err, next));
   };
 };

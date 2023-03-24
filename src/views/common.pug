@@ -14,7 +14,7 @@ block content
     
   
   
-  //  Flight Search Areas 
+  //  flight Search Areas 
   section#explore_area.section_padding
     .container
       //  Section Heading 
@@ -36,19 +36,19 @@ block content
                   h5 Escales
                 .tour_search_type.btn_radio_max_connections
                   .form-check
-                    input.form-check-input#flexCheckDefaultf1(name='maxConnections' type='radio' value=0 checked=filters.maxConnections==='0')
+                    input.form-check-input#flexCheckDefaultf1(name='maxConnections' type='radio' value=0 checked=filters.maxConnections===0)
                     label.form-check-label(for='flexCheckDefaultf1')
                       span.area_flex_one
                         span Direct (Sans escale)
                         span 
                   .form-check
-                    input.form-check-input#flexCheckDefaultf2(name='maxConnections' type='radio' value=1 checked=filters.maxConnections==='1')
+                    input.form-check-input#flexCheckDefaultf2(name='maxConnections' type='radio' value=1 checked=filters.maxConnections===1)
                     label.form-check-label(for='flexCheckDefaultf2')
                       span.area_flex_one
                         span Jusque 1 escale
                         span 
                   .form-check
-                    input.form-check-input#flexCheckDefaultf2(name='maxConnections' type='radio' value=2 checked=!filters.maxConnections || filters.maxConnections==='2')
+                    input.form-check-input#flexCheckDefaultf2(name='maxConnections' type='radio' value=2 checked=!filters.maxConnections || filters.maxConnections===2)
                     label.form-check-label(for='flexCheckDefaultf3')
                       span.area_flex_one
                         span Tous les vols
@@ -73,7 +73,7 @@ block content
                         span Distance totale
                       
                 .flight_search_result_wrapper
-                  each itinerary,i in data  
+                  each destination,i in data  
                     - var index = i + 1 
                     //- .flight_search_item_wrappper(data-bs-toggle='collapse' data-bs-target=`#collapseExample${index}` aria-expanded='false' aria-controls=`#collapseExample${index}`)
                     .flight_search_item_wrappper
@@ -83,15 +83,15 @@ block content
                             .flight_search_left
                               .flight_search_destination
                                 p Destination:
-                                h3=`${itinerary.cityTo} (${itinerary.cityCodeTo})`
-                                h6=itinerary.countryTo
+                                h3=`${destination.cityTo} (${destination.cityCodeTo})`
+                                h6=destination.countryTo
                         .flight_search_right
                           - var links = [];
-                          each flight in itinerary.flights 
-                            - links.push(flight.deep_link)
+                          each itinerary in destination.itineraries  
+                            - links.push(itinerary.deep_link)
                           .numbers 
-                            h2=`${itinerary.price} €`
-                            h4=`(${itinerary.distance} km)`                       
+                            h2=`${destination.price} €`
+                            h4=`(${destination.distance} km)`                       
                           a.btn.btn_theme.btn_sm.btn_book_all(data-links=links) Réserver tous les vols ↗️
                           h6
                             | Détails 
@@ -103,62 +103,62 @@ block content
                             .flight_inner_show_component Aller
                             .flight_inner_show_component Retour
                           .TabPanelInner Prix
-                        each flight in itinerary.flights
+                        each itinerary in destination.itineraries 
                           .flight_show_down_wrapper
                             .airline-details
-                              h3=`${flight.cityFrom}`
-                            - var onewayConnections = (flight.route.oneway.connections.length > 0) ? flight.route.oneway.connections : null
+                              h3=`${itinerary.cityFrom}`
+                            - var onewayConnections = (itinerary.onewayRoute.connections.length > 0) ? itinerary.onewayRoute.connections : null
                           
                             .flight_inner_show_component_container 
                               .flight_inner_show_component
                                 .flight_det_wrapper
                                   .flight_det
                                     .code_time
-                                      span.code=flight.flyFrom
-                                      span.time=`${flight.route.oneway.local_departure.split(',')[1].trim()}`
-                                    p.airport=`${flight.cityFrom}`
+                                      span.code=itinerary.flyFrom
+                                      span.time=`${itinerary.onewayRoute.local_departure.split(',')[1].trim()}`
+                                    p.airport=`${itinerary.cityFrom}`
 
-                                    p.date=`${flight.route.oneway.local_departure.split(',')[0].trim()}`
+                                    p.date=`${itinerary.onewayRoute.local_departure.split(',')[0].trim()}`
                                 .flight_duration
                                   .arrow_right
-                                  if flight.route.oneway.connections.length > 0
-                                    span=flight.route.oneway.connections
-                                  p=flight.route.oneway.duration
+                                  if itinerary.onewayRoute.connections.length > 0
+                                    span=itinerary.onewayRoute.connections
+                                  p=itinerary.onewayRoute.duration
                                 .flight_det_wrapper
                                   .flight_det
                                     .code_time
-                                      span.code=flight.flyTo
-                                      span.time=`${flight.route.oneway.local_arrival.split(',')[1].trim()}`
-                                    p.airport=`${flight.cityTo}`
+                                      span.code=itinerary.flyTo
+                                      span.time=`${itinerary.onewayRoute.local_arrival.split(',')[1].trim()}`
+                                    p.airport=`${itinerary.cityTo}`
 
-                                    p.date=`${flight.route.oneway.local_arrival.split(',')[0].trim()}`
+                                    p.date=`${itinerary.onewayRoute.local_arrival.split(',')[0].trim()}`
                               .flight_inner_show_component
                                 .flight_det_wrapper
                                   .flight_det
                                     .code_time
-                                      span.code=flight.flyTo
-                                      span.time=`${flight.route.return.local_departure.split(',')[1].trim()}`
-                                    p.airport=`${flight.cityTo}`
+                                      span.code=itinerary.flyTo
+                                      span.time=`${itinerary.returnRoute.local_departure.split(',')[1].trim()}`
+                                    p.airport=`${itinerary.cityTo}`
 
-                                    p.date=`${flight.route.return.local_departure.split(',')[0].trim()}`
+                                    p.date=`${itinerary.returnRoute.local_departure.split(',')[0].trim()}`
                                 .flight_duration
                                   .arrow_left
-                                  if flight.route.return.connections.length > 0
-                                    span=flight.route.return.connections
-                                  p=flight.route.return.duration
+                                  if itinerary.returnRoute.connections.length > 0
+                                    span=itinerary.returnRoute.connections
+                                  p=itinerary.returnRoute.duration
                                 .flight_det_wrapper
                                   .flight_det
                                     .code_time
-                                      span.code=flight.flyFrom
-                                      span.time=`${flight.route.return.local_arrival.split(',')[1].trim()}`
-                                    p.airport=`${flight.cityFrom}`
+                                      span.code=itinerary.flyFrom
+                                      span.time=`${itinerary.returnRoute.local_arrival.split(',')[1].trim()}`
+                                    p.airport=`${itinerary.cityFrom}`
 
-                                    p.date=`${flight.route.return.local_arrival.split(',')[0].trim()}`
+                                    p.date=`${itinerary.returnRoute.local_arrival.split(',')[0].trim()}`
                             .TabPanelInner
                               .flight_info_taable
-                                h3=`${flight.fare.adults} € / pers.`
-                                p=`(${flight.distance} km / pers.)`
-                                a.btn.btn_theme.btn_sm.btn_book(target='_blank',href=`${flight.deep_link}`)=`Réserver ce vol (${flight.price} €) ↗️`
+                                h3=`${itinerary.fare.adults} € / pers.`
+                                p=`(${itinerary.distance} km / pers.)`
+                                a.btn.btn_theme.btn_sm.btn_book(target='_blank',href=`${itinerary.deep_link}`)=`Réserver ce vol (${itinerary.price} €) ↗️`
                 if (navigation)
                   .filter_results                    
                     .pagination_results 

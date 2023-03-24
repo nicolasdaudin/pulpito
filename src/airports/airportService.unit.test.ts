@@ -6,6 +6,10 @@ import {
 
 describe('AirportService', function () {
   describe('searchByString', function () {
+    /* FIXME: all these tests depend on the airport-code.json file content. 
+    They will fail if airport-codes.json no longer have Paris for example
+    This actually are integration tests, since tomorrow airport-codes.json could become a database or something. 
+    */
     test('should be able to retrieve airports by any string', function () {
       const airports = searchByString('paris');
       expect(airports.length).toBeGreaterThan(0);

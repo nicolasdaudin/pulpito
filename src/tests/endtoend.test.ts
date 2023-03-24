@@ -1,15 +1,19 @@
 import request from 'supertest';
 import app from '../app';
 import { faker } from '@faker-js/faker';
-import User from '../user/userModel';
-import mongoose from 'mongoose';
+import User, { IUser } from '../user/userModel';
+import mongoose, { HydratedDocument } from 'mongoose';
 import { DateTime } from 'luxon';
+import { Itinerary } from '../common/types';
 
 const KIWI_DATE_FORMAT = `dd'/'LL'/'yyyy`;
 
 describe('End to end tests', () => {
   jest.setTimeout(15000);
   beforeAll(async () => {
+    if (!process.env.DATABASE || !process.env.DATABASE_PASSWORD)
+      throw Error('Missing env variables');
+
     const DB = process.env.DATABASE.replace(
       '<PASSWORD>',
       process.env.DATABASE_PASSWORD
@@ -29,7 +33,7 @@ describe('End to end tests', () => {
       expect(response.text).toMatch('Pulpito');
     });
     // FIXME: problem with AppError and now it seems it's not taken into account so this test fails....
-    test.skip('Should fail if the page does not exist', async () => {
+    test.skip('Should return a fail status if the page does not exist', async () => {
       const response = await request(app).get('/fakepage');
       expect(response.statusCode).toBe(404);
       expect(response.body.status).toBe('fail');
@@ -41,7 +45,7 @@ describe('End to end tests', () => {
       expect(response.body.data.airports[0].iata_code).toEqual('CDG');
     });
     // FIXME: problem with AppError and now it seems it's not taken into account so this test fails....
-    test.skip('API should fail if the route does not exist', async () => {
+    test.skip('API should return a fail status if the route does not exist', async () => {
       const response = await request(app).get('/api/v1/airrts/?q=CDG');
 
       expect(response.statusCode).toBe(404);
@@ -86,7 +90,7 @@ describe('End to end tests', () => {
     });
 
     describe('API Signup and Auth Route', () => {
-      let newUser, fakeUser;
+      let newUser: HydratedDocument<IUser>, fakeUser: Partial<IUser>;
       beforeEach(async () => {
         // creating a fake user in DB
 
@@ -190,6 +194,8 @@ describe('End to end tests', () => {
         expect(response.body.status).toBe('fail');
         expect(response.body.message).toMatch('Please provide missing');
       });
+
+      test.todo('should return an error when there are no parameters at all');
     });
 
     describe('API Common destinations route', () => {
@@ -213,8 +219,8 @@ describe('End to end tests', () => {
         expect(response.statusCode).toBe(200);
         expect(response.body.totalResults).toBeGreaterThan(0);
         expect(
-          response.body.data[0].flights.every((flight) =>
-            origins.includes(flight.cityCodeFrom)
+          response.body.data[0].itineraries.every((itinerary: Itinerary) =>
+            origins.includes(itinerary.cityCodeFrom)
           )
         ).toBe(true);
       });
@@ -240,6 +246,8 @@ describe('End to end tests', () => {
         expect(response.body.status).toBe('fail');
         expect(response.body.message).toMatch('Please provide missing');
       });
+
+      test.todo('should return an error when there are no parameters at all');
 
       test('should return a 400 error and a fail status if origin is not in the format MAD,BRU,BOD', async () => {
         const params = {
@@ -332,6 +340,7 @@ describe('End to end tests', () => {
           /Please provide missing parameter(.*)origin,destination/
         );
       });
+      test.todo('should return an error if no input parameters at all');
 
       test('should return a 400 error and a fail status if dates are not in the correct format', async () => {
         const dates = {

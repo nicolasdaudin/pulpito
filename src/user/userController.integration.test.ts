@@ -1,12 +1,17 @@
 import userController from './userController';
-import User from './userModel';
-import mongoose from 'mongoose';
+import User, { IUser } from './userModel';
+import mongoose, { HydratedDocument } from 'mongoose';
 import { faker } from '@faker-js/faker';
+import { NextFunction, Request, Response } from 'express-serve-static-core';
 
 describe('UserController', () => {
   jest.setTimeout(15000);
+  let newUser: HydratedDocument<IUser>;
+  let fakeUser: Partial<IUser>;
 
   beforeAll(async () => {
+    if (!process.env.DATABASE || !process.env.DATABASE_PASSWORD)
+      throw new Error('missing env variables');
     const DB = process.env.DATABASE.replace(
       '<PASSWORD>',
       process.env.DATABASE_PASSWORD
@@ -20,7 +25,9 @@ describe('UserController', () => {
     mongoose.disconnect();
   });
 
-  let req, res, next;
+  let req: Request & { user: HydratedDocument<IUser> },
+    res: Partial<Response> & Partial<{ data: any; message: string }>,
+    next: NextFunction;
   beforeEach(() => {
     res = {
       status: jest.fn().mockImplementation(function () {
@@ -32,8 +39,8 @@ describe('UserController', () => {
         this.data = obj.data;
         this.message = obj.message;
       }),
-      data: null,
-      message: null,
+      data: undefined,
+      message: '',
     };
 
     next = jest.fn().mockImplementation(function (err) {
@@ -46,7 +53,7 @@ describe('UserController', () => {
       test('should get all users', async () => {
         // console.log(allUsers);
 
-        await userController.getAllUsers(req, res);
+        await userController.getAllUsers(req, res as Response);
 
         console.log(res.data.users);
         expect(res.status).toHaveBeenCalledWith(200);
@@ -58,7 +65,6 @@ describe('UserController', () => {
   });
 
   describe('updateMe', () => {
-    let newUser, fakeUser;
     beforeEach(async () => {
       // creating a fake user in DB
 
@@ -85,9 +91,9 @@ describe('UserController', () => {
         req = {
           body: UPDATED_PROPERTIES,
           user: { id: newUser.id },
-        };
+        } as Request & { user: HydratedDocument<IUser> };
 
-        await userController.updateMe(req, res, next);
+        await userController.updateMe(req, res as Response, next);
 
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.data.user.id).toEqual(newUser.id);
@@ -104,7 +110,6 @@ describe('UserController', () => {
   });
 
   describe('airports', () => {
-    let newUser, fakeUser;
     beforeEach(async () => {
       // creating a fake user in DB
 
@@ -128,9 +133,9 @@ describe('UserController', () => {
             user: {
               id: newUser.id,
             },
-          };
+          } as Request & { user: HydratedDocument<IUser> };
 
-          await userController.getFavAirports(req, res, next);
+          await userController.getFavAirports(req, res as Response, next);
 
           expect(res.status).toHaveBeenCalledWith(200);
           expect(Array.isArray(res.data.favAirports)).toBe(true);
@@ -147,9 +152,9 @@ describe('UserController', () => {
               id: newUser.id,
             },
             body: { airport: 'JFK' },
-          };
+          } as Request & { user: HydratedDocument<IUser> };
 
-          await userController.addFavAirport(req, res, next);
+          await userController.addFavAirport(req, res as Response, next);
 
           expect(res.status).toHaveBeenCalledWith(200);
           expect(Array.isArray(res.data.favAirports)).toBe(true);
@@ -177,7 +182,7 @@ describe('UserController', () => {
               id: newUser.id,
             },
             body: { airport: 'JFK' },
-          };
+          } as Request & { user: HydratedDocument<IUser> };
 
           // add an airport to that fake user
           await User.findByIdAndUpdate(newUser.id, {
@@ -185,7 +190,7 @@ describe('UserController', () => {
           });
 
           // and then remove it ...
-          await userController.removeFavAirport(req, res, next);
+          await userController.removeFavAirport(req, res as Response, next);
 
           expect(res.status).toHaveBeenCalledWith(200);
           expect(Array.isArray(res.data.favAirports)).toBe(true);
@@ -207,7 +212,6 @@ describe('UserController', () => {
   });
 
   describe('deleteMe', () => {
-    let newUser, fakeUser;
     beforeEach(async () => {
       // creating a fake user in DB
 
@@ -231,12 +235,12 @@ describe('UserController', () => {
           user: {
             id: newUser.id,
           },
-        };
+        } as Request & { user: HydratedDocument<IUser> };
 
         const user = await User.findById(newUser.id);
         expect(user).not.toBeUndefined();
 
-        await userController.deleteMe(req, res, next);
+        await userController.deleteMe(req, res as Response, next);
 
         const updatedUser = await User.findById(newUser.id);
         expect(res.status).toHaveBeenCalledWith(204);

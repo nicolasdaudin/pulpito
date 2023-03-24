@@ -1,4 +1,5 @@
-import { isAlpha, isNumeric } from 'validator';
+import validatorJs from 'validator';
+import { ParamModel, QueryParams } from '../common/types';
 
 // const validateParams = (req, res, next) => {};
 
@@ -7,9 +8,9 @@ import { isAlpha, isNumeric } from 'validator';
  * @param {*} str
  * @returns true if str is a comma-separated list of alphabetic strings (i.e. 'MAD,BRU,POE'), false otherwise (i.e. 'MAD-BRU-POE', or 'MAD-BRU2-POR')
  */
-const isCommaSeparatedAlpha = (str) => {
+const isCommaSeparatedAlpha = (str: string): boolean => {
   const splitted = str.split(',');
-  return splitted.every((split) => isAlpha(split));
+  return splitted.every((split) => validatorJs.isAlpha(split));
 };
 
 /**
@@ -17,9 +18,9 @@ const isCommaSeparatedAlpha = (str) => {
  * @param {*} str
  * @returns true if str is a comma-separated list of numbers (i.e. '1,2,2')
  */
-const isCommaSeparatedNumeric = (str) => {
+const isCommaSeparatedNumeric = (str: string): boolean => {
   const splitted = str.split(',');
-  return splitted.every(isNumeric);
+  return splitted.every((split) => validatorJs.isNumeric(split));
 };
 
 /**
@@ -28,7 +29,7 @@ const isCommaSeparatedNumeric = (str) => {
  * @param {*} params
  * @returns list of missing params name
  */
-const findMissingParams = (model, params) => {
+const findMissingParams = (model: ParamModel[], params: QueryParams) => {
   const missingParams = model
     .filter((param) => param.required && !params[param.name])
     .map((param) => param.name);
@@ -41,7 +42,7 @@ const findMissingParams = (model, params) => {
  * @param {*} params
  * @returns list of params name for which we have a wrong type
  */
-const findWrongTypeParams = (model, params) => {
+const findWrongTypeParams = (model: ParamModel[], params: QueryParams) => {
   return model
     .filter(
       (param) => params[param.name] && !param.typeCheck(params[param.name])

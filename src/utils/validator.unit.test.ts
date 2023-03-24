@@ -1,52 +1,55 @@
-import validator from './validator';
-import { isAlpha, isDate, isNumeric } from 'validator';
+import pulpitoValidator from './validator';
+import validator from 'validator';
+import { ParamModel } from '../common/types';
 
 describe('validator utils', () => {
   describe('isCommaSeparatedAlpha', () => {
     test('should return true when argument is a unique string of letters', function () {
-      expect(validator.isCommaSeparatedAlpha('MAD')).toBe(true);
+      expect(pulpitoValidator.isCommaSeparatedAlpha('MAD')).toBe(true);
     });
     test('should return true when argument is a comma separated string of letters', function () {
-      expect(validator.isCommaSeparatedAlpha('MAD,OPO,BRU')).toBe(true);
+      expect(pulpitoValidator.isCommaSeparatedAlpha('MAD,OPO,BRU')).toBe(true);
     });
     test('should return false when argument contains numbers', function () {
-      expect(validator.isCommaSeparatedAlpha('MAD2')).toBe(false);
-      expect(validator.isCommaSeparatedAlpha('MAD2,OPO,BRU')).toBe(false);
+      expect(pulpitoValidator.isCommaSeparatedAlpha('MAD2')).toBe(false);
+      expect(pulpitoValidator.isCommaSeparatedAlpha('MAD2,OPO,BRU')).toBe(
+        false
+      );
     });
     test('should return false when argument has not the correct comma-separator', function () {
-      expect(validator.isCommaSeparatedAlpha('MAD;OPO;BRU')).toBe(false);
-      expect(validator.isCommaSeparatedAlpha('MAD-OPO-BRU')).toBe(false);
-      expect(validator.isCommaSeparatedAlpha('MAD OPO BRU')).toBe(false);
+      expect(pulpitoValidator.isCommaSeparatedAlpha('MAD;OPO;BRU')).toBe(false);
+      expect(pulpitoValidator.isCommaSeparatedAlpha('MAD-OPO-BRU')).toBe(false);
+      expect(pulpitoValidator.isCommaSeparatedAlpha('MAD OPO BRU')).toBe(false);
     });
     test('should return false when argument is empty', function () {
-      expect(validator.isCommaSeparatedAlpha('')).toBe(false);
+      expect(pulpitoValidator.isCommaSeparatedAlpha('')).toBe(false);
     });
     test('should return false when argument ends with a comma', function () {
-      expect(validator.isCommaSeparatedAlpha('MAD,')).toBe(false);
+      expect(pulpitoValidator.isCommaSeparatedAlpha('MAD,')).toBe(false);
     });
   });
 
   describe('isCommaSeparatedNumeric', () => {
     test('should return true when argument is a number', function () {
-      expect(validator.isCommaSeparatedNumeric('1')).toBe(true);
+      expect(pulpitoValidator.isCommaSeparatedNumeric('1')).toBe(true);
     });
     test('should return true when argument is a comma separated string of numbers', function () {
-      expect(validator.isCommaSeparatedNumeric('1,1,1')).toBe(true);
+      expect(pulpitoValidator.isCommaSeparatedNumeric('1,1,1')).toBe(true);
     });
     test('should return false when argument contains letters', function () {
-      expect(validator.isCommaSeparatedNumeric('MAD')).toBe(false);
-      expect(validator.isCommaSeparatedNumeric('1,2,a')).toBe(false);
+      expect(pulpitoValidator.isCommaSeparatedNumeric('MAD')).toBe(false);
+      expect(pulpitoValidator.isCommaSeparatedNumeric('1,2,a')).toBe(false);
     });
     test('should return false when argument has not the correct comma-separator', function () {
-      expect(validator.isCommaSeparatedNumeric('1;2;3')).toBe(false);
-      expect(validator.isCommaSeparatedNumeric('1-2-3')).toBe(false);
-      expect(validator.isCommaSeparatedNumeric('1 2 3')).toBe(false);
+      expect(pulpitoValidator.isCommaSeparatedNumeric('1;2;3')).toBe(false);
+      expect(pulpitoValidator.isCommaSeparatedNumeric('1-2-3')).toBe(false);
+      expect(pulpitoValidator.isCommaSeparatedNumeric('1 2 3')).toBe(false);
     });
     test('should return false when argument is empty', function () {
-      expect(validator.isCommaSeparatedNumeric('')).toBe(false);
+      expect(pulpitoValidator.isCommaSeparatedNumeric('')).toBe(false);
     });
     test('should return false when argument ends with a comma', function () {
-      expect(validator.isCommaSeparatedNumeric('2,4,')).toBe(false);
+      expect(pulpitoValidator.isCommaSeparatedNumeric('2,4,')).toBe(false);
     });
   });
 
@@ -68,7 +71,7 @@ describe('validator utils', () => {
         name: 'nonRequiredParam1',
         required: false,
       },
-    ];
+    ] as ParamModel[];
 
     test('should return an empty array if no parameters from given model are missing', () => {
       const params = {
@@ -77,7 +80,7 @@ describe('validator utils', () => {
         requiredParam3: 'foobar',
         nonRequiredParam1: 'foobar',
       };
-      expect(validator.findMissingParams(model, params)).toEqual([]);
+      expect(pulpitoValidator.findMissingParams(model, params)).toEqual([]);
     });
     test('should return an array of the missing parameters names when they are missing', function () {
       const params = {
@@ -85,10 +88,10 @@ describe('validator utils', () => {
         nonRequiredParam1: 'foobar',
         nonRequiredParam2: 'boofar',
       };
-      expect(validator.findMissingParams(model, params)).toContain(
+      expect(pulpitoValidator.findMissingParams(model, params)).toContain(
         'requiredParam1'
       );
-      expect(validator.findMissingParams(model, params)).toContain(
+      expect(pulpitoValidator.findMissingParams(model, params)).toContain(
         'requiredParam2'
       );
     });
@@ -98,17 +101,17 @@ describe('validator utils', () => {
     const model = [
       {
         name: 'alphaParam',
-        typeCheck: isAlpha,
+        typeCheck: validator.isAlpha,
       },
       {
         name: 'numericParam',
-        typeCheck: isNumeric,
+        typeCheck: validator.isNumeric,
       },
       {
         name: 'dateParam',
-        typeCheck: (str) => isDate(str, { format: 'DD/MM/YYYY' }),
+        typeCheck: (str) => validator.isDate(str, { format: 'DD/MM/YYYY' }),
       },
-    ];
+    ] as ParamModel[];
 
     test('should return an empty array if parameters have the correct type', () => {
       const params = {
@@ -116,7 +119,7 @@ describe('validator utils', () => {
         numericParam: '42',
         dateParam: '22/06/1984',
       };
-      expect(validator.findWrongTypeParams(model, params)).toEqual([]);
+      expect(pulpitoValidator.findWrongTypeParams(model, params)).toEqual([]);
     });
 
     test(`should return ['alphaParam'] when alphaParam contains something else than letters`, () => {
@@ -125,7 +128,7 @@ describe('validator utils', () => {
         numericParam: '42',
         dateParam: '22/06/1984',
       };
-      expect(validator.findWrongTypeParams(model, params)).toEqual([
+      expect(pulpitoValidator.findWrongTypeParams(model, params)).toEqual([
         'alphaParam',
       ]);
     });
@@ -136,7 +139,7 @@ describe('validator utils', () => {
         numericParam: '4a2',
         dateParam: '22/06/1984',
       };
-      expect(validator.findWrongTypeParams(model, params)).toEqual([
+      expect(pulpitoValidator.findWrongTypeParams(model, params)).toEqual([
         'numericParam',
       ]);
     });
@@ -147,7 +150,7 @@ describe('validator utils', () => {
         numericParam: '42',
         dateParam: '1984/06/22',
       };
-      expect(validator.findWrongTypeParams(model, params)).toEqual([
+      expect(pulpitoValidator.findWrongTypeParams(model, params)).toEqual([
         'dateParam',
       ]);
     });
@@ -158,10 +161,10 @@ describe('validator utils', () => {
         numericParam: '4a2',
         dateParam: '22/06/1984',
       };
-      expect(validator.findWrongTypeParams(model, params)).toContain(
+      expect(pulpitoValidator.findWrongTypeParams(model, params)).toContain(
         'alphaParam'
       );
-      expect(validator.findWrongTypeParams(model, params)).toContain(
+      expect(pulpitoValidator.findWrongTypeParams(model, params)).toContain(
         'numericParam'
       );
     });

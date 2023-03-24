@@ -1,20 +1,21 @@
-import validator from '../utils/validator';
-import { isAlpha, isDate, isNumeric } from 'validator';
-import AppError from '../utils/appError';
-import { RESULTS_SEARCH_LIMIT, DEFAULT_SORT_FIELD } from '../config';
+import validator from '../../utils/validator';
+import validatorJs from 'validator';
+import AppError from '../../utils/appError';
+import { NextFunction, Response } from 'express';
+import { TypedRequestQueryWithFilter } from '../../common/interfaces';
+import {
+  BaseParamModel,
+  FilterParams,
+  ParamModel,
+  QueryParams,
+  RegularFlightsParams,
+  WeekendFlightsParams,
+} from '../../common/types';
+import { getFilterParamsFromQueryParams } from './validatorHelper';
 
-const PARAMS_TO_FILTER = [
-  { name: 'sort', default: DEFAULT_SORT_FIELD },
-  { name: 'limit', default: RESULTS_SEARCH_LIMIT },
-  { name: 'page', default: 1 },
-  { name: 'maxConnections' },
-  { name: 'priceFrom' },
-  { name: 'priceTo' },
-];
-
-const ONE_CITYCODE_PARAM_MODEL = {
+const ONE_CITYCODE_PARAM_MODEL: BaseParamModel = {
   required: true,
-  typeCheck: isAlpha,
+  typeCheck: validatorJs.isAlpha,
   errorMsg: 'only airport or airport area codes, for example LON or JFK', // see https://wikitravel.org/en/Metropolitan_Area_Airport_Codes
 };
 const SEVERAL_CITYCODES_PARAM_MODEL = {
@@ -24,12 +25,12 @@ const SEVERAL_CITYCODES_PARAM_MODEL = {
 };
 const DATE_PARAM_MODEL = {
   required: true,
-  typeCheck: (str) => isDate(str, { format: 'DD/MM/YYYY' }),
+  typeCheck: (str: string) => validatorJs.isDate(str, { format: 'DD/MM/YYYY' }),
   errorMsg: `a date of format DD/MM/YYYY, for example 22/06/2022`,
 };
 const ONE_PASSENGER_PARAM_MODEL = {
   required: false,
-  typeCheck: isNumeric,
+  typeCheck: validatorJs.isNumeric,
   errorMsg: 'a number, for example 2',
 };
 const SEVERAL_PASSENGERS_PARAM_MODEL = {
@@ -45,23 +46,13 @@ const SEVERAL_PASSENGERS_PARAM_MODEL = {
  * @param {*} res
  * @param {*} next
  */
-const filterParams = (req, res, next) => {
-  req.filter = {};
+export const filterParams = (
+  req: TypedRequestQueryWithFilter<QueryParams, FilterParams>,
+  res: Response,
+  next: NextFunction
+) => {
   if (req.query) {
-    PARAMS_TO_FILTER.forEach((param) => {
-      if (req.query[param.name]) {
-        // if param present in the queryString, we add it to req.filter and remove it from req.query
-
-        req.filter[param.name] = req.query[param.name];
-
-        delete req.query[param.name];
-      } else {
-        // if param not present but he has a default value, we add it to req.filter
-        if (param.default) {
-          req.filter[param.name] = param.default;
-        }
-      }
-    });
+    req.filter = getFilterParamsFromQueryParams(req.query);
   }
   next();
 };
@@ -72,8 +63,12 @@ const filterParams = (req, res, next) => {
  * @param {*} res
  * @param {*} next
  */
-const validateRequestParamsWeekend = (req, res, next) => {
-  const requestModelParams = [
+export const validateRequestParamsWeekend = (
+  req: TypedRequestQueryWithFilter<WeekendFlightsParams>,
+  res: Response,
+  next: NextFunction
+) => {
+  const requestModelParams: ParamModel[] = [
     { name: 'origin', ...ONE_CITYCODE_PARAM_MODEL },
     {
       name: 'destination',
@@ -113,9 +108,13 @@ const validateRequestParamsWeekend = (req, res, next) => {
  * @param {*} res
  * @param {*} next
  */
-const validateRequestParamsManyOrigins = (req, res, next) => {
+export const validateRequestParamsManyOrigins = (
+  req: TypedRequestQueryWithFilter<RegularFlightsParams>,
+  res: Response,
+  next: NextFunction
+) => {
   // FIXME: is this really necessary to be so specific about parameter types? isn't it better to have a good documentation and only send an error msg like "Parameters have wrong type"
-  const requestModelParams = [
+  const requestModelParams: ParamModel[] = [
     { name: 'origin', ...SEVERAL_CITYCODES_PARAM_MODEL },
     {
       name: 'departureDate',
@@ -185,9 +184,13 @@ const validateRequestParamsManyOrigins = (req, res, next) => {
  * @param {*} res
  * @param {*} next
  */
-const validateRequestParamsOneOrigin = (req, res, next) => {
+export const validateRequestParamsOneOrigin = (
+  req: TypedRequestQueryWithFilter<RegularFlightsParams>,
+  res: Response,
+  next: NextFunction
+) => {
   // FIXME: is this really necessary to be so specific about parameter types? isn't it better to have a good documentation and only send an error msg like "Parameters have wrong type"
-  const requestModelParams = [
+  const requestModelParams: ParamModel[] = [
     {
       name: 'origin',
       ...ONE_CITYCODE_PARAM_MODEL,
@@ -228,7 +231,11 @@ const validateRequestParamsOneOrigin = (req, res, next) => {
  * @param {*} next the next call if there is an error
  * @returns if no wrong type params
  */
-const checkWrongTypeParams = (modelParams, query, next) => {
+const checkWrongTypeParams = (
+  modelParams: ParamModel[],
+  query: QueryParams,
+  next: NextFunction
+) => {
   const wrongTypeParams = validator.findWrongTypeParams(modelParams, query);
   if (wrongTypeParams.length > 0) {
     const errorMsg = modelParams
@@ -252,7 +259,11 @@ const checkWrongTypeParams = (modelParams, query, next) => {
  * @param {*} next the next call if there is an error
  * @returns if no missing  params
  */
-const checkMissingParams = (modelParams, query, next) => {
+const checkMissingParams = (
+  modelParams: ParamModel[],
+  query: QueryParams,
+  next: NextFunction
+) => {
   const missingParams = validator.findMissingParams(modelParams, query);
   if (missingParams.length > 0)
     return next(
@@ -263,12 +274,4 @@ const checkMissingParams = (modelParams, query, next) => {
         400
       )
     );
-};
-
-// TODO: validate request param for cheapest weekend requests
-export = {
-  validateRequestParamsManyOrigins,
-  validateRequestParamsOneOrigin,
-  validateRequestParamsWeekend,
-  filterParams,
 };

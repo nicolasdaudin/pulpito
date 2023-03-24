@@ -2,12 +2,12 @@
   "verbose": true,
   "setupFiles": ["dotenv/config"],
   "collectCoverageFrom": [
-    "src/**/*.{js|ts}",
-    "!public/**/*.{js|ts}",
-    "!src/*.{js|ts}",
-    "!coverage/**/*.{js|ts}",
+    "src/**/*.ts",
+    "!public/**/*.ts",
+    "!src/*.ts",
+    "!coverage/**/*.ts",
     "!**/node_modules/**",
-    "!dev-data/**/*.{js|ts}"
+    "!dev-data/**/*.ts"
   ],
   "preset": "ts-jest",
   "testEnvironment": "node",

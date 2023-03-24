@@ -1,7 +1,12 @@
 import express from 'express';
 
 import destinationsController from './destinationsController';
-import validatorService from '../common/validatorService';
+import {
+  validateRequestParamsManyOrigins,
+  validateRequestParamsOneOrigin,
+  validateRequestParamsWeekend,
+  filterParams,
+} from '../middleware/validator/validatorService';
 
 export const router = express.Router();
 
@@ -9,15 +14,15 @@ export const router = express.Router();
 router
   .route('/cheapest')
   .get(
-    validatorService.filterParams,
-    validatorService.validateRequestParamsOneOrigin,
+    filterParams,
+    validateRequestParamsOneOrigin,
     destinationsController.getCheapestDestinations
   );
 router
   .route('/common')
   .get(
-    validatorService.filterParams,
-    validatorService.validateRequestParamsManyOrigins,
+    filterParams,
+    validateRequestParamsManyOrigins,
     destinationsController.getCommonDestinations
   );
 
@@ -25,7 +30,7 @@ router
 router
   .route('/cheapestWeekend')
   .get(
-    validatorService.filterParams,
-    validatorService.validateRequestParamsWeekend,
+    filterParams,
+    validateRequestParamsWeekend,
     destinationsController.getCheapestWeekend
   );
