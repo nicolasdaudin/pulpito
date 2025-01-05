@@ -2,6 +2,6 @@
 
 _English version is available [here](/README.en.md)_
 
-# Pulpito
+# Pulpito (non maintenu)
 
 Une API et une interface (rendue côté serveur) pour vous aider à décider où vous retrouver avec vos amis.
